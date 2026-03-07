@@ -1,0 +1,11 @@
+paper_id,title,topic,arxiv_id,arxiv_abs_url,arxiv_pdf_url,local_pdf_path
+p01,"Training Large Language Models to Reason in a Continuous Latent Space",llm,2412.06769v3,https://arxiv.org/abs/2412.06769,https://arxiv.org/pdf/2412.06769v3.pdf,data/pdfs/2412.06769v3.pdf
+p02,"Detecting Systematic Weaknesses in Vision Models along Predefined Human-Understandable Dimensions",computer_vision,2502.12360v2,https://arxiv.org/abs/2502.12360,https://arxiv.org/pdf/2502.12360v2.pdf,data/pdfs/2502.12360v2.pdf
+p03,"Unveiling the Invisible: Reasoning Complex Occlusions Amodally with AURA",computer_vision,2503.10225v2,https://arxiv.org/abs/2503.10225,https://arxiv.org/pdf/2503.10225v2.pdf,data/pdfs/2503.10225v2.pdf
+p04,"Provenance Detection for AI-Generated Images: Combining Perceptual Hashing, Homomorphic Encryption, and AI Detection Models",computer_vision,2503.11195v1,https://arxiv.org/abs/2503.11195,https://arxiv.org/pdf/2503.11195v1.pdf,data/pdfs/2503.11195v1.pdf
+p05,"Proof or Bluff? Evaluating LLMs on 2025 USA Math Olympiad",llm,2503.21934v5,https://arxiv.org/abs/2503.21934,https://arxiv.org/pdf/2503.21934v5.pdf,data/pdfs/2503.21934v5.pdf
+p06,"Large Language Models Meet Knowledge Graphs for Question Answering: Synthesis and Opportunities",knowledge_graphs,2505.20099v2,https://arxiv.org/abs/2505.20099,https://arxiv.org/pdf/2505.20099v2.pdf,data/pdfs/2505.20099v2.pdf
+p07,"Your Brain on ChatGPT: Accumulation of Cognitive Debt when Using an AI Assistant for Essay Writing Task",llm,2506.08872v2,https://arxiv.org/abs/2506.08872,https://arxiv.org/pdf/2506.08872v2.pdf,data/pdfs/2506.08872v2.pdf
+p08,"RAVID: Retrieval-Augmented Visual Detection: A Knowledge-Driven Approach for AI-Generated Image Identification",computer_vision,2508.03967v1,https://arxiv.org/abs/2508.03967,https://arxiv.org/pdf/2508.03967v1.pdf,data/pdfs/2508.03967v1.pdf
+p09,"LLM-empowered knowledge graph construction: A survey",knowledge_graphs,2510.20345v1,https://arxiv.org/abs/2510.20345,https://arxiv.org/pdf/2510.20345v1.pdf,data/pdfs/2510.20345v1.pdf
+p10,"InnovatorBench: Evaluating Agents' Ability to Conduct Innovative LLM Research",llm_agents,2510.27598v2,https://arxiv.org/abs/2510.27598,https://arxiv.org/pdf/2510.27598v2.pdf,data/pdfs/2510.27598v2.pdf

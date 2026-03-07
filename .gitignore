@@ -1,0 +1,15 @@
+# Virtual environments
+venv/
+3.11/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# macOS
+.DS_Store
+
+# Generated outputs
+outputs/*.png
+outputs/*.csv
+outputs/*.txt

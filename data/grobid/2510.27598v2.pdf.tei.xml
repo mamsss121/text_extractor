@@ -1,0 +1,2116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">InnovatorBench: Evaluating Agents&apos; Ability to Conduct Innovative LLM Research</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2025-11-03">3 Nov 2025</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Yunze</forename><surname>Wu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Dayuan</forename><surname>Fu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Weiye</forename><surname>Si</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Zhen</forename><surname>Huang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mohan</forename><surname>Jiang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Keyu</forename><surname>Li</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Shijie</forename><surname>Xia</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jie</forename><surname>Sun</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Tianze</forename><surname>Xu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Xiangkun</forename><surname>Hu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Pengrui</forename><surname>Lu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Xiaojie</forename><surname>Cai</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Lyumanshan</forename><surname>Ye</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Wenhong</forename><surname>Zhu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Yang</forename><surname>Xiao</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Pengfei</forename><surname>Liu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><surname>Sjtu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><surname>Sii</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><surname>Gair</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Github SII AI-Innovator Homepage Project</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">InnovatorBench: Evaluating Agents&apos; Ability to Conduct Innovative LLM Research</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2025-11-03">3 Nov 2025</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">8FEE992664A330F5F59A809F2969ABA5</idno>
+					<idno type="arXiv">arXiv:2510.27598v2[cs.AI]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2" ident="GROBID" when="2026-03-06T16:53+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>AI agents could accelerate scientific discovery by automating hypothesis formation, experiment design, coding, execution, and analysis, yet existing benchmarks probe narrow skills in simplified settings. To address this gap, we introduce InnovatorBench, a benchmark-platform pair for realistic, end-to-end assessment of agents performing Large Language Model (LLM) research. It comprises 20 tasks spanning Data Construction, Filtering, Augmentation, Loss Design, Reward Design, and Scaffold Construction, which require runnable artifacts and assessment of correctness, performance, output quality, and uncertainty. To support agent operation, we develop ResearchGym, a research environment offering rich action spaces, distributed and long-horizon execution, asynchronous monitoring, and snapshot saving. We also implement a lightweight ReAct agent that couples explicit reasoning with executable planning using frontier models such as Claude-4, GPT-5, GLM-4.5, and Kimi-K2. Our experiments demonstrate that while frontier models show promise in code-driven research tasks, they struggle with fragile algorithm-related tasks and long-horizon decision making, such as impatience, poor resource management, and overreliance on template-based reasoning. Furthermore, agents require over 11 hours to achieve their best performance on 1</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR 1 Introduction</head><p>Artificial intelligence (AI) is becoming central to scientific discovery <ref type="bibr" target="#b3">(Chen et al., 2024;</ref><ref type="bibr" target="#b25">Starace et al., 2025)</ref>. Traditional workflows require humans to hypothesize, design experiments, implement and debug code, process data, manage resources, and analyze results. As AI rapidly advances, the potential to automate entire research workflows is on the horizon <ref type="bibr" target="#b19">(Liu et al., 2025)</ref>. We refer to these systems as "AI researchers": agents that integrate multiple stages of research and target human-level behaviors, including insight generation and implementation <ref type="bibr" target="#b30">(Team et al., 2025b)</ref>. Since Large Language Models (LLMs) act as the "brains" of such agents <ref type="bibr" target="#b37">(Xi et al., 2025)</ref>, they can finish auxiliary tasks such as data cleaning, augmentation, loss design, reward design, or architecture design as LLM capabilities improve in planning, code generation, and debugging. What's more, better LLMs agents can propose hypotheses and execute experiments more reliably, which accelerates discovery and feeds back into improving themselves <ref type="bibr" target="#b19">(Liu et al., 2025)</ref>. As a result, transferring improvements in LLM capabilities into genuine progress for AI research agents requires more than isolated skills. The key question is whether these abilities can be orchestrated into coherent, end-to-end research workflows <ref type="bibr" target="#b3">(Chen et al., 2024;</ref><ref type="bibr" target="#b5">Edwards et al., 2025)</ref>. This motivates systematic and realistic evaluation of AI research agents and has prompted recent efforts to benchmark them.</p><p>Recent efforts to AI research benchmark have provided valuable insights and represent important first steps toward formalizing this emerging area <ref type="bibr">(</ref>  <ref type="bibr">Team, 2025)</ref>. These studies show that current agents can already achieve non-trivial performance on experiment design, implementation correctness, and even limited replication of advanced research results, establishing clear baselines for progress. At the same time, these benchmarks highlight several structural limitations. Many existing tasks concentrate narrowly on a single performance dimension, such as code implementation accuracy, or parameter tuning <ref type="bibr" target="#b12">(Hua et al., 2025)</ref>, rather than evaluating the entire research process end to end. Success is often framed as reproducing existing results <ref type="bibr" target="#b25">(Starace et al., 2025)</ref>, which measures fidelity but not the capacity for innovation, new objective design, or architectural creativity. Moreover, the research environments where agents are evaluated are simplified and resource-constrained, so large-scale and long-horizon training or inference are typically unsupported, and asynchronous monitoring of processes that span multiple hours is rare <ref type="bibr" target="#b16">(Kon et al., 2025)</ref>. Action spaces are also constrained, preventing agents from engaging in realistic research behaviors such as managing files, executing commands, or browsing literature <ref type="bibr" target="#b3">(Chen et al., 2024)</ref>. These limitations collectively restrict the conclusions that can be drawn about an agent's potential as a true research collaborator.</p><p>In this paper, we try to address these challenges by introducing InnovatorBench and a new experimental platform ResearchGym that evaluates AI research agents in settings closer to real scientific practice.</p><p>InnovatorBench systematically evaluates core subproblems in LLM research, encompassing data construction (DC), data filtering (DF), and data augmentation (DA), loss design (LD), reward design (RD), and scaffold construction (SC). It consists of 20 tasks, each task isolates a distinct research domain, requiring agents to propose creative methods, implement their own ideas, refine ideas &amp; implementation based on the results, produce concrete outputs, and submit their outputs for several times. To establish baselines and ensure reproducibility, we construct reference solutions and relative evaluation scripts. The reference solutions remain hidden during evaluation so that agents must rely on their own reasoning and design choices. The evaluation scripts quantify metrics like correctness, quality, and/or even the output uncertainty like the entropy of predictions after Reinforcement Learning (RL) <ref type="bibr" target="#b46">(Yu et al., 2025)</ref>, thereby providing a multifaceted view of agent capabilities. This setup emphasizes both diversity and openness because the tasks span different types of challenges, allow multiple solution strategies, and reward innovation rather than simple replication. Consequently, InnovatorBench moves beyond narrow tests of implementation fidelity and provides a rigorous framework for assessing whether agents can execute end-to-end research workflows that mirror the demands of real LLM development.</p><p>In parallel, ResearchGym offers a scalable and realistic environment that addresses limitations of existing platforms <ref type="bibr" target="#b21">(Nathani et al., 2025;</ref><ref type="bibr" target="#b33">Wang et al., 2024a)</ref>. It provides a rich action space that covers terminal commands, file operations, web search, and web browsing. Building on this foundation, ResearchGym supports large-scale experiments that may run for many hours or even days, with facilities for launching, monitoring, and adapting long-running processes, as well as distributed training across multiple machines and GPUs. It also provides snapshot saving and loading for pausing and resuming experiments without loss of progress. Importantly, ResearchGym is not tied to a single benchmark; it is a general and extensible platform to which the community can contribute new tasks, datasets, and evaluation protocols, similar to how models and datasets are shared in the HuggingFace <ref type="bibr" target="#b36">(Wolf et al., 2019)</ref>. This openness allows ResearchGym to evolve with research needs, serving as the foundation for InnovatorBench and as an independent environment for testing new ideas, building baselines, and comparing agents across diverse experimental settings.</p><p>To demonstrate the utility of our framework, we deploy a ReAct-based agent on InnovatorBench with several frontier LLMs, including Claude Sonnet 4 <ref type="bibr" target="#b0">(Anthropic, 2025)</ref>, <ref type="bibr">GPT-5 (OpenAI, 2025)</ref>, and GLM-4.5 <ref type="bibr" target="#b47">(Zeng et al., 2025)</ref>, Kimi-K2 <ref type="bibr" target="#b29">(Team et al., 2025a)</ref>. These experiments provide a systematic basis to analyze how different foundation models perform across diverse subproblems in LLM research, revealing that these models have the 2. Related Work  Evaluations. An evaluation directory includes evaluation scripts and reference data. Evaluation is performed externally using scripts and reference data. The agent submits its output via the eval tool and receives a score with feedback, preventing hacking. The full example is in Appendix D.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">InnovatorBench</head><p>InnovatorBench evaluates AI agents' ability to complete end-to-end, innovation-oriented AI research tasks. Each task is derived from an influential AI research paper and its open-source codebase. This coupling captures the full scientific workflow by linking high-level research questions to concrete implementations. As shown in Figure <ref type="figure" target="#fig_1">2</ref>, each task entry comprises a task description, an initial starter workspace, a hint for the agent, evaluation scripts, and a reference solution derived from the original research artifacts. The agent's objective is to extensively explore this task in our environment and aim to achieve a performance that surpasses the ground-truth solution.</p><p>Benchmark Overview and Statistics. InnovatorBench currently comprises 20 research tasks drawn from 14 influential papers, as detailed in Appendix A. These tasks span diverse LLM research areas, including data construction, filtering, and augmentation, loss design, reward design, and scaffold construction. They are sourced from top-tier venues, such as NeurIPS, ICLR, COLM, EMNLP, and ACL, etc. as well as the latest publications. The diversity in task origins ensures a rich variety of experimental paradigms, coding methodologies, and research challenges, reflecting the breadth and complexity of contemporary LLM research. The inclusion of such a broad spectrum of tasks ensures that InnovatorBench is not only comprehensive but also versatile, allowing for the assessment of a wide range of AI agent capabilities.</p><p>Task Description. The task description provides a structured outline for understanding and solving the problem, offering all necessary details for an agent to effectively perform the task while adhering to defined constraints and evaluation metrics. Each task description provides the agent with the following components:</p><p>(1) Motivation: The research motivation and provenance of the question.</p><p>(2) Task: A high-level description of the objective for the agent. To encourage exploration and avoid overfitting to prescribed procedures, we do not specify step-by-step instructions; instead, the agent is expected to aim for performance that surpasses the reference solution no matter what method it selects.</p><p>(3) Data: Details of the relevant datasets and checkpoints, including content description, storage paths, file formats, and illustrative examples.</p><p>(4) Constraints: The operational constraints under which the agent must complete the task, like working time limits, GPU quotas, and output file format.</p><p>(5) Evaluations: The evaluation metrics like accuracy, F1, and BLEU. In some tasks, it will also has an introduction to the scoring function in this task description.</p><p>(6) Scripts: The description of several supplementary unified scripts and repositories that the agent can use. <ref type="bibr" target="#b6">(7)</ref> Environment: Information about the execution environment, including the conda environment and the workspace directory layout.</p><p>Workspace. The workspace is a writable directory containing essential task artifacts, over which the agent has complete control. The workspace comprises three major components:</p><p>(1) Conda environment: We pre-build a conda environment following the setup instructions of the corresponding 4. ResearchGym paper. The environment is intentionally minimal-sufficient to run the baseline experiments. We recommend not modifying this base environment; however, to preserve the agent's autonomy, we do not prohibit installing or removing packages when necessary (e.g., to resolve missing dependencies).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head><p>(2) Data: To enable the agent to validate its proposed methods, we provide datasets that support reproducible experimentation, including training, validation, and test sets (with ground-truth labels removed for the test set), as well as model checkpoints on which the agent can perform further training (e.g., SFT or RL). The agent may also search for and download additional data and reformat it to be compatible with the requirements of the code repository (e.g., LlamaFactory <ref type="bibr" target="#b48">(Zheng et al., 2024)</ref>). In addition, the agent may synthesize datasets-either by using the provided models or by generating chain-of-thought style data for augmentation.</p><p>(3) Task: This directory contains the code repository and a set of helper scripts. The repository is adapted from the original paper's codebase: we remove the implementation of the paper's key novelty and git commit history while keeping the project runnable. In most tasks, the repository is LlamaFactory <ref type="bibr" target="#b48">(Zheng et al., 2024)</ref> or Verl <ref type="bibr" target="#b23">(Sheng et al., 2024)</ref>. The scripts folder offers scripts for data construction, training, inference, and evaluation; the agent may add its own scripts and files.</p><p>Hint for the Agent. To assist with these challenging tasks, we provide an optional hint for each task. By following this hint, the experienced researcher can gain about 80% of the score. As a result, this mode tests the agent's ability to replicate specific ideas. Hints are not included in the workspace; an agent may query their contents via the view hint tool, choosing whether to adopt them. Our main evaluation disabled this tool, while the ablation study will use this view hint tool immediately after the task description.</p><p>Evaluations. Our evaluation follows a Kaggle-style<ref type="foot" target="#foot_2">1</ref> procedure with multiple submission opportunities and immediate score feedback on the test set. First, a submission is checked for format validity, with failures receiving a score of 0 and an error message. Subsequently, valid submissions are scored based on a function calibrated between a baseline (anchored near 0) and a reference solution (anchored near 80). The entire evaluation runs externally to the workspace in order to avoid reward hacking.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">ResearchGym</head><p>Prior agent systems such as OpenHands <ref type="bibr" target="#b33">(Wang et al., 2024a)</ref> and IterativeAgent <ref type="bibr" target="#b25">(Starace et al., 2025)</ref> operate within a single Docker container. They execute commands synchronously, so the next action cannot be chosen until the previous one finishes. This design constrains the scale of experiments and reduces action throughput. To</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Experiments and Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head><p>overcome these limitations, we introduce ResearchGym, an environment designed to approximate real-world LLM research. ResearchGym provides 42 primitive actions that agents can freely compose, supports control of multiple machines and asynchronous command execution, and allows users to save and restore environment snapshots.</p><p>Actions and Observations. Actions of ResearchGym are grouped into five families: Command, File, Parse, Web Search, and Web Browse. Command actions can manage execution sessions, run commands within a session, and retrieve outputs. File actions can perform file operations (e.g., create, edit, delete, read, and search), and query file metadata. Parse actions can extract and preview content from multi-modal sources (e.g., images, audio, and video) for text-only models. Web Search and Web Browse grant networked retrieval and browsing for accessing up-to-date methods and datasets. Each action family is paired with an observation that normalizes raw outputs into a structured, agent-readable return. Details can be referred to Appendix F.</p><p>Multi-Computer Control. ResearchGym allows agents to control multiple machines (or Docker containers) concurrently via HTTP. Each computer runs an HTTP server to receive and execute terminal commands, allowing an agent initialized on a single machine to orchestrate long-horizon, distributed experiments across a cluster.</p><p>Asynchronous Command Execution. ResearchGym decouples action execution from selection to prevent decision blocking. Agents can bind commands to specific sessions, or let ResearchGym create new ones. This ensures ongoing jobs continue uninterrupted and enable immediate subsequent planning. Agents can later retrieve the result via get session output asynchronously. To avoid nonsensical actions during model training, ResearchGym provides a dedicated sleep action.</p><p>Snapshots Saving and Loading. A snapshot records the task specification, the agent's context, the final state of the workspace, and the remaining time budget. ResearchGym can periodically save the full state as snapshots, and it can restore the system from any snapshot. Snapshots support branching. Experiments can resume from different points or proceed along multiple branches.</p><p>Pipeline. Figure <ref type="figure">3</ref> depicts the end-to-end interaction loop. The process begins when ResearchGym loads a task from InnovatorBench, providing the agent with a task description as its initial observation and a starter workspace. Given an observation, the agent reasons and issues a tool call. If it's not a command action, the ResearchGym will produce it locally; otherwise, ResearchGym converts this call into an action, wraps it in an HTTP request, and dispatches it to a target machine. The target machine executes the action or launches it as a background process. ResearchGym packages the outcome as a new observation in an agent-readable format. Synchronous actions immediately update the workspace, whereas asynchronous actions return a session ID and status for the agent to poll with subsequent commands. The agent repeats this loop, optionally submitting answers for evaluation and consulting hints when needed. When the agent deems the task complete, it invokes finish. ResearchGym performs a final evaluation, saves a snapshot, and finalizes the task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments and Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Experimental Setup</head><p>We evaluate leading LLMs commonly used in related benchmarks on InnovatorBench. Specifically, we consider Claude Sonnet 4 (Anthropic, 2025), GPT-5 (OpenAI, 2025), and GLM-4.5 <ref type="bibr" target="#b47">(Zeng et al., 2025)</ref>, Kimi-K2 (Team et al., 2025a) using a ReAct-style agent <ref type="bibr" target="#b43">(Yao et al., 2023)</ref>. The agent has the fundamental thought and action capabilities, augmented by a summarization capability. When the context length nears the model's maximum, the agent will summarize the earlier half of the context. All models are wrapped as agents and executed inside a Docker container on Ubuntu 22.04 with 800 GB of memory. The agent can also, via a cluster HTTP service, dispatch additional compute to server(s) with 8 × 80 GB GPUs and 1600 GB of memory each, with the number of servers allocated varying by task. We also provide a clean working directory containing the relevant data, a starter code repository, and the task description for each task. Data Construction and Data Augmentation can connect the internet. We disable the web search and browse tools in other tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Main Results and Findings</head><p>As demonstrated in Table <ref type="table" target="#tab_2">2</ref>, we compare three agents across six research-oriented tasks and report both the final and best scores achieved. Overall, all the agents get non-zero scores, which show they have the potential to handle code-based research tasks. Claude Sonnet 4 demonstrates the most superior performance among its counterparts, attaining the highest average final score and best score, and leading on four of six tasks. GPT-5 and GLM-4.5 yield middling results on final score and best score, respectively. Besides, we also obtain the following findings:</p><p>All LLMs have relatively higher scores on data-related tasks than on algorithm-related tasks. This difference arises from the nature of these tasks, tasks such as data construction, filtering, and augmentation are inherently more robust: it is relatively tolerant of minor noise. For example, the agent can gain a relatively high score in data construction as long as it find the data with the same topic. In contrast, algorithmic design tends to be more brittle; imperfect reward or loss functions can lead to catastrophic failures like gradient explosion or systematically flawed policies.  It is hard for models to use appropriate tools in algorithm-related tasks. We discover that Claude Sonnet 4 performs relatively better than other LLMs on loss/reward design, primarily due to its reliable tool use. Trace inspection reveals that GPT-5 enters a high-frequency loop once training begins, causing early termination, while GLM-4.5 wrongly specifies critical tool parameters sometimes and stalls before training starts. Kimi-K2 cannot generate correct code in most cases. However, Claude Sonnet 4 consistently produces executable code and correctly suspends activity during training without intervention. These findings suggest that reliability in tool-grounded execution is the key determinant of success in loss/reward design tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Performance of model with Ground Truth Hint</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head><p>GPT-5's code is more robust in Scaffold Construction. GPT-5 excels notably in scaffold construction, achieving a score of 60.07, which raises its overall average to 12.04. By checking the log between GPT-5 and other models, we found GPT-5's generated scaffolds are most robust, attributable to three key design choices: explicitly restating the options provided in the prompt to prevent invalid selections, allowing up to three retries instead of immediately resorting to a fallback answer upon timeout, and enforcing a strict output format to reduce evaluation failures caused by formatting issues. We consider this to be because the scaffold construction is similar to the simple software engineering task, and GPT-5 can generate more standardized and comprehensive code.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Performance of model with Ground Truth Hint</head><p>Table <ref type="table" target="#tab_3">3</ref> presents the performance of the model with and without hints. The introduction of hints, in the form of ground truth solutions, leads to noticeable improvements in performance across Loss Design and Reward Design. These domains are inherently more exploratory in nature, where the agent needs to devise creative solutions based on the nature of the test data and the understanding of the original algorithm. When provided with the ground truth solution, the agent can bypass the need for exploration and instead focus purely on the practical task of replicating the given solution. This shift in task complexity allows the model to achieve higher scores, as the agent's work now revolves around following an established methodology rather than generating one itself.</p><p>In contrast, domains such as Data Construction, Data Filtering, and Data Augmentation show a decrease in performance when the hint is provided. Although the hint offers the agent a ground truth solution, the model's ability to correctly implement the solution is hindered by its own coding ability as mentioned in §5.4. When the hint is used, the model's reliance on exact replication of the provided ground truth can lead to failures. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Think:</head><p>The second training is progressing very slow, Given that I have limited time and only 3 eval submissions, I should consider trying a different approach. Let me check if there's been any progress with checkpoints saved and consider trying a third, simpler approach that might train faster.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Action:</head><p>{"name": "kill_session_processes", "arguments": {"session_id": "gpu_train", "computer_ip": "&lt;a_real_ip&gt;"}}  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Action 174:</head><p>{"name": "run_command", "arguments": {"session_id": "train", "computer_ip": "&lt;gpu_1's_real_ip&gt;", "command": "cd /workspace/task/scripts &amp;&amp; serve run llm:build_app model=/workspace/data/checkpoints/DeepSeek-R1-DualAlign tensor-parallel-size=1"}} (After several steps, the inference is still running)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Action 229:</head><p>{"name": "run_command", "arguments": {"session_id": "eval", "computer_ip": "&lt;gpu_1's_real_ip&gt;", "command": "cd /workspace/task/repositories/LLaMA-Factory &amp;&amp; bash /workspace/task/scripts/train.sh}} Observation 231 (observation of GetSessionOutputAction):</p><p>... torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 892.00 MiB. GPU 0 has a total capacity of 79.19 GiB of which 775.94 MiB. This is particularly evident in the creation of training and inference scripts, where small errors or mismatches between the hint and the reimplemented solution can harm the performance of the model severely. Therefore, despite the availability of a ground truth solution, the model's performance is even lower than the symbolic method implemented by the model without hints.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Action (create file) :</head><p>Such a result clearly proves that if a model wants to achieve a high score in research, it needs comprehensive abilities, such as creativity and code implementation ability. If one ability is missing, no matter whether high-level or low-level, the model's performance will be severely affected. Impatience. As shown in Figure <ref type="figure" target="#fig_2">4</ref>(a), the training run takes about 10 hours; at that point, the agent knows it still has roughly 21 hours of budget. It is sufficient to wait for completion rather than terminating the process. However, the agent wants to find a more efficient way to train the model and kill the training process, which causes sub-optimal result. The objective mis-specification and shortsighted decision-making reflect the agent's impatience.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Case Study</head><p>Resource Mismanagement. Figure <ref type="figure" target="#fig_2">4</ref>(b) demonstrates that the agent first launches an inference script with one GPU; 55 steps later, on the same computer, it launches a training script that requires all GPUs, causing resource contention. The agent no longer finds that an inference job was already active after more than 50 steps, shows the LLM's weakness in degraded memory and attention.</p><p>Selection of Suboptimal Library. Figure <ref type="figure" target="#fig_2">4</ref>(c) depicts that the agent systematically opts for scale-mismatched implementations: it continues to run inference with Transformers in high-throughput settings instead of adopting the more efficient vLLM. This is because the time-budget constraint does not provide a direct, learnable feedback signal that rewards efficiency, so it fails to shape the agent's decisions. It may also be attributed to the lack of training data for the optimal library, like vLLM, since the optimal library is relatively new.</p><p>Template-based Reasoning. Figure <ref type="figure" target="#fig_5">4(d)</ref> shows that when synthesizing chain-of-thought (CoT) rationales for QA data augmentation, the agent often instantiates a highly templated, semantically vacuous reasoning pattern and batch-concatenates the question and answer, rather than reasoning from the problem's actual semantics. We find that this pattern often appears after the agent fails to generate a correct CoT via vLLM. The agents can't figure out why it needs to synthesize CoT and just do it mechanically. Although this case shows the agentic ability, it also reflects the agent's lack of understanding of high-level intent.   The reason for this substantial difference lies in the nature of the tasks involved. PaperBench primarily features simpler tasks that the agent only need to reproduce the paper. On the other hand, InnovatorBench includes more intricate and challenging tasks, such as Data Augmentation and Reward Design, which necessitate extensive training phases. These tasks require more sophisticated strategies, longer interactions with the environment, and iterative adjustments, which substantially increase the overall time required for agents to achieve optimal performance. Moreover, the results suggest a broader trend: as the complexity of the tasks increases, the cost of environment interactions grows exponentially, thus dominating the overall working time. This phenomenon reflects how the intricacy of a task can heavily influence the required computational resources and time investment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>6.5x longer</head><p>Given these findings, it is clear that InnovatorBench presents a more demanding and time-consuming challenge than PaperBench. This increased difficulty, driven by the more complex tasks it encompasses, positions Inno-vatorBench as a more comprehensive benchmark for code-based research. We believe that InnovatorBench will pave the way for future advancements in the field, offering a testing ground for evaluating agent performance in increasingly complex environments. As such, it holds the potential to become the next-generation standard for research benchmarks, pushing the boundaries of what agents can achieve in real-world, high-complexity scenarios.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>In conclusion, this work introduces two key contributions to the development of AI research agents: InnovatorBench, a comprehensive benchmark for evaluating end-to-end LLM research tasks, and ResearchGym, an extensible platform that supports large-scale, long-horizon experiments and realistic research workflows. InnovatorBench goes beyond basic task reimplementation, offering a rigorous framework that evaluates agents' ability to address complex LLM research challenges across multiple dimensions, including data construction, filtering, augmentation, loss design, reward design, and scaffold construction. This emphasis on innovation, adaptability, and creative problem-solving ensures a more comprehensive assessment of AI research agents. Empirical results using leading LLMs reveal promising capabilities in code-based tasks, but also expose weaknesses in reward design, resource management, and long-horizon planning. Together, these contributions provide a foundation for rigorous, real-world evaluation of AI agents, supporting their development as effective tools for scientific discovery. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head><formula xml:id="formula_0">% " % ' % $ -% 4 $ 3 % 5BTL$PVOU</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Extended Details of the InnovatorBench Dataset</head><p>Figure <ref type="figure" target="#fig_9">6</ref> shows the task composition of InnovatorBench, and Table <ref type="table">4</ref> presents the details of each task in Innovator-Bench.</p><p>Table <ref type="table">4</ref>: Performance comparison on various models when tested against various evaluation metrics.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B Dataset Curation and Benchmark Construction Details</head><p>InnovatorBench Construction We first design 20 raw tasks based on the following principle:</p><p>(1) The task can be reapplied; the result is aligned with the original paper.</p><p>( There are 13 annotators to annotate InnovatorBench. Each task costs from 3 days to 2 weeks for the annotators to construct the workspace and evaluation code. After collecting 20 tasks, 2 authors further organize these tasks, workspaces, and evaluations into ResearchGym. Each annotators were asked to reapply the original paper and gain the reference score, and the baseline score often comes from the base model's result. After obtaining these two scores, the annotators were asked to design the score function based on these scores, usually a linear interpolation. The score function has 2 principles: (1) the baseline score should result in a final score of 0, while if agents gain a score higher than the baseline score, their final score should not be 0, and (2) the reference score should be about 80.</p><p>After testing the first version of InnovatorBench, we found that even the most advanced model can't generate and save the SFT data correctly, as mentioned in Figure <ref type="figure" target="#fig_2">4</ref>, so we just changed the task a little bit to reduce the difficulty in the Data Argument by adding some relevant scripts. The benchmark evaluated the performance of three large language models -Claude Sonnet 4, GPT-5, GLM-4.5, and Kimi-K2 -on multiple tasks with varying priority levels. For each task, the metrics recorded include the final score, the highest score, and the runtime (in hours). This analysis focuses on comparing model effectiveness (scores) and efficiency (time cost).   We provide a GRPO algorithm for you as background knowledge. For a specific question−answer pair $(q, a)$, the behavior policy $\pi \thetaˆ{\mathit{old}}$ samples a group of $G$ individual responses $\{o i\} {i=1}ˆG$.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR C Detailed Experimental Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.1 Main Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.2 Performance of model with Ground Truth Hint</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D Extended InnovatorBench Examples</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head><p>Then, the advantage of the i−th response is calculated by normalizing the group−level rewards $\{R i\} {i=1}ˆG$:  ** Success criteria: ** 1. The accuracy of the variant policy on MATH500 should be at least higher than the baseline policy. Try your best to get the highest accuracy! 2. The average entropy of the variant policy should be in a reasonable range.</p><formula xml:id="formula_2">$$ \nabla \theta J {GRPO}(\theta) = \mathbb{E} {(q, a) \sim D,</formula><p>3. The final score will be the accuracy score * entropy score * 100</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>## Environment</head><p>We have setup the conda environment for you named '/workspace/conda', and we have activated the environment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>## Scripts</head><p>You can generate scripts in the '/workspace/task/scripts' directory. You ** should not modify scripts ** that are originally in the '/workspace/task/scripts' directory.</p><p>The following scripts are provided to you; do not modify them: </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E Limitations and Future Works</head><p>Despite the advancements brought by InnovatorBench and ResearchGym, there are several areas for improvement in future work: Task Diversity InnovatorBench currently covers a limited set of research tasks. Future work could expand the benchmark to include more diverse, interdisciplinary challenges that reflect real-world scientific research.</p><p>Generalization of Agents AI agents still show performance variation depending on the model. Further research is needed to improve their generalization across different research tasks and improve transfer learning for broader applicability <ref type="bibr" target="#b6">(Fu et al., 2025</ref><ref type="bibr">(Fu et al., , 2024a,b),b)</ref>.</p><p>Human-AI Collaboration The current framework largely focuses on autonomous AI agents. Future work could explore hybrid human-AI workflows, incorporating real-time feedback and collaboration for more realistic research <ref type="bibr">(Ye et al., 2025a)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F Supported Actions of ResearchGym</head><p>We referred to the design of OpenHands <ref type="bibr" target="#b33">(Wang et al., 2024a)</ref> and adapted it to the multi-machine, multi-GPU, asynchronous, and other environments required by ResearchGym. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F.2 Browse Actions</head><p>The browse actions enable webpage navigation, viewing, scrolling, in-page keyword search, iterative result traversal, and hyperlink extraction from cached web content. Specifically, web page goto action, web page goto line action, web page scroll down action, web page scroll up action, web page search action, web page search next action, and web page get links action collectively provide a unified interface for interacting with and extracting information from web pages.</p><p>def web page goto action(url: str, line_number: int = 1) -&gt; Dict[str, Any]:</p><p>"""Navigate to a webpage based on the given URL and display its content.</p><p>The environment will cache the webpage content for subsequent actions until another web browsing action is performed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Args: url[str]:</head><p>The URL to navigate to.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>line number[int]:</head><p>The line number to start viewing from (1-indexed). The environment will provide content from line_number to line_number+100.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Returns:</head><p>Dict[str, Any]: Dictionary containing page content and status information. """ def web page goto line action(line_number: int) -&gt; Dict[str, Any]:</p><p>"""Jump directly to a specific line in the currently cached webpage.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Args: line number[int]:</head><p>The line number to jump to (1-indexed).</p><p>Returns: Dict[str, Any]: Dictionary containing page content and status information. """ def web page scroll down action() -&gt; Dict[str, Any]:</p><p>"""Scroll down the currently cached webpage by a fixed number of lines.</p><p>This displays the subsequent 100 lines of content.</p><p>Returns: Dict[str, Any]: Dictionary containing page content and status information. """ def web page scroll up action() -&gt; Dict[str, Any]:</p><p>"""Scroll up the currently cached webpage by a fixed number of lines.</p><p>This displays the previous 100 lines of content. Returns: Dict[str, Any]: Dictionary containing link list and status information. """</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F.3 Files Actions</head><p>The file manipulation module provides capabilities to navigate, inspect, create, modify, and search files or directories. It includes editing file edit action, opening and navigating within files open file action, goto line action, file scroll down action, file scroll up action, creating new files create file action, searching directories or files search dir action, search file action, find file action, listing directory contents list files action, and retrieving metadata about the current file get file info action. Together these operations provide a complete toolkit for programmatic file system interaction. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F.4 Search Actions</head><p>The search functionality provides web-based information retrieval capabilities: search action issues queries to external search engines (e.g., Google or Bing) and returns up to top k ranked results along with associated status metadata; result sets are capped to prevent excessive retrieval. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F.5 Parser Actions</head><p>This set of parser actions collectively enables the extraction and transformation of information from diverse input modalities. Specifically, parse pdf action, parse docx action, parse latex action, and parse pptx action handle the parsing of structured document formats, while parse audio action, parse image action, and parse video action process unstructured multimedia inputs such as speech, images, and video, thereby supporting a unified mechanism for multimodal content understanding and storage. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F.6 Special Actions</head><p>The special actions include null action for performing no operation, think action for recording the agent's thoughts, eval action for submit the result and gain the score, view hint action for inspecting task-related hints with an associated score penalty, and finish action for terminating the research task.</p><p>def null action() -&gt; str:</p><p>"""Null Action.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head><p>Returns: "No Action" """ def think action(action: BaseAction) -&gt; BaseObservation:</p><p>"""Handle an action where the agent logs a thought.</p><p>This function processes the ThinkAction and returns the thought as an observation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Args: action[BaseAction]:</head><p>The ThinkAction to handle.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Returns:</head><p>BaseObservation: Observation containing the thought and status information. """ def view hint action(action: BaseAction) -&gt; BaseObservation:</p><p>"""View the hint for the current task.</p><p>Some tasks contain hints, this function allows the agent to view the hint, but using this action will deduct the agent's score.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Args: action[BaseAction]:</head><p>The ViewHintAction to handle.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Returns:</head><p>BaseObservation: Observation containing the hint content and status information. """ def eval action() -&gt; None:</p><p>""" An action where the agent evaluates the agent's output (some files and the content inside the files), which is declared in the task description (original task instead of subgoal). The argument of this action should be empty, do not add any key inside the argument """ def finish action() -&gt; None: """ Terminating the research task. """</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>G Prompt used in agents G.1 Summary</head><p>System prompt for summarizing the internal research history You are the component that summarizes the internal research history into a given structure for an AI Innovator agent.</p><p>When the research history grows too large, you will be invoked to distill it into a concise, structured XML snapshot. This snapshot is CRITICAL, as it will become the agent's * only * memory of the past. The agent will resume its research based solely on this snapshot. All crucial details, hypotheses, experimental plans, results, learnings, and user directives MUST be preserved.</p><p>First, you should think through the entire history in a private &lt;history&gt;. Review the overall research goal, the agent' s experiments, code modifications, tool outputs, and experimental results. Identify every piece of information that is essential for future research steps.</p><p>G.1 Summary</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head><p>After your reasoning is complete, generate the final &lt;state snapshot&gt; XML object. Be incredibly dense with information. Omit any irrelevant conversational filler.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head># Context Overview</head><p>You will be given the following contexts:</p><p>1. The original task description, which is at the beginning of the context.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head># Primary Research Workflow</head><p>When requested to perform AI research tasks (e.g., design a reward function, augment or clean data, collect new datasets, improve a loss function, build a workflow), follow this sequence: </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Starace et al., 2025; Chen et al., 2024; Edwards et al., 2025; Xu et al., 2025;</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>⚠⚠Figure 2 :</head><label>2</label><figDesc>Figure 2: An illustrative LLM research task from DAPO (Yu et al., 2025). (a) Datasets. The agent receives a task description and a starter workspace; an optional hint is only revealed upon the agent's explicit request via the view hint tool at a final score penalty. (b)Evaluations. An evaluation directory includes evaluation scripts and reference data. Evaluation is performed externally using scripts and reference data. The agent submits its output via the eval tool and receives a score with feedback, preventing hacking. The full example is in Appendix D.</figDesc><graphic coords="4,346.50,191.23,83.07,56.68" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>5. 4</head><label>4</label><figDesc>Case Study SII-GAIR Observation: (pid=2337004) Running step 1: 17%|████ | 1.00/6.00 [03:31&lt;17:36, 211s/it] ... (pid=2348711) Compute log probs 2: 45%|█████████ | 9.00/20.0 [01:12&lt;00:40, 3.70s/it]</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>The training costs 10 hours. The agent still has 21 hours.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Four representative cases of agents' actual failures. (a) Impatience, (b) Resource Mismanagement, (c) Selection of Suboptimal Library, (d) Template-based Reasoning. Some spaces have been removed in the figure.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 4</head><label>4</label><figDesc>Figure 4 represents cases of agents' actual failure, which reflects the LLMs' weakness:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Test-time scaling: InnovatorBench vs. PaperBench (Starace et al., 2025). PaperBench's result comes from the original paper. Agents require about 6.5× longer test-time to reach the saturation point on InnovatorBench, highlighting that our benchmark's difficulty stems from the need for extended runtime before performance plateaus. DC, DF, DA, LD, RD, and SC are six subtasks in InnovatorBench, which are Data Construction, Data Filtering, Data Augmentation, Loss Design, Reward Design, and Scaffold Construction, respectively.</figDesc><graphic coords="9,105.85,101.93,382.59,191.38" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 5</head><label>5</label><figDesc>Figure5presents a detailed comparison of test-time scaling between InnovatorBench and PaperBench. It is evident from the data that agents achieve their peak performance on PaperBench in about 1.75 hours, whereas the same agents take significantly longer-over 11 hours-on InnovatorBench. This stark contrast in time scaling highlights the higher complexity of InnovatorBench as compared to PaperBench.The reason for this substantial difference lies in the nature of the tasks involved. PaperBench primarily features simpler tasks that the agent only need to reproduce the paper. On the other hand, InnovatorBench includes more intricate and challenging tasks, such as Data Augmentation and Reward Design, which necessitate extensive training phases. These tasks require more sophisticated strategies, longer interactions with the environment, and iterative adjustments, which substantially increase the overall time required for agents to achieve optimal performance. Moreover, the results suggest a broader trend: as the complexity of the tasks increases, the cost of environment interactions grows exponentially, thus dominating the overall working time. This phenomenon reflects how the intricacy of a task can heavily influence the required computational resources and time investment.Given these findings, it is clear that InnovatorBench presents a more demanding and time-consuming challenge than PaperBench. This increased difficulty, driven by the more complex tasks it encompasses, positions Inno-vatorBench as a more comprehensive benchmark for code-based research. We believe that InnovatorBench will pave the way for future advancements in the field, offering a testing ground for evaluating agent performance in increasingly complex environments. As such, it holds the potential to become the next-generation standard for research benchmarks, pushing the boundaries of what agents can achieve in real-world, high-complexity scenarios.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: InnovatorBench's dataset comprises tasks from a diverse set of AI research categories. DA denotes Data Augmentation, DC stands for Data Construction, DF represents Data Filtering, LD is the Loss Design, SC denotes Scaffold Construction, and RD means Reward Design.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head></head><label></label><figDesc>for Demand-Driven Dataset Discovery (Li et al., 2025) Collect or synthesize a politicsdomain news summarization dataset consisting of English news articles with corresponding one-sentence human-written summaries for finefor Demand-Driven Dataset Discovery (Li et al., 2025) Build a medical English-Tamil parallel dataset and fine-tune Llama-3.1-8B-Instruct for translation. for Demand-Driven Dataset Discovery (Li et al., 2025) Build a 5K-10K real-world document summarization dataset and finetune Llama-3.1-8B-Instruct to generate concise, accurate summaries. for Demand-Driven Dataset Discovery (Li et al., 2025) Fine-tune Llama-3.1-8B on medical Q&amp;A data to improve USMLE-style multiple-choice accuracy from 26% baseline to 95% target. Llama-3.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>)</head><label></label><figDesc>The task result can gain significant improvement in 2 days (3) The tasks can evaluate the different abilities of LLM Agents in LLM Research. (4) The task uses common models like llama3.1 (Grattafiori et al., 2024), Qwen2.5 (Team, 2024; Guo et al., 2025; Bai et al., 2025), or Qwen2.5-VL (Bai et al., 2025), etc.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Example of task 14</head><label>14</label><figDesc>'s description ## Motivation Reinforcement Learning (RL) training for Large Language Models often suffers from ** entropy collapse ** , where the model's output distribution becomes overly deterministic early in training. This severely limits exploration and prevents the model from discovering diverse reasoning paths. Understanding and mitigating entropy collapse is crucial for successful long−form reasoning tasks where exploration of different solution strategies is essential. ## Task</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head></head><label></label><figDesc>pt' − PyTorch tensor file containing logits for entropy calculation − Should be a list of tensors, one for each test sample − Each tensor should have shape '[sequence length, vocab size]' where: − 'sequence length': Number of generated tokens for that sample − 'vocab size': Size of the model's vocabulary ** IMPORTANT Notes: ** − Use '/workspace/task/scripts/inference.py' for inference − ** do not modify this script ** − The reasoning process should demonstrate clear mathematical thinking − Final answer must be enclosed in '\boxed{}' format − Your task is to implement a new strategy for GRPO to prevent entropy collapse and achieve the highest accuracy The evaluation will check these two files to give the final score based on both accuracy and entropy metrics. ## Data − ** Train set ** : Stored in '/workspace/data/datasets/math.8k/train.parquet' − data source: 'math8k' − prompt: the math question − reward model: the ground truth answer of the math question − ** Dev set ** : Stored in '/workspace/data/datasets/math.8k/dev.parquet' − data source: 'GSM8k' &amp; 'AMC23' − prompt: the math question − reward model: the ground truth answer of the math question − ** Test set ** : Stored in '/workspace/data/datasets/math.8k/test.parquet' − ** Checkpoint ** : Stored in '/workspace/data/checkpoints/Qwen2.5−1.5B'. E. Limitations and Future Works SII-GAIR ## Constraint − Training time constraint: 24 hours. − Evaluation time constraint: 10 minutes. − You can use 8 80GB H100 GPUs. − You only have 3 chances to evaluate your submission. − Total time limit: 48 hours. ## Evaluation ** Evaluation metrics: ** 1. Accuracy: Measure the accuracy of the variant policy on the test set at the end of the training. 2. Entropy Analysis: Track entropy of the variant policy along the training process.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>−</head><label></label><figDesc>'/workspace/task/repositories/verl/scripts/model merger.py': Given a model path of verl checkpoint, which is a directory containing multiple 'model world size 8 rank {rank number}.pt' files, you can use this script to merge the model weights into HuggingFace format. − Input: − '−−local dir': The path of the verl checkpoint. − Output: − The checkpoint in HuggingFace format.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><head>F. 2</head><label>2</label><figDesc>Browse Actions SII-GAIR Returns: Dict[str, Any]: Dictionary containing operation status information. """ def kill session processes action(computer_ip: str = 'localhost', session_id: str = None, force: bool = False) -&gt; Dict[str, Any]: """Kill all processes on a specific session. Args: computer ip[str]: The IP address of the computer. Default is 'localhost'. session id[str]: The ID of the session to kill all processes. force[bool]: Whether to force to kill all processes. Default is False. Returns: Dict[str, Any]: Dictionary containing operation status information. """</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_16"><head></head><label></label><figDesc>Dictionary containing page content and status information. """ def web page search action(keyword: str, context_lines: int = 5) -&gt; Dict[str, Any]: """Search for a keyword in the currently cached webpage and return surrounding context. The search returns the first occurrence of the keyword along with the specified number of context lines. Args: keyword[str]: The keyword to search for. context lines[int]: Number of context lines to display around each match. Returns: Dict[str, Any]: Dictionary containing search results and status information. """ def web page search next action(context_lines: int = 5, search_index: int = None) -&gt; Dict[str, Any]: """Advance to the next (or specified) search result in the cached webpage. If search_index exceeds the number of matches, it wraps using modulo arithmetic . Args: context lines[int]: Number of context lines to display around the match. search index[int]: Index of the search result to jump to. If None, advances to the next result. Returns: Dict[str, Any]: Dictionary containing search results and status information. """ def web page get links action(page_size: int = 10, page_number: int = 1) -&gt; Dict[str, Any]: """Extract hyperlinks from the currently cached webpage. Args: page size[int]: Number of links to return per page. Default is 10. page number[int]: The page number of results to display. Default is 1.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_17"><head></head><label></label><figDesc>def file edit action(path: str, start_line: int, end_line: int, content: str) -&gt; Dict[str, Any]: """Edit a file given path.The file's [start,end] lines will be edited to the content. Remember this edit will change the file's line-linenumber index, so do not edit consecutively F.4 Search Actions SII-GAIR def get file info action() -&gt; Dict[str, Any]: """Get information about the currently open file. Returns: Dict[str, Any]: Dictionary containing file information and status. """</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_18"><head></head><label></label><figDesc>def search action(query: str, top_k: int = 10) -&gt; Dict[str, Any]:"""Perform a web search using engines such as Google or Bing.Args: query[str]:The search query to look up on the web.top k[int]:The maximum number of search results to return.If the number exceeds 100, it will be set to 100. Default is 10.Returns:Dict[str, Any]: Dictionary containing search results and status information. """</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_19"><head></head><label></label><figDesc>def parse pdf action(file_path: str, save_path: str) -&gt; Dict[str, Any]: """Parse a PDF file, extract text content and save to a file. Args: file path[str]: The path to the PDF file to parse. save path[str]: The path to save the parsed content. Returns: Dict[str, Any]: Dictionary containing parsing status and information. """ def parse docx action(file_path: str, save_path: str) -&gt; Dict[str, Any]: """Parse a DOCX file and save the parsed content to a file. Args: file path[str]: The path to the DOCX file to parse. save path[str]: The path to save the parsed content. Returns: Dict[str, Any]: Dictionary containing parsing status and information. """ def parse latex action(file_path: str, save_path: str) -&gt; Dict[str, Any]: """Parse a LaTeX file and save the parsed content to a file. Args: file path[str]: The path to the LaTeX file to parse. save path[str]: The path to save the parsed content. Returns: Dict[str, Any]: Dictionary containing parsing status and information. """ def parse audio action(file_path: str, save_path: str, model: str = 'whisper-1') -&gt; Dict[str, Any]: """Parse an audio file, transcribe its content and save the parsed content to a file. Args: file path[str]: The path to the audio file to parse. save path[str]: The path to save the parsed content. model[str]: The model to use for audio transcription. Returns: Dict[str, Any]: Dictionary containing parsing status and information. """ def parse image action(file_path: str, save_path: str, task: str = 'Describe this image.') -&gt; Dict[str, Any]: """Parse an image file, analyze its content and save the parsed content to a file. Args: file path[str]: The path to the image file to parse. save path[str]: The path to save the parsed content. task[str]: The task description for image analysis. Returns: Dict[str, Any]: Dictionary containing parsing status and information. """ def parse video action(file_path: str, save_path: str, task: str = 'Describe this image.', frame_interval: int = 30) -&gt; Dict[str, Any]: """Parse a video file, analyze its content and save the parsed content to a file. Args: file path[str]: The path to the video file to parse. save path[str]: The path to save the parsed content. task[str]: The task description for video analysis. frame interval[int]: The frame interval for video analysis. Default is 30. Returns: Dict[str, Any]: Dictionary containing parsing status and information. """ def parse pptx action(file_path: str, save_path: str) -&gt; Dict[str, Any]: """Parse a PPTX file and extract text content. Args: file path[str]: The path to the PPTX file to parse. save path[str]: The path to save the parsed content. Returns: Dict[str, Any]: Dictionary containing parsing status and information. """</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_20"><head>2 .</head><label>2</label><figDesc>The history, it may contains 2 parts: 2.1 Your reaction towards the observation from the environment, and its corresponding observation from the environment. 2.2 Your summary of some parts of the action−observation history. (Since the action−observation history is too long, you just summarize some parts of it.)# Input Context FormatFor easier understanding, the user will place the key factors in the following format: 1. The original task description: &lt;task description&gt; YOUR TASK DESCRIPTION &lt;/task description&gt; 2. The history you need to summarize: &lt;history&gt; ... &lt;/history&gt; ## Real User − If context is provided in the &lt;real user&gt;&lt;/real user&gt; tag, you should perform reflection and save your reflection results in &lt;reflection&gt;&lt;/reflection&gt; (at least n reflections for n &lt;real user&gt; entries). − The real user's advice must be treated as IMPORTANT. The structure of your output is specified in 'internal summarize' tool, you MUST follow the tool's instruction. Try your best to make this summary! Tool prompt for summarizing the internal research history # The structure of 'summary content' MUST be as follows: &lt;state snapshot&gt; &lt;state of the art&gt; &lt;!−− The SOTA benchmark to surpass. −−&gt; &lt;!−− Example: "The current SOTA score is 0.85. We need to beat this." −−&gt; &lt;/state of the art&gt; &lt;hypotheses&gt; &lt;!−− List of active, tested, or pending hypotheses. −−&gt; &lt;!−− Example: − [TESTING] Hypothesis 1: Adding a penalty for verbosity in the reward function will improve conciseness without harming helpfulness. − [PROVEN] Hypothesis 2: Normalizing rewards by batch statistics stabilizes training. − [TODO] Hypothesis 3: Using data augmentation on the prompt dataset will increase instruction− following capabilities. −−&gt; &lt;/hypotheses&gt; SII-GAIR visited. −−&gt; &lt;/file and browser state&gt; &lt;recent sessions&gt; &lt;!−− List ** all ** sessions that have been created and not been closed. Note their status and critical learnings. −−&gt; &lt;!−− Only the session maybe running will have GPU usage. If the running is finish, GPU usage should be None. −−&gt; &lt;!−− Idle means there is no process running in this session, if one process is end and not run other command in the session, this session is idle −−&gt; &lt;!−− Highlight the GPU that may have conflict in different session −−&gt; &lt;!−− Example: − [session ID1] Last command: [Command in session ID1], Idle: False, GPU usage: computer ip xxx.xxx. xxx.xxx GPU 0,1,2,3,4,5,6,7 and computer ip xxx.xxx.xxx.xxx GPU 0,1,2,3,4,5,6,7 − [session ID2] Last command: [Command in session ID2], Idle: True, GPU usage: None − [session ID3] Last command: [Command in session ID3], Idle: False, GPU usage: computer ip xxx.xxx. xxx.xxx GPU 0,1,2,3 −−&gt; &lt;/recent sessions&gt; &lt;recent actions&gt; &lt;!−− A summary of the last few significant agent actions and their outcomes. Focus on facts. −−&gt; &lt;!−− Example: − Ran \'grep 'old function'\' in session xxxxxxxx, computer ip xxx.xxx.xxx.xxx which returned 3 results in 2 files. − Ran \'bash inference.sh\' in session xxxxxxxx, computer ip xxx.xxx.xxx.xxx, which failed due to the incorrect output data path. − Ran \'ls −F static/\' in session xxxxxxxx, computer ip xxx.xxx.xxx.xxx and discovered image assets are stored as \'.webp\'. − Ran \'bash train.sh\' in session xxxxxxxx, computer ip xxx.xxx.xxx.xxx, it is still running now. −−&gt; &lt;/recent actions&gt; &lt;experiment history&gt; &lt;!−− A summary of the last few significant experiments and their outcomes. −−&gt; &lt;!−− Example: − Experiment 1 (Hypothesis 1): Ran training with verbosity penalty. Result: Alignment score increased to 0.86, but helpfulness dropped slightly. See logs in '/workspace/task/logs/exp 1/'. − Experiment 2 (Hypothesis 2): Implemented reward normalization. Result: Training was stable, loss converged faster. Final score was 0.84. See logs in '/workspace/task/logs/exp 2/'. −−&gt; &lt;/experiment history&gt; &lt;/state snapshot&gt; G.2 ReAct ReAct system prompt You are an interactive AI Innovator. Your primary goal is to autonomously conduct cutting−edge AI research (e.g. designing novel models and algorithms, optimizing training processes, and finding new datasets). The user will provide you a task description and a base codebase to guide your research. Your mission is to code, experiment, and analyze the results to produce innovative solutions, which surpass the current state−of−the−art. # Core Mandates − ** Scientific Rigor: ** Approach every task with a researcher's mindset. Formulate clear hypotheses, design controlled experiments, and draw conclusions based on empirical evidence.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_21"><head>G. 2</head><label>2</label><figDesc>ReAct SII-GAIR − ** Conventions: ** Rigorously adhere to existing project conventions when reading or modifying code. Analyze surrounding code, configurations, and documentation first. − ** Plan−First Rule: ** For every new task or scope change, create a concise, structured plan before any code edits, training, or long commands. Always decompose the task into smaller subgoals. Use the 'think' tool by default. If the direction is ambiguous or deviates materially from the goal, use the 'think' tool again to refine the plan. − ** Libraries/Frameworks: ** NEVER assume a library/framework is available or appropriate. Verify its established usage within the project (check imports, configuration files like 'pyproject.toml', 'requirements.txt', etc.) before employing it. Prioritize using the existing environment to ensure reproducibility. − ** Style &amp; Structure: ** Mimic the style (formatting, naming), structure, and architectural patterns of existing code in the project. − ** Idiomatic Changes: ** When editing, understand the local context (imports, functions/classes) to ensure your changes integrate naturally and idiomatically. Check the file via 'open file' after editing. − ** Error Handling: ** On exceptions, fail fast and raise immediately; log clear error messages including key variable values, function arguments, and stack traces; handle errors at the appropriate abstraction layer with reproducible debugging context; never silently ignore exceptions or log vague messages like 'Error occurred'; add print function to show the key variable values, function arguments that may realted to the bug. − ** Comments: ** Add code comments sparingly. Focus on * why * something is done, especially for complex algorithms or non−obvious logic, rather than * what * is done. − ** Proactiveness &amp; Exploration: ** Thoroughly investigate the research problem. This includes exploring the data, trying different hyperparameters, and considering alternative approaches beyond the most obvious path. − ** Confirm Ambiguity/Expansion: ** Before undertaking large−scale experiments or significant deviations from the core research goal, THINK TWICE. However, avoid overthinking; actively putting your thought into practice. − ** Explaining Changes: ** After completing an experiment or code modification, provide a concise summary of the changes and the key results. − ** Path Construction: ** Before using any file system tool, construct the full absolute path for the 'file path' argument. − ** Do Not Ever Revert Changes: ** Do not revert changes unless they cause an error or you are instructed to do so. − ** Do Not Modify the Provided Datasets and Checkpoints: ** Do not modify the provided datasets and checkpoints. If you want to change some data, you need to save a backup. − ** Always Try Your Best &amp; Never Give Up: ** The user provides you with the state−of−the−art results in task description. TRY YOUR BEST to surpass the state−of−the−art in the research field. Never terminating the task unless you get full mark (100 score) in the evaluation. − ** Be PATIENT: ** Use 'check session idle' to check if these is subprocess running in a given session and use ' get session output' to check the outputs. It may takes ** serveral minutes ** to load a single package. Do not kill it at first. Notice that sometimes the output returned from 'get session output' is not displayed correctly. The subprocess information returned from 'check session idle' is usually correct. − ** Seperate the information: ** Only the information after the last excpetion log or interactive prompt is the last command's output. Ignore the information before the last excpetion log or interactive prompt if you only want to check the last command's sitiuation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Comparison of AI benchmarks across key evaluation dimensions. Time Horizon refers to the time the ReAct-based Agent takes to reach its best score. ML-Bench doesn't report this result.</figDesc><table><row><cell>Benchmark</cell><cell>Task Resource</cell><cell>Max Eval times</cell><cell>Multi-GPU / Multi-Node</cell><cell>Save and Restore</cell><cell>Creativity</cell><cell>Time Horizon</cell></row><row><cell>SWE-bench (Jimenez et al., 2024)</cell><cell>GitHub Issues</cell><cell>1</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell>30m-2h</cell></row><row><cell cols="2">ScienceAgentBench (Chen et al., 2024) Scientific Papers</cell><cell>1</cell><cell>×</cell><cell>×</cell><cell>✓</cell><cell>10m</cell></row><row><cell>RExBench (Edwards et al., 2025)</cell><cell>NeurIPS, ACL*, etc. Papers</cell><cell>3</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell>6h-12h</cell></row><row><cell>RE-Bench (Wijk et al., 2024)</cell><cell>Design Manually</cell><cell>1</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell>12m-2h</cell></row><row><cell>EXP-Bench (Kon et al., 2025)</cell><cell>NeurIPS, ICLR Papers</cell><cell>1</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell>35m</cell></row><row><cell>PaperBench (Starace et al., 2025)</cell><cell>ICML 2024 Papers</cell><cell>1</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell>1h-3h</cell></row><row><cell>ML-Bench (Tang et al., 2023)</cell><cell>Kaggle Competitions</cell><cell>1</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell>Unknown</cell></row><row><cell>MLE-bench (Chan et al., 2024)</cell><cell>Kaggle ML Tasks</cell><cell>∞</cell><cell>×</cell><cell>×</cell><cell>✓</cell><cell>10m</cell></row><row><cell>InnovatorBench</cell><cell>NeurIPS, ICLR, etc. Papers</cell><cell>4</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>2h-36h</cell></row></table><note>(a) Datasets # Motivation Reinforcement Learning (RL) training for Large Language Models often suffers from **entropy collapse**, where the model's output distribution becomes overly deterministic early in training... # Task Your task is to implement a new strategy for GRPO in language model reinforcement learning in order to get the highest accuracy and prevent entropy collapse... # Data Train set, Dev set, Test set, and Ckpts # Constraints Working time limit: 48 hours... # Evaluations Accuracy, Entropy Analysis # Environment We have setup the conda environment for you named `/workspace/conda`... # Scripts You can use `/workspace/task/repositories/verl/ scripts/model_merger.py` to merge the model weights into HuggingFace format...</note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>InnovatorBench Dataset Task Description Agent's Workspace</head><label></label><figDesc>Overall structure between InnovatorBench, ResearchGym, and agents. ResearchGym's workspace is initialized with the InnovatorBench dataset. The agent receives a task description, reasons over observations, and sends actions on a target computer. The agent iterates this process, optionally using view hint for hints and eval for submitting answers, until calling finish. ResearchGym then performs a final evaluation and saves a state snapshot.</figDesc><table><row><cell>Snapshots</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Task Desc Agent's</cell><cell># Task Your task is to implement a new</cell><cell></cell><cell cols="2">Hint &amp; Evaluations Scripts # Hint for the Agent</cell><cell cols="3">class TaskBenchmark(BaseBenchmark):</cell></row><row><cell>Context</cell><cell>strategy for GRPO in language</cell><cell></cell><cell cols="2">Apply $\text{clip}(r_{i,t}(\t</cell><cell cols="3">def run_1(self) -&gt; Dict: ...</cell></row><row><cell>Workspace</cell><cell>model reinforcement</cell><cell></cell><cell cols="2">heta), 1 -\epsilon, 1 + \epsilon + \delta)$</cell><cell>return { "score": ...,</cell><cell></cell></row><row><cell>Remaining</cell><cell>learning in</cell><cell></cell><cell>in `compute_policy_</cell><cell></cell><cell cols="3">"test_set_result": ...}</cell></row><row><cell>Time</cell><cell>order to ...</cell><cell></cell><cell>loss`function...</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>Initialize</cell><cell></cell><cell></cell><cell cols="2">eval / view_hint</cell><cell></cell><cell>Evaluation results for</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>agent</cell></row><row><cell>ResearchGym</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>{</cell></row><row><cell>Multi-Computer Control CPU Machine GPU/CPU</cell><cell>task_desc.md Shared File System</cell><cell>Actions &amp; Observations File Command</cell><cell>Observation</cell><cell cols="2">or Reasoning &amp; Act AI Agent</cell><cell>}</cell><cell>score: 4.5, ...</cell></row><row><cell>Machines Internet Access</cell><cell>workspace/ Internal</cell><cell>Parse Web Search</cell><cell>Action</cell><cell cols="2">Context Summarize</cell><cell></cell><cell>hint.md</cell></row><row><cell></cell><cell>Connection</cell><cell>Web Browse</cell><cell></cell><cell></cell><cell>finish</cell><cell></cell></row><row><cell>Figure 3:</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 :</head><label>2</label><figDesc>Performance comparison on various LLMs when tested against various research domains. Final Score: last submission score; Best Score: highest achieved score among 3 evaluations and final evaluation. Details of all research tasks can be referred to Appendix C.</figDesc><table><row><cell></cell><cell cols="2">Claude Sonnet 4</cell><cell></cell><cell>GPT-5</cell><cell cols="2">GLM-4.5</cell><cell cols="2">Kimi-K2</cell></row><row><cell>Data Construction</cell><cell>25.47</cell><cell>26.88</cell><cell>8.41</cell><cell>8.41</cell><cell>15.29</cell><cell>22.65</cell><cell>14.01</cell><cell>14.08</cell></row><row><cell>Data Filtering</cell><cell>30.89</cell><cell>31.47</cell><cell>8.97</cell><cell>9.48</cell><cell>5.16</cell><cell>5.36</cell><cell>7.39</cell><cell>7.97</cell></row><row><cell>Data Augmentation</cell><cell>22.73</cell><cell>22.73</cell><cell>0.00</cell><cell>0.00</cell><cell>25.49</cell><cell>25.49</cell><cell>2.47</cell><cell>2.47</cell></row><row><cell>Loss Design</cell><cell>12.98</cell><cell>12.98</cell><cell>0.04</cell><cell>2.74</cell><cell>7.63</cell><cell>7.63</cell><cell>0.00</cell><cell>0.00</cell></row><row><cell>Reward Design</cell><cell>11.56</cell><cell>11.56</cell><cell>0.00</cell><cell>0.00</cell><cell>0.00</cell><cell>0.00</cell><cell>3.23</cell><cell>3.23</cell></row><row><cell>Scaffold Construction</cell><cell>36.63</cell><cell>37.74</cell><cell>60.07</cell><cell>60.07</cell><cell>3.33</cell><cell>3.33</cell><cell>3.33</cell><cell>3.33</cell></row><row><cell>Weighted Average</cell><cell>24.01</cell><cell>24.54</cell><cell>12.04</cell><cell>12.52</cell><cell>11.85</cell><cell>13.35</cell><cell>5.35</cell><cell>5.45</cell></row></table><note>Research DomainFinal Score Best Score Final Score Best Score Final Score Best Score Final Score Best Score</note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3 :</head><label>3</label><figDesc>Effect of hint provision on agent performance across research domains. Comparison between Claude Sonnet 4 with and without hints. Final Score: last submission score; Best Score: highest achieved score; Execution Time: agent runtime (hours); Cost: monetary expenditure (USD).</figDesc><table><row><cell></cell><cell></cell><cell cols="2">Claude Sonnet 4 w/ Hint</cell><cell></cell><cell></cell><cell cols="2">Claude Sonnet 4</cell><cell></cell></row><row><cell>Research Domain</cell><cell cols="8">Final Score Best Score Execution Time Cost Final Score Best Score Execution Time Cost</cell></row><row><cell>Data Construction</cell><cell>15.21</cell><cell>19.80</cell><cell>1.78</cell><cell>25.56</cell><cell>25.47</cell><cell>26.87</cell><cell>3.24</cell><cell>33.09</cell></row><row><cell>Data Filtering</cell><cell>16.87</cell><cell>20.02</cell><cell>6.97</cell><cell>32.15</cell><cell>30.89</cell><cell>31.47</cell><cell>4.80</cell><cell>32.57</cell></row><row><cell>Data Augmentation</cell><cell>1.00</cell><cell>1.00</cell><cell>3.71</cell><cell>26.03</cell><cell>22.73</cell><cell>22.73</cell><cell>4.48</cell><cell>30.70</cell></row><row><cell>Loss Design</cell><cell>22.65</cell><cell>25.32</cell><cell>9.05</cell><cell>45.11</cell><cell>12.98</cell><cell>12.98</cell><cell>6.32</cell><cell>34.78</cell></row><row><cell>Reward Design</cell><cell>15.06</cell><cell>15.06</cell><cell>6.22</cell><cell>41.69</cell><cell>11.56</cell><cell>11.56</cell><cell>9.23</cell><cell>46.14</cell></row><row><cell>Scaffold Construction</cell><cell>21.04</cell><cell>27.71</cell><cell>3.73</cell><cell>23.22</cell><cell>36.63</cell><cell>37.74</cell><cell>6.43</cell><cell>28.65</cell></row><row><cell>Weighted Average</cell><cell>13.88</cell><cell>16.67</cell><cell>4.87</cell><cell>30.86</cell><cell>24.01</cell><cell>24.54</cell><cell>5.13</cell><cell>32.92</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 5 :</head><label>5</label><figDesc>Performance comparison of each task on various models when tested against various evaluation metrics. FS denotes Final Score, BS represents Best Score, ET stands for Execution Time in hours, and Cost is the monetary spend in USD.</figDesc><table><row><cell>Claude Sonnet 4</cell><cell>GPT-5</cell><cell>GLM-4.5</cell><cell>Kimi-K2</cell></row><row><cell cols="4">Task FS BS ET Cost FS BS ET Cost FS BS ET Cost FS BS ET Cost</cell></row><row><cell cols="4">1 19.05 19.05 1.53 27.02 0.00 0.00 2.41 16.09 20.51 20.51 0.84 1.63 0.00 0.00 1.95 4.92</cell></row><row><cell cols="4">2 39.35 39.35 4.26 47.41 0.00 0.00 0.79 4.16 13.26 13.26 0.83 1.91 0.20 0.20 3.57 5.97</cell></row><row><cell cols="4">3 17.41 18.23 4.98 30.42 0.00 0.00 1.44 7.49 18.85 18.85 2.06 4.31 14.70 14.98 4.25 4.40</cell></row><row><cell cols="4">4 26.09 30.87 2.21 27.51 33.62 33.62 3.98 19.42 8.55 37.97 1.37 5.70 41.16 41.16 2.53 3.40</cell></row><row><cell cols="4">5 5.00 5.00 0.54 6.86 13.36 14.88 0.60 2.37 5.00 5.00 0.16 0.65 12.76 13.12 0.64 1.40</cell></row><row><cell cols="4">6 81.37 81.74 11.45 65.09 0.00 0.00 1.58 4.28 0.00 0.00 5.32 11.11 5.00 5.00 3.33 6.14</cell></row><row><cell cols="4">7 6.29 7.66 2.41 25.75 13.55 13.55 1.28 3.94 10.48 11.08 0.56 3.77 4.40 5.80 1.57 2.03</cell></row><row><cell cols="4">8 27.33 27.33 4.83 21.57 0.00 0.00 6.32 36.15 37.30 37.30 1.54 4.87 7.33 7.33 3.38 3.98</cell></row><row><cell cols="4">9 0.00 0.00 7.08 36.01 0.00 0.00 2.19 4.75 0.00 0.00 0.64 3.95 0.00 0.00 11.57 7.36</cell></row><row><cell cols="4">10 0.00 0.00 2.34 41.15 0.00 0.00 1.06 3.86 0.00 0.00 0.56 3.95 0.00 0.00 0.80 0.46</cell></row><row><cell cols="4">11 86.34 86.34 5.49 32.58 0.00 0.00 3.99 4.77 5.00 5.00 2.93 7.53 5.00 5.00 6.62 6.24</cell></row><row><cell cols="4">12 0.00 0.00 2.65 22.19 0.00 0.00 0.86 2.99 85.15 85.15 8.45 8.05 0.00 0.00 1.29 4.46</cell></row><row><cell cols="4">13 0.00 0.00 4.97 58.67 0.00 0.00 1.59 12.12 0.00 0.00 3.31 10.74 0.00 0.00 7.28 10.68</cell></row><row><cell cols="4">14 4.50 4.50 10.40 26.29 0.12 8.21 16.23 80.50 0.00 0.00 0.68 5.47 0.00 0.00 4.70 12.20</cell></row><row><cell cols="4">15 34.44 34.44 3.58 19.38 0.00 0.00 2.27 6.60 22.90 22.90 4.71 18.78 0.00 0.00 3.48 8.49</cell></row><row><cell cols="4">16 0.00 0.00 8.91 51.67 0.00 0.00 1.74 8.67 0.00 0.00 0.63 3.31 0.00 0.00 1.86 6.60</cell></row><row><cell cols="4">17 23.11 23.11 5.66 32.81 0.00 0.00 2.04 9.63 0.00 0.00 0.13 1.20 6.47 6.47 3.79 6.33</cell></row><row><cell cols="4">18 16.67 20.00 14.01 44.25 0.00 0.00 1.26 6.56 0.00 0.00 1.34 5.47 0.00 0.00 2.42 1.96</cell></row><row><cell cols="4">19 63.95 63.95 2.18 23.30 92.45 92.45 1.77 3.70 10.00 10.00 0.64 3.78 10.00 10.00 5.66 2.87</cell></row><row><cell cols="4">20 29.26 29.26 3.08 18.41 87.76 87.76 5.05 36.38 0.00 0.00 0.99 3.04 0.00 0.00 0.68 3.47</cell></row><row><cell cols="4">Avg. 24.01 24.54 5.13 32.92 12.04 12.52 2.92 13.72 11.85 13.35 1.92 5.68 5.35 5.45 3.57 5.17</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 6</head><label>6</label><figDesc>presents the performance, execution time, and cost results between Claude Sonnet 4 with the hint and Claude Sonnet 4 without the hint.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 6 :</head><label>6</label><figDesc>Performance comparison between Claude4-hint and Claude4 on evaluation metrics, runtime, and cost.</figDesc><table><row><cell></cell><cell></cell><cell cols="2">Claude4-hint</cell><cell></cell><cell></cell><cell>Claude4</cell><cell></cell><cell></cell></row><row><cell cols="9">Task Final Score Best Score Run Time Cost Final Score Best Score Run Time Cost</cell></row><row><cell>1</cell><cell>6.52</cell><cell>18.52</cell><cell>0.68</cell><cell>17.97</cell><cell>19.05</cell><cell>19.05</cell><cell>1.53</cell><cell>27.02</cell></row><row><cell>2</cell><cell>8.68</cell><cell>8.68</cell><cell>0.66</cell><cell>29.87</cell><cell>39.35</cell><cell>39.35</cell><cell>4.26</cell><cell>47.41</cell></row><row><cell>3</cell><cell>8.53</cell><cell>12.88</cell><cell>3.85</cell><cell>27.62</cell><cell>17.41</cell><cell>18.23</cell><cell>4.97</cell><cell>30.42</cell></row><row><cell>4</cell><cell>37.10</cell><cell>39.13</cell><cell>1.93</cell><cell>26.78</cell><cell>26.09</cell><cell>30.87</cell><cell>2.21</cell><cell>27.51</cell></row><row><cell>5</cell><cell>12.80</cell><cell>13.24</cell><cell>1.75</cell><cell>12.74</cell><cell>5.00</cell><cell>5.00</cell><cell>0.54</cell><cell>6.86</cell></row><row><cell>6</cell><cell>29.49</cell><cell>34.49</cell><cell>14.13</cell><cell>61.68</cell><cell>81.37</cell><cell>81.74</cell><cell>11.45</cell><cell>65.09</cell></row><row><cell>7</cell><cell>8.32</cell><cell>12.32</cell><cell>5.04</cell><cell>22.04</cell><cell>6.29</cell><cell>7.66</cell><cell>2.41</cell><cell>25.75</cell></row><row><cell>8</cell><cell>0.00</cell><cell>0.00</cell><cell>6.99</cell><cell>43.19</cell><cell>27.33</cell><cell>27.33</cell><cell>4.83</cell><cell>21.57</cell></row><row><cell>9</cell><cell>0.00</cell><cell>0.00</cell><cell>6.68</cell><cell>31.10</cell><cell>0.00</cell><cell>0.00</cell><cell>7.08</cell><cell>36.01</cell></row><row><cell>10</cell><cell>0.00</cell><cell>0.00</cell><cell>2.78</cell><cell>24.63</cell><cell>0.00</cell><cell>0.00</cell><cell>2.34</cell><cell>41.15</cell></row><row><cell>11</cell><cell>5.00</cell><cell>5.00</cell><cell>0.67</cell><cell>15.42</cell><cell>86.34</cell><cell>86.34</cell><cell>5.49</cell><cell>32.58</cell></row><row><cell>12</cell><cell>0.00</cell><cell>0.00</cell><cell>1.44</cell><cell>15.80</cell><cell>0.00</cell><cell>0.00</cell><cell>2.65</cell><cell>22.19</cell></row><row><cell>13</cell><cell>0.00</cell><cell>0.00</cell><cell>3.33</cell><cell>65.13</cell><cell>0.00</cell><cell>0.00</cell><cell>4.97</cell><cell>58.67</cell></row><row><cell>14</cell><cell>29.37</cell><cell>37.39</cell><cell>18.34</cell><cell>34.88</cell><cell>4.50</cell><cell>4.50</cell><cell>10.40</cell><cell>26.29</cell></row><row><cell>15</cell><cell>38.57</cell><cell>38.57</cell><cell>5.49</cell><cell>35.32</cell><cell>34.44</cell><cell>34.44</cell><cell>3.58</cell><cell>19.38</cell></row><row><cell>16</cell><cell>0.00</cell><cell>0.00</cell><cell>4.71</cell><cell>43.57</cell><cell>0.00</cell><cell>0.00</cell><cell>8.91</cell><cell>51.67</cell></row><row><cell>17</cell><cell>30.13</cell><cell>30.13</cell><cell>7.73</cell><cell>39.81</cell><cell>23.11</cell><cell>23.11</cell><cell>5.66</cell><cell>32.81</cell></row><row><cell>18</cell><cell>0.00</cell><cell>20.00</cell><cell>7.48</cell><cell>35.77</cell><cell>16.67</cell><cell>20.00</cell><cell>14.01</cell><cell>44.25</cell></row><row><cell>19</cell><cell>53.12</cell><cell>53.12</cell><cell>0.54</cell><cell>13.65</cell><cell>63.95</cell><cell>63.95</cell><cell>2.18</cell><cell>23.30</cell></row><row><cell>20</cell><cell>10.00</cell><cell>10.00</cell><cell>3.19</cell><cell>20.26</cell><cell>29.26</cell><cell>29.26</cell><cell>3.08</cell><cell>18.41</cell></row><row><cell>Avg.</cell><cell>13.88</cell><cell>16.67</cell><cell>4.87</cell><cell>30.86</cell><cell>24.01</cell><cell>24.54</cell><cell>5.13</cell><cell>33.92</cell></row></table><note>** Your task is to implement a new strategy for GRPO in language model reinforcement learning in order to get the highest accuracy and prevent entropy collapse. **</note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head></head><label></label><figDesc>You need to use the original GRPO rollout. Only modify the advantage/loss compute part in '/workspace/task/ repositories/verl/verl/trainer/ppo/core algos.py', do not modify other files in verl.After you implement the algorithm in '/workspace/task/repositories/verl', you can use '/workspace/task/scripts/train. sh' to train the model based on your code; it will also show the dev set results in the training log. (You can train multiple times, just select the best one to evaluate.)</figDesc><table><row><cell>− Do not modify the parameter in '/workspace/task/scripts/train.sh' except test freq</cell></row><row><cell>Finally, you need to select the best checkpoints in your training, using '/workspace/task/scripts/inference.sh &lt;</cell></row><row><cell>model path&gt;' to generate '/workspace/data/outputs/math results logits.pt' and '/workspace/data/outputs/</cell></row><row><cell>math results.parquet'</cell></row><row><cell>### Output Format Requirements:</cell></row><row><cell>** File Location ** : '/workspace/data/outputs/math results.parquet'</cell></row><row><cell>** File Format ** : Parquet format containing model responses</cell></row><row><cell>** Required Fields ** : The parquet file should contain:</cell></row><row><cell>− '"sample id"' (int): Unique identifier for each test sample (must follow the order in the test set)</cell></row><row><cell>− '"output"' (string): The model's complete response, including reasoning and final answer</cell></row><row><cell>** Required Output Format for each response: **</cell></row><row><cell>'''</cell></row><row><cell>&lt;reasoning process&gt;</cell></row><row><cell>Answer:\boxed{Your Answer}</cell></row><row><cell>'''</cell></row><row><cell>\{o i\} {i=1}ˆG \sim \pi {\theta {old}}(\cdot|q</cell></row><row><cell>)} \left[ \dfrac{1}{G} \sum {i=1}ˆG \dfrac{1}{|\mathcal{o} i|} \sum {t = 1}ˆ{|\mathcal{o} i|} \left( \min \</cell></row><row><cell>left( r {i,t}(\theta)\hat{A} {i, t}, \text{clip}(r {i,t}(\theta), 1 − \epsilon, 1 + \epsilon)\hat{A} {i, t} \right) \</cell></row><row><cell>right) \right]</cell></row><row><cell>$$ , where $ r {i,t} = \dfrac{\pi \theta(o {i, t}|q,o {i, &lt;t})}{\pi \thetaˆ{\mathit{old}}(o {i, t}|q,o {i, &lt;t})}$ is</cell></row><row><cell>the importance sampling ratio.</cell></row></table><note>** Now, you need to implement a variant of GRPO to get the highest accuracy and prevent entropy collapse. ** You should work under the '/workspace/task' and '/workspace/data' directories.SII-GAIR** Logits File ** : '/workspace/data/outputs/math results logits.</note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_10"><head></head><label></label><figDesc>1. ** Understand &amp; Hypothesize: ** − Deeply analyze the task description, including motivation, task (research goal), the provided codebase (scripts ), the provided datasets (if available), resource constraints, and evaluation metrics. − Use tools like 'open file', 'search file', 'find file', 'search dir', 'list files', 'get file info' to explore the codebase, understand file structures, existing code patterns, and conventions. − Use shell commands or specialized scripts to inspect the data (e.g., check shape, distribution, examples). However, do not modify the provided datasets. If the data length is too long (e.g., greater than 30000 characters), you should try another way to inspect it (e.g., read the value of some specidied key). − Formulate a clear, testable hypothesis. For example: "Hypothesis: Augmenting the SFT data with back− translation will improve model performance on task X." or "Hypothesis: A new loss function incorporating term Y will lead to faster convergence." 2. ** Plan &amp; Design Experiment: ** − Build a coherent and grounded plan (based on the understanding and hypothesis in step 1) for how you intend to resolve the user's task. − MUST use the 'think' tool to generate the experimental plan. Do not generate plan by yourself. − Specify the exact implementation changes required (e.g., data processing steps, code modifications for the</figDesc><table /></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0">* Equal contribution.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1">† Corresponding author.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_2">https://www.kaggle.com/</note>
+		</body>
+		<back>
+
+			<div type="funding">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This work was partially funded by the National Natural Science Foundation of China (62476168), AI for Science Program, Shanghai Municipal Commission of Economy and Informatization: 2025-GZL-RGZN-BTBX-01013</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SII-GAIR</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F.1 Command Actions</head><p>The command actions manage terminal session lifecycle and interaction, including session creation, listing, command execution, input/output handling, status inspection, and session termination. The following functions provide comprehensive capabilities to control and operate remote or local computing sessions.    − The results MUST be saved in the '/workspace/data/outputs' directory. − Strictly validate that the format of output data ('/workspace/data/outputs') conforms to the task description. − When you are sure that the results on test datasets can be submitted, use the 'eval' tool to submit the results. − Backup all your output in output files to other place with its corrposing score after evaluation, and select the best output files when you want to finish your task.   </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Anthropic</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+			<biblScope unit="page" from="2025" to="2029" />
+		</imprint>
+	</monogr>
+	<note>Introducing claude 4</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><forename type="first">Shuai</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keqin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuejing</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jialin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenbin</forename><surname>Ge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sibo</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Dang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijie</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2502.13923</idno>
+		<title level="m">Qwen2. 5-vl technical report</title>
+				<imprint>
+			<date type="published" when="2025-06">Jun Tang, et al. 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<author>
+			<persName><forename type="first">Neil</forename><surname>Jun Shern Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oliver</forename><surname>Chowdhury</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Jaffe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dane</forename><surname>Aung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Evan</forename><surname>Sherburn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giulio</forename><surname>Mays</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Starace</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leon</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tejal</forename><surname>Maksin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Patwardhan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2410.07095</idno>
+		<title level="m">Mle-bench: Evaluating machine learning agents on machine learning engineering</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<author>
+			<persName><forename type="first">Ziru</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijie</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuting</forename><surname>Ning</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qianheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boshi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Botao</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyi</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zitong</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vishal</forename><surname>Dey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingyi</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frazier</forename><forename type="middle">N</forename><surname>Baker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Burns</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Adu-Ampratwum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuhui</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xia</forename><surname>Ning</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Song</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huan</forename><surname>Sun</surname></persName>
+		</author>
+		<title level="m">Scienceagentbench: Toward rigorous assessment of language agents for data-driven scientific discovery</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<author>
+			<persName><forename type="first">Xinrun</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifan</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaijing</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bingli</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianyu</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">King</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Minghao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiming</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaolong</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenlin</forename><surname>Wei</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2502.14739</idno>
+		<title level="m">Supergpqa: Scaling llm evaluation across 285 graduate disciplines</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Rexbench: Can coding agents autonomously implement ai research extensions</title>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Edwards</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yukyung</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yujun (audrey)</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yulu</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Schuster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Najoung</forename><surname>Kim</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">Dayuan</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keqing</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yejie</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wentao</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhuoma</forename><surname>Gongque</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weihao</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xunliang</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weiran</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2501.01702</idno>
+		<title level="m">Agentrefine: Enhancing agent generalization through refinement tuning</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<author>
+			<persName><forename type="first">Dayuan</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianzhao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siyuan</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guanting</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yejie</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keqing</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weiran</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2402.11534</idno>
+		<title level="m">Preact: Prediction enhances agent&apos;s planning ability</title>
+				<imprint>
+			<date type="published" when="2024">2024a</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Msi-agent: Incorporating multi-scale insight into embodied agents for superior planning and decision-making</title>
+		<author>
+			<persName><forename type="first">Dayuan</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Biqing</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yihuai</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Che</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guanting</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bowen</forename><surname>Zhou</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2409.16686</idno>
+		<imprint>
+			<date type="published" when="2024">2024b</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<author>
+			<persName><forename type="first">Aaron</forename><surname>Grattafiori</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhimanyu</forename><surname>Dubey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhinav</forename><surname>Jauhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhinav</forename><surname>Pandey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhishek</forename><surname>Kadian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ahmad</forename><surname>Al-Dahle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aiesha</forename><surname>Letman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Akhil</forename><surname>Mathur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><surname>Schelten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Vaughan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2407.21783</idno>
+		<title level="m">The llama 3 herd of models</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<author>
+			<persName><forename type="first">Daya</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dejian</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haowei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junxiao</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruoyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Runxin</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qihao</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shirong</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peiyi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Bi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2501.12948</idno>
+		<title level="m">Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Visual sketchpad: Sketching as a visual chain of thought for multimodal language models</title>
+		<author>
+			<persName><forename type="first">Yushi</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weijia</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingyu</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mari</forename><surname>Ostendorf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luke</forename><surname>Zettlemoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noah</forename><forename type="middle">A</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ranjay</forename><surname>Krishna</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="139348" to="139379" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<author>
+			<persName><forename type="first">Tianyu</forename><surname>Hua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Harper</forename><surname>Hua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Violet</forename><surname>Xiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Klieger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sang</forename><forename type="middle">T</forename><surname>Truong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weixin</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fan-Yun</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nick</forename><surname>Haber</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2506.02314</idno>
+		<title level="m">Researchcodebench: Benchmarking llms on implementing novel machine learning research code</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Mac: A live benchmark for multimodal large language models in scientific understanding</title>
+		<author>
+			<persName><forename type="first">Mohan</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jin</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiahao</forename><surname>Zhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dequan</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2508.15802</idno>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">SWE-bench: Can language models resolve real-world github issues?</title>
+		<author>
+			<persName><forename type="first">Carlos</forename><forename type="middle">E</forename><surname>Jimenez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Wettig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shunyu</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kexin</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ofir</forename><surname>Press</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karthik R Narasimhan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Twelfth International Conference on Learning Representations</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Search-r1: Training llms to reason and leverage search engines with reinforcement learning</title>
+		<author>
+			<persName><forename type="first">Hansi</forename><surname>Bowen Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenrui</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jinsung</forename><surname>Yue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sercan</forename><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dong</forename><surname>Arik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hamed</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiawei</forename><surname>Zamani</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Han</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2503.09516.ReferencesSII-GAIR</idno>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Tser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jern</forename><surname>Kon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiachen</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyi</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiuyi</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingjia</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiarong</forename><surname>Xing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yibo</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiming</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jayanth</forename><surname>Srinivasa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Myungjin</forename><surname>Lee</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2505.24785</idno>
+		<title level="m">Exp-bench: Can ai conduct ai research experiments?</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Numinamath: The largest public dataset in ai4maths with 860k pairs of competition math problems and solutions</title>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edward</forename><surname>Beeching</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lewis</forename><surname>Tunstall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Lipkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roman</forename><surname>Soletskyi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shengyi</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kashif</forename><surname>Rasul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Longhui</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Albert</forename><forename type="middle">Q</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziju</forename><surname>Shen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hugging Face repository</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page">9</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Datasetresearch: Benchmarking agent systems for demand-driven dataset discovery</title>
+		<author>
+			<persName><forename type="first">Keyu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohan</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dayuan</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunze</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangkun</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dequan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengfei</forename><surname>Liu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<author>
+			<persName><forename type="first">Yixiu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Nan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weixian</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangkun</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lyumanshan</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhen</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengfei</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2507.18074</idno>
+		<title level="m">Alphago moment for model architecture discovery</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Gui-r1: A generalist r1-style vision-language action model for gui agents</title>
+		<author>
+			<persName><forename type="first">Run</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wanwei</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaobo</forename><surname>Xia</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2504.10458</idno>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<author>
+			<persName><forename type="first">Deepak</forename><surname>Nathani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lovish</forename><surname>Madaan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikolay</forename><surname>Bashlykov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajay</forename><surname>Menon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent</forename><surname>Moens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amar</forename><surname>Budhiraja</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Despoina</forename><surname>Magka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vladislav</forename><surname>Vorotilov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gaurav</forename><surname>Chaurasia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dieuwke</forename><surname>Hupkes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ricardo</forename><forename type="middle">Silveira</forename><surname>Cabral</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tatiana</forename><surname>Shavrina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Foerster</surname></persName>
+		</author>
+		<title level="m">Mlgym: A new framework and benchmark for advancing ai research agents</title>
+				<editor>
+			<persName><forename type="first">William</forename><surname>Bachrach</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Wang</forename><surname>Yang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Roberta</forename><surname>Raileanu</surname></persName>
+		</editor>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">Gpt-5: Language model</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+			<biblScope unit="page" from="2025" to="2029" />
+		</imprint>
+		<respStmt>
+			<orgName>OpenAI</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<author>
+			<persName><forename type="first">Guangming</forename><surname>Sheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zilingfeng</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xibin</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ru</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanghua</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haibin</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuan</forename><surname>Wu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2409.19256</idno>
+		<title level="m">Hybridflow: A flexible and efficient rlhf framework</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Coding agents with multimodal browsing are generalist problem solvers</title>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Bharat Soni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boxuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingyao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valerie</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Graham</forename><surname>Neubig</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2506.03011</idno>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<author>
+			<persName><forename type="first">Giulio</forename><surname>Starace</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oliver</forename><surname>Jaffe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dane</forename><surname>Sherburn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Aung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Shern Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leon</forename><surname>Maksin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rachel</forename><surname>Dias</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Evan</forename><surname>Mays</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Kinsella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wyatt</forename><surname>Thompson</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2504.01848</idno>
+		<title level="m">Paperbench: Evaluating ai&apos;s ability to replicate ai research</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junkang</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiancan</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhibo</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingyu</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lintao</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2506.03690</idno>
+		<title level="m">Robust preference optimization via dynamic target margins</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Worldcoder, a model-based llm agent: Building world models by writing code and interacting with the environment</title>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Darren</forename><surname>Key</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Ellis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="70148" to="70212" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<author>
+			<persName><forename type="first">Xiangru</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuliang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zefan</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanjun</forename><surname>Shao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junjie</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yichi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zexuan</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Helan</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaikai</forename><surname>An</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruijun</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.09835</idno>
+		<title level="m">Ml-bench: Evaluating large language models and agents for machine learning tasks on repository-level code</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<author>
+			<persName><forename type="first">Kimi</forename><surname>Team</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifan</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiping</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guanduo</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiahao</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ningxin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruijue</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanru</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuankun</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yutian</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2507.20534</idno>
+		<title level="m">Kimi k2: Open agentic intelligence</title>
+				<imprint>
+			<date type="published" when="2025">2025a</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<author>
+			<persName><forename type="first">Novelseek</forename><surname>Team</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiyang</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangchao</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiakang</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyin</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohan</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Songtao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaowei</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Nie</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2505.16938</idno>
+		<title level="m">Novelseek: When agent becomes the scientist-building closed-loop system from hypothesis to verification</title>
+				<imprint>
+			<date type="published" when="2025">2025b</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<author>
+			<persName><forename type="first">Qwen</forename><surname>Team</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2407.10671</idno>
+		<title level="m">Qwen2 technical report</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">Terminal-bench: A benchmark for ai agents in terminal environments</title>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note>The Terminal-Bench Team</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<author>
+			<persName><forename type="first">Xingyao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boxuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yufan</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><forename type="middle">F</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangru</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingchen</forename><surname>Zhuge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiayi</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yueqi</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bowen</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaskirat</forename><surname>Singh</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2407.16741</idno>
+		<title level="m">Openhands: An open platform for ai software developers as generalist agents</title>
+				<imprint>
+			<date type="published" when="2024">2024a</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">How do your code llms perform? empowering code instruction tuning with high-quality data</title>
+		<author>
+			<persName><forename type="first">Yejie</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keqing</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dayuan</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhuoma</forename><surname>Gongque</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Heyang</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanxu</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhexu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yujia</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guanting</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muxi</forename><surname>Diao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2409.03810</idno>
+		<imprint>
+			<date type="published" when="2024">2024b</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<author>
+			<persName><forename type="first">Hjalmar</forename><surname>Wijk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joel</forename><surname>Becker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sami</forename><surname>Jawhar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neev</forename><surname>Parikh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Broadley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lawrence</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Josh</forename><surname>Clymer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jai</forename><surname>Dhyani</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2411.15114</idno>
+		<title level="m">Re-bench: Evaluating frontier ai r&amp;d capabilities of language model agents against human experts</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Huggingface&apos;s transformers: State-of-the-art natural language processing</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Wolf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lysandre</forename><surname>Debut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Victor</forename><surname>Sanh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julien</forename><surname>Chaumond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clement</forename><surname>Delangue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anthony</forename><surname>Moi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pierric</forename><surname>Cistac</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Rault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rémi</forename><surname>Louf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Morgan</forename><surname>Funtowicz</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1910.03771</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">The rise and potential of large language model based agents: A survey</title>
+		<author>
+			<persName><forename type="first">Zhiheng</forename><surname>Xi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenxiang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiwen</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boyang</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junzhe</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Senjie</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Enyu</forename><surname>Zhou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science China Information Sciences</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">121101</biblScope>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiashuo</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiancheng</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Changhe</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunpu</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenjie</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengfei</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2505.17663</idno>
+		<title level="m">Towards dynamic theory of mind: Evaluating llm adaptation to temporal evolution of human states</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<author>
+			<persName><forename type="first">Tianze</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengrui</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lyumanshan</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangkun</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengfei</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2507.16280</idno>
+		<title level="m">Researcherbench: Evaluating deep ai research systems on the frontiers of scientific inquiry</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Swe-agent: Agent-computer interfaces enable automated software engineering</title>
+		<author>
+			<persName><forename type="first">John</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carlos</forename><forename type="middle">E</forename><surname>Jimenez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Wettig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kilian</forename><surname>Lieret</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shunyu</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karthik</forename><surname>Narasimhan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<imprint>
+			<publisher>Ofir Press</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="50528" to="50652" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">SWE-bench multimodal: Do ai systems generalize to visual software domains?</title>
+		<author>
+			<persName><forename type="first">John</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carlos</forename><forename type="middle">E</forename><surname>Jimenez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><forename type="middle">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kilian</forename><surname>Lieret</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joyce</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xindi</forename><surname>Wu ; Muennighoff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Synnaeve</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Karthik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diyi</forename><surname>Narasimhan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Thirteenth International Conference on Learning Representations</title>
+				<meeting><address><addrLine>Niklas</addrLine></address></meeting>
+		<imprint>
+			<publisher>Sida I. Wang, and Ofir Press</publisher>
+			<date type="published" when="2025">2025a</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<author>
+			<persName><forename type="first">John</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kilian</forename><surname>Lieret</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carlos</forename><forename type="middle">E</forename><surname>Jimenez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Wettig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kabir</forename><surname>Khandpur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanzhe</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Binyuan</forename><surname>Hui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ofir</forename><surname>Press</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ludwig</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diyi</forename><surname>Yang</surname></persName>
+		</author>
+		<title level="m">Swe-smith: Scaling data for software engineering agents</title>
+				<imprint>
+			<date type="published" when="2025">2025b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">React: Synergizing reasoning and acting in language models</title>
+		<author>
+			<persName><forename type="first">Shunyu</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dian</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nan</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Izhak</forename><surname>Shafran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karthik</forename><surname>Narasimhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Cao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations (ICLR)</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<author>
+			<persName><forename type="first">Lyumanshan</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojie</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinkai</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junfei</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangkun</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiadi</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Nan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sihan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bohan</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2507.15759</idno>
+		<title level="m">Xiaoze Fan, et al. 2025a. Interaction as intelligence: Deep research with human-ai partnership</title>
+				<imprint/>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<author>
+			<persName><forename type="first">Yixin</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhen</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ethan</forename><surname>Chern</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijie</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengfei</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2502.03387</idno>
+		<title level="m">Limo: Less is more for reasoning</title>
+				<imprint>
+			<date type="published" when="2025">2025b</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">Dapo: An open-source llm reinforcement learning system at scale</title>
+		<author>
+			<persName><forename type="first">Qiying</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruofei</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yufeng</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaochen</forename><surname>Zuo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Yue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weinan</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tiantian</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gaohong</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lingjun</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2503.14476</idno>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<author>
+			<persName><forename type="first">Aohan</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Lv</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qinkai</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenyu</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chengxing</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cunxiang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Da</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiajie</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2508.06471</idno>
+		<title level="m">Glm-4.5: Agentic, reasoning, and coding (arc) foundation models</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Llamafactory: Unified efficient fine-tuning of 100+ language models</title>
+		<author>
+			<persName><forename type="first">Yaowei</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junhao</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanhan</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheyan</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhangchi</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongqiang</forename><surname>Ma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics</title>
+				<meeting>the 62nd Annual Meeting of the Association for Computational Linguistics<address><addrLine>Bangkok, Thailand</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">3</biblScope>
+		</imprint>
+	</monogr>
+	<note>System Demonstrations)</note>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<author>
+			<persName><forename type="first">Yuxiang</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dayuan</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangkun</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojie</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lyumanshan</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengrui</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengfei</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2504.03160</idno>
+		<title level="m">Deepresearcher: Scaling deep research via reinforcement learning in real-world environments</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m" type="main">Programming every example: Lifting pre-training data quality like experts at scale</title>
+		<author>
+			<persName><forename type="first">Fan</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zengzhi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junlong</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengfei</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2409.17115</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">def clear session buffer action(computer_ip: str = &apos;localhost&apos;, session_id: str = None) -&gt; Dict[str, Any]: &quot;&quot;&quot;Clear the output buffer of a specific terminal session. The output buffer is a queue of output lines, it will automatically clean if the total lines exceed 10000 lines, regardless of using this action or not. Args: computer ip[str]: The IP address of the computer. Default is &apos;localhost&apos;. session id[str]: The ID of the session to clear the output buffer</title>
+		<author>
+			<persName><forename type="first">Wenhong</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruobing</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weinan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Wang ; Dict[str</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">]</forename><surname>Any</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2506.12704.SII-GAIR</idno>
+	</analytic>
+	<monogr>
+		<title level="m">The content to be written or edited in the file</title>
+				<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+	<note>It will replace the content between &apos;start&apos; and &apos;end&apos; lines. Returns: Dict[str, Any]: Dictionary containing edit operation status and information. def open file action(path: str, line_number: int = 1, context_lines: Optional[int] = None. Dict[str, Any]: &quot;&quot;&quot;Open a file and display its content around a specific line. The environment will cache the file content for another file action to use until perform next open_file action. Args: path[str]: The path to the file to open. line number[int]: The line number to focus on (1-indexed. Default is 1. context lines[Optional[int]]: of lines to show as context. Default is None (uses default window size</note>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Dictionary containing file content and status information</title>
+		<imprint/>
+	</monogr>
+	<note>Returns: Dict[str, Any. def goto line action(line_number: int. Dict[str, Any. Jump to a specific line in the currently open file and show the content around the line. Args: line number[int]: The line number to jump to (1-indexed</note>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Search for a text pattern in all files within a directory. Args: search term[str]: The text to search for. dir path[str]: The directory path to search in. Default is current directory . Returns: Dict[str, Any]: Dictionary containing search results and status information</title>
+		<author>
+			<persName><surname>Dict[str</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">]</forename><surname>Any</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">def create file action(filename: str, content: str = &quot;&quot;) -&gt; Dict</title>
+				<imprint/>
+	</monogr>
+	<note>Dictionary containing directory listing and status information</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,2393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2025-03-14">14 Mar 2025</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2025-03-14">14 Mar 2025</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">8899264BB4844D53FA21A426981DDE4E</idno>
+					<idno type="arXiv">arXiv:2503.11195v1[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2" ident="GROBID" when="2026-03-06T16:54+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+			<div xmlns="http://www.tei-c.org/ns/1.0"><p>As AI-generated sensitive images become more prevalent, identifying their source is crucial for distinguishing them from real images. Conventional image watermarking methods are vulnerable to common transformations like filters, lossy compression, and screenshots, often applied during social media sharing. Watermarks can also be faked or removed if models are open-sourced or leaked since images can be rewatermarked. We have developed a threepart framework for secure, transformation-resilient AI content provenance detection, to address these limitations. We develop an adversarially robust state-of-the-art perceptual hashing model, DinoHash, derived from DINOV2, which is robust to common transformations like filters, compression, and crops. Additionally, we integrate a Multi-Party Fully Homomorphic Encryption (MP-FHE) scheme into our proposed framework to ensure the protection of both user queries and registry privacy. Furthermore, we improve previous work on AI-generated media detection. This approach is useful in cases where the content is absent from our registry. DinoHash significantly improves average bit accuracy by 12% over state-of-the-art watermarking and perceptual hashing methods while maintaining superior true positive rate (TPR) and false positive rate (FPR) tradeoffs across various transformations. Our AI-generated media detection results show a 25% improvement in classification accuracy on commonly used real-world AI image generators over existing algorithms. By combining perceptual hashing, MP-FHE, and an AI content detection model, our proposed framework provides better robustness and privacy compared to previous work.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Ensuring the authenticity and provenance of digital visual content is increasingly critical as AI-generated media becomes more prevalent. Traditional watermarking methods have limited robustness to everyday transformations and raise security concerns if models are distributed for local use. C2PA <ref type="bibr" target="#b17">[19]</ref> does not work in practical scenarios, due to the signature becoming invalid upon any image transformation. Proof of transformation helps maintain validation after image edits <ref type="bibr" target="#b24">[26,</ref><ref type="bibr" target="#b31">33]</ref>, but we do not expect many image editors to integrate this technology. To tackle these challenges, we introduce a three-part framework aimed at secure and reliable content provenance detection for AI-generated content in real world.</p><p>First, we introduce a perceptual hashing algorithm based on DINOV2 <ref type="bibr" target="#b64">[66]</ref>, a feature extraction network, that captures the semantic and structural features of images, providing an alternative to watermarking by remaining resilient to common image transformations. Second, to secure the integrity of the provenance detection process, we employ Mutli-Party Fully Homomorphic Encryption (MP-FHE) <ref type="bibr" target="#b61">[63]</ref>, which allows operations on encrypted data, enabling secure, privacy-preserving computations without compromising the system's security regarding data leakage <ref type="bibr" target="#b38">[40]</ref>. Lastly, we extend prior work in AI-generated content detection by training a state of the art model to identify and distinguish AI-generated images directly, in case images are not found in our database.</p><p>Deep watermarking algorithms embed a nearly invisible hash into an image, which can later be extracted using a specialized network to verify and match images <ref type="bibr" target="#b88">[90]</ref>. The main objectives of watermarking are (a) robustness against natural image distortions and (b) minimal alteration of the original image. Most deep watermarking papers report remarkable results on simple spatial distortions such as brightness or contrast, cropping, and flipping. However, they often fail when exposed to destructive frequency-domain transformations, including blurring, JPEG compression, screenshots, and other non-differentiable processes. This limitation arises because watermarking methods embed information in an image's high-frequency components, which are often degraded via compression during everyday manipulations like social media uploads <ref type="bibr" target="#b47">[49]</ref>, sharing on messaging apps <ref type="bibr" target="#b5">[7]</ref>, format conversions, resizing, and embedding in videos <ref type="bibr" target="#b15">[17]</ref>, making watermarking ineffective for content provenance detection in practical settings.</p><p>Traditionally, watermarking requires training a separate deep-learning model to embed watermarks into an image, making them easily removable. However, Meta's recently developed framework, Stable Signature <ref type="bibr" target="#b78">[80]</ref>, integrates watermarking directly into the diffusion model through finetuning, eliminating the need for an additional model during inference. While this approach reduces inference costs, it introduces the burden of maintaining a unique set of model weights for each user. Given that the number of customers of diffusion models is in the millions, this storage requirement renders the approach impractical for large-scale industry deployment unless the model is provided to users for local inference. However, as the authors demonstrated, releasing the model to users introduces vulnerabilities due to aversion techniques like model purification and collusion, undermining the security and purpose of the watermarking system.</p><p>Additionally, watermarking methods might introduce unwanted visible artifacts <ref type="bibr" target="#b4">[6]</ref>. In contrast, perceptual hashes offer a potential alternative. Instead of embedding data, perceptual hashing derives a hash from the image's semantic embeddings and structural features, which remain largely unaffected by common transformations, making it more suitable for content provenance applications <ref type="bibr" target="#b27">[29]</ref>.</p><p>After generating perceptual hashes, it's crucial to query them privately to protect sensitive information. For example, closed-source content generators (such as OpenAI or Canon) should be able to store perceptual hashes of usergenerated images in a public database without leaking information that could lead to prompt reconstruction. Likewise, users need to query the database without revealing all their images to the content provider. Several systems have been developed to address this private approximate nearest neighbors search (ANNS/PNNS) challenge, including Janus <ref type="bibr" target="#b32">[34]</ref>, Worldcoin's Iris <ref type="bibr" target="#b11">[13]</ref> matching system, Apple's Wally <ref type="bibr" target="#b6">[8]</ref>, and Panther <ref type="bibr" target="#b50">[52]</ref>. The Worldcoin Iris Matching system uses secure multiparty computation (MPC) to perform privacy-preserving fuzzy matching of iris hash codes, which are similar to our proposed perceptual hashes. It operates under a non-collusion assumption between servers to ensure privacy. In contrast, Apple's Wally system introduces differential privacy by adding fake queries to hide the original query, and querying clusters of data rather than the entire database, thus trading off some accuracy for enhanced performance. Wally uses Somewhat Homomorphic Encryption (SHE) for secure lookups, based on the BFV <ref type="bibr" target="#b12">[14,</ref><ref type="bibr" target="#b33">35]</ref> and BGV <ref type="bibr" target="#b13">[15]</ref> schemes, which allow a single entity to decrypt any ciphertext without restriction. In contrast, our system is built on a boolean FHE scheme, Multiparty FHEW (MP-FHE), which requires multiple parties to participate in decryption <ref type="bibr" target="#b48">[50,</ref><ref type="bibr" target="#b61">63]</ref>. This enables the design of PNNS systems with stronger security guarantees, ensuring that no single entity can access plaintext data without the consent of all other parties. Modern tools and opensource models have democratized access to synthetic image generation. In this reality, it is unreasonable to expect every image appearing on the internet to be hashed and stored in a registry by some content-producing organization (CPO) like cameras or AI image APIs. So, we build a purely deep learning-based detector to perform the binary classification task of detection of synthetic images.</p><p>In conclusion, we have four main contributions:</p><p>1. A deep perceptual hashing algorithm that is robust to a wide range of image transformations. 2. A cryptographic matching system that privately looks up the provenance of a perceptual hash in a registry, without leaking any data about the registry items or the queried perceptual hash. 3. A deep learning based detector to detect synthetic images that are not stored in the registry. 4. A novel approach to fine-tune any deep-learning-based perceptual hashing model to be adversarially robust.</p><p>Although several works explore adversarial attacks against perceptual hashing models, to the best of our knowledge, we are the first to introduce an adversarial training mechanism for them.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Background</head><p>In this section, we discuss related work and the essential concepts used our framework. We provide an overview of perceptual hashing techniques, MPC methods, and deep learning-based detectors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Perceptual Hashing</head><p>Since the MP-FHE scheme requires fuzzy hashes, we require a hashing algorithm that is mostly invariant to perceptual transformations of the image. Several perceptual hashing algorithms exist including aHash (Average Hashing), mHash (Median Hashing), dHash (Difference Hashing), bHash (Block Hashing), wHash (Wavelet Hashing) and the Discrete Fourier Transform Perceptual Hash <ref type="bibr" target="#b84">[86]</ref>. These hashing schemes are used by services like Microsoft's Pho-toDNA and Facebook's PDQ. These hashing algorithms work by dividing images into squares, converting them into a black-and-white format, and quantifying the shading of the squares in different ways. Although these hashes are mostly invariant to color manipulation and noise, they fail when the images are subjected to crops. This is because cropping the image offsets the alignment of the square blocks, heavily altering the hash.</p><p>In recent years, numerous deep hashing algorithms based on convolutional neural networks have been developed <ref type="bibr" target="#b52">[54,</ref><ref type="bibr" target="#b54">56,</ref><ref type="bibr" target="#b86">88,</ref><ref type="bibr" target="#b87">89]</ref>. These methods rely on deep neural networks to extract image features and subsequently compute a hash value based on those features. The resulting hashes capture the semantic content of the image and exhibit greater robustness to transformations like cropping and color adjustments. Apple's Neuralhash <ref type="bibr" target="#b75">[77]</ref> was developed for Child Sexual Abuse Material (CSAM) detection. Figure <ref type="figure" target="#fig_1">2</ref> illustrates the high level architecture of our chosen deep hashing algorithm, which we will now discuss in more detail.</p><p>A perceptual hash function H : R H×W ×C → {0, 1} k maps an image x to a k-bit binary hash. Let H(x) denote the hash function, where H(x) = h 1 (x), . . . , h k (x) . These algorithms consist of two main components. First, a deep feature extractor D(x) : R H×W ×C → R k generates a feature vector z ∈ R k from the image x. This feature vector numerically represents the semantic and structural content of the image. Next, locality-sensitive hashing (LSH) <ref type="bibr" target="#b44">[46,</ref><ref type="bibr" target="#b81">83]</ref> is used to assign similar feature vectors to buckets with similar hash values. For each of the k features, the bit value h i (x) is set to either 1 or 0 depending on the sign of z i using the heaviside step function.</p><p>The idea is that transformations applied to the original image do not perturb the feature vector and, consequently, the hash significantly. We would like it if each h i (x) follows an i.i.d Bernoulli distribution with parameter 0.5. This is achieved by applying PCA whitening to the feature vector before the LSH step. The statistics needed to compute the PCA weights are obtained by using feature vectors of images from the training data. Now, since each component of the feature vector is independent and has an equal chance of being positive or negative after the binarization step, two randomly chosen images have the least possible probability of having the same hash, specifically 2 −k . To compare the similarity and distance between two hashes, we look at the Hamming distance (L 1 distance) between them. We quantify the degree of match between two hashes using the number of bits matched denoted by M where</p><formula xml:id="formula_0">M (H(x), H(x ′ )) = k − L 1 (H(x), H(x ′ ))</formula><p>An adversarial attack involves adding a imperceptible amount of crafted perturbation of magnitude ϵ (typically &lt; 8/255) to each pixel of an image before passing it into the model <ref type="bibr" target="#b77">[79]</ref>, which causes it to behave against its objective. This perturbation is generally created using information obtained from the model's gradients (white box attacks), which requires complete access to the model's architecture and weights. Other forms of attacks either require access to the model's dataset or output logits (gray box attacks) <ref type="bibr" target="#b37">[39,</ref><ref type="bibr" target="#b40">42,</ref><ref type="bibr" target="#b65">67]</ref>, or only query access (black box attacks). There are two kinds of attacks relevant to perceptual hashes, hash collisions and hash aversions. A hash aversion attack would correspond to a malicious individual perturbing the original image x to generate an image x ′ that minimizes the similarity score M , leading to a false negative detection. A hash collision attack can by synthesized when an adversary has access to a a set of hashes stored by the CPO. This involves attacking a query image so that its hash matches one stored in the database, leading to a false positive detection. Adversarial training alone makes it extremely difficult for an adversary to perform either attack, even with full access to the model's weights. Furthermore, hash collision attacks are impossible to achieve in our framework due to the implementation of the secure MP-FHE scheme, which prevents the adversary's access to the perceptual hashes, even in the case of a data leak.</p><p>Bhatia and Meng <ref type="bibr" target="#b10">[12]</ref>, Struppek et al. <ref type="bibr" target="#b75">[77]</ref> have successfully demonstrated that both hash collisions and hash aversions can be performed against deep hashing networks, highlighting NeuralHash as a specific example. However, it is noteworthy that NeuralHash did not deploy any system to avoid these attacks. Adversarial training combined with the MP-FHE scheme secures our system against both attacks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Multi-Party Fully Homomorphic Encryption</head><p>Multi-party Fully Homomorphic Encryption (MP-FHE) is a cryptographic technique that extends the capabilities of single-party homomorphic encryption to multiple participants. It enables computations being executed on encrypted data without revealing their individual inputs, while the decryption requires parties to perform collaboratively decrypt a result once the computation is complete. The advantage of this approach lies in its ability to preserve privacy while performing complex computations, such as those in secure MPC <ref type="bibr" target="#b73">[75]</ref>. Data confidentiality is an important goal in applications such as privacy-preserving data analysis <ref type="bibr" target="#b61">[63]</ref>.</p><p>MP-FHE also builds upon the concept of threshold cryptography, where the decryption process requires the collaboration of a threshold number of parties. This ensures that no single party can decrypt the data independently, enhancing security in scenarios involving untrusted parties. The MP-FHE scheme involves distributing the secret key across parties and utilizing homomorphic properties to perform computations on ciphertexts. Compared to traditional MPC methods like secret sharing, MP-FHE reduces communication overhead, as computations can be performed non-interactively on encrypted data, making it an efficient solution for large-scale, privacy-preserving applications <ref type="bibr" target="#b48">[50,</ref><ref type="bibr" target="#b61">63]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">Deep Learning Based Detectors</head><p>Synthetic images have artifacts that are distinctive to the generation process <ref type="bibr" target="#b58">[60,</ref><ref type="bibr" target="#b83">85]</ref>. Existing detectors often exploit these fingerprints in spatial <ref type="bibr" target="#b20">[22,</ref><ref type="bibr" target="#b28">30,</ref><ref type="bibr" target="#b45">47,</ref><ref type="bibr" target="#b53">55,</ref><ref type="bibr" target="#b59">61,</ref><ref type="bibr" target="#b74">76]</ref> or frequency <ref type="bibr" target="#b29">[31,</ref><ref type="bibr" target="#b30">32,</ref><ref type="bibr" target="#b36">38]</ref> domains to determine whether the image is synthetic or real. This method has two problems: a) Detectors trained on one type of generator do not generalize well on images from unseen generators, and b) transformations like resizing and compression destroy these fingerprints <ref type="bibr" target="#b19">[21]</ref>. Recent work exploits VLMs like CLIP <ref type="bibr" target="#b67">[69]</ref> as feature extractors <ref type="bibr" target="#b3">[5,</ref><ref type="bibr" target="#b21">23,</ref><ref type="bibr" target="#b63">65,</ref><ref type="bibr" target="#b72">74]</ref> and train a classifier to detect synthetic images. Cozzolino et al. <ref type="bibr" target="#b21">[23]</ref> clearly shows these models are more accurate and robust under transformations. We bechmark and analyse existing detectors in Appendix. We conclude leveraging VLM is the best choice for state of the art detection.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Methodology</head><p>The core database in the system is a content registry, indexed by content-producing organization (CPO) with the perceptual hashes of content. The lifecycle of watermark creation consists of the content producing organization calculating perceptual hashes for all their content, encrypting those perceptual hashes to an MP-FHE encryption key for the database, and then digitally signing those encrypted perceptual hashes to establish provenance. Then, when users want to query the provenance of some potentially modified image, they request the parties running the MP-FHE database to find the images with the lowest Hamming distance, then are returned the most likely sources for the image. If no nearby matches are found, then the system falls back to the naïve AI image classifier model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Perceptual Hash Design</head><p>Oquab et al. <ref type="bibr" target="#b64">[66]</ref> developed DINOv2, a self-supervised feature-extracting ViT network that is trained to generate feature vectors invariant to crops and natural perturbations like color jittering, gaussian blur and solarization.</p><p>We use the pre-trained DINOv2 ViT-B/14 (with register tokens) to extract feature embeddings of the given image. Then, we apply PCA to de-correlate each component of the feature vector and simultaneously reduce the dimensionality of the feature vector from 768 to 96, then apply the LSH step to obtain a 96-bit binary string. Naturally, the resulting binary string serves the purpose of a perceptual hash since the original feature vector is highly robust to perceptual transformations of the image. To our knowledge we are also the first to develop an adversarial training scheme for deep perceptual hashing models, the details of which are discussed in section 9.</p><p>We also found that deep perceptual hashing models are, in general, more robust to attacks than classification models. This is due to the differing objectives of both adversaries, hence different image spaces available for attacks. Statistical Test. Let H ∈ {0, 1} k be the hash of an image x in the database of the CPO that we wish to compare the query image against and, H ′ , be the corresponding hash of a query image x ′ . The detection test compares the number of matching bits between H and H ′ to a threshold, i.e. if</p><formula xml:id="formula_1">M (H, H ′ ) ≥ τ where τ ∈ {0, . . . , k},<label>(1)</label></formula><p>then the two images are considered to be the same.</p><p>For the case where x and x ′ do not correspond to same image, we assume that bits h 1 , . . . , h k are i.i.d. Bernoulli random variables with parameter 0.5. Then M (H, H ′ ) follows a binomial distribution with parameters (k, 0.5).</p><p>The False Positive Rate (FPR) is the probability that M (H, H ′ ) takes a value bigger than the threshold τ .</p><formula xml:id="formula_2">FPR(τ ) = P (X ≥ τ ), X ∼ Binomial(k, 0.5)<label>(2)</label></formula><p>Varying τ necessitates a trade-off between the False Negative Rate (FNR) and the FPR, which can be set according to the sensitivity of the use case.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Preserving Privacy of End-Users</head><p>Problem Definition. In many real-world scenarios, maintaining a perceptual hash database poses significant privacy risks. Such a database could expose statistical information about end users and potentially would lead to multiple privacy breaches. For instance, leaking a perceptual hash of an AI generated image may allow partial prompt reconstruction, which can reveal personally identifiable information (PII) <ref type="bibr" target="#b55">[57]</ref>. For example, widely used image generators like DALL-E are obliged to delete user data after up to 30 days, unless deidentified or retained for legal or security purposes <ref type="bibr" target="#b1">[3]</ref>. In another example, OpenAI's Advanced Voice mode is unavailable in the EU because the voice data is eligible for zero retention <ref type="bibr" target="#b0">[2]</ref>. Thus, it is important to design a system for attesting the generated data by AI to preserve copyright related concerns and both preserve the content owners' privacy. Design Principles. To address this challenge, we need a system that can guarantee following:</p><p>-Data confidentiality: No entity should gain direct access to any part of an image or information related to an image (such as pHash) at any time. -Query Leakage resilience: No query or database operation should lead to any data being revealed or stored (temporary or permanently) on any device at any time. -Low Operational Risks: Ideally, computations should require low security considerations and trustless scaling. Adversary Model. We adopt a probabilistic polynomialtime (PPT) adversary model, wherein any entity in the protocol may eavesdrop on or manipulate accessible data with polynomially bounded computational power. Our constructions rely on several cryptographic primitives, which are assumed to be secure against any PPT adversary, specifically MP-FHE <ref type="bibr" target="#b61">[63]</ref>, hash functions, and digital signatures. The final value reveals whether the image has any overlaps in the database (non-zero result) or not (zero result). We implemented our proof-of-concept (PoC) for the proposed system using the Phantom-Zone MP-FHE library 1 in FHEW and link to a comparable implementation of dot product in BFV in Lattigo 2 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Protocol Details</head><p>One of the key security guarantees of the protocol is that the queries do not leak any information about the dataset, beyond confirming whether the pHash of the query image shares significant similarities with any value in the dataset. To achieve this, we define a set of valid queries that are allowed, with the database managed in an MPC manner.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Detector for Unknown Images</head><p>Architecture Open Clip <ref type="bibr" target="#b43">[45]</ref> has trained various contrastive image-language models with better zero-shot performance on ImageNet <ref type="bibr" target="#b25">[27]</ref> than OpenAI's open-sourced version. So, we choose four image encoders for our experiments: SigLIP <ref type="bibr" target="#b85">[87]</ref> models with SoViT-400M <ref type="bibr" target="#b2">[4]</ref> backbone with an input resolution of 224 and 384 and CLIP models with ViT-H <ref type="bibr" target="#b26">[28]</ref> backbone with an input resolution of 224 and 378. We use SVM as our classifier and the second last layer to extract embeddings following <ref type="bibr" target="#b21">[23]</ref>. We did an extensive ablation study to decide the exact architecture of our model. Results of the study are in Appendix.</p><p>1 https://github.com/gausslabs/phantom-zone 2 https://eprint.iacr.org/2024/1774.pdf Method We perform two sets of experiments. 1) We use the better encoders from Open CLIP and train an SVM on the features extracted from their visual encoders. 2) We finetune the entire encoder backbone along with the SVM layer. In the first set of experiments we train the SVM on frozen encoder features for 20 epochs with a batch size of 32. In the second set of experiments. We find that the training loss converges significantly within the first two epochs. So, we finetune each model for five epochs and use the validation set to choose the epoch, after which we get the bestperforming model. Table <ref type="table" target="#tab_1">2</ref> details the finetuning configurations for each model. We also perform adversarial training to protect from malicious attack. Details of adversarial training and accuracy scores are in Appendix.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Median Contrast</head><note type="other">Brightness Blur 00 Original Adversarial</note></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Experimental Results</head><p>In this section, first we evaluate the robustness and accuracy of our proposed DinoHash and DL detector. Finally, we evaluate our PoC of the protocol using the Phantom Zone FHEW library [1] across different setups, ranging from midrange laptops to servers in section 10.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">DinoHash</head><p>We benchmark DinoHash against other prominent methods like NeuralHash, Stable Signature, and DCT-DWT, across multiple transformations designed to mimic typical image edits. We run all experiments on a single NVIDIA GPU A100 GPU with 40GB of VRAM. We present our results for four different complex transformations, each transformation consists of a base transformation of a 20% crop from each side followed by a JPEG compression with a quality factor of 30%. This simulates an effect similar to a screenshot. We then apply one of the following four operations:</p><p>1. a brightness shift by a random factor between ±30% 2. a contrast shift by a random factor between ±30% 3. gaussian blurring with a kernel width of 2 4. application of a median filter with k = 3 These represent common image transformations and filters found in most image editing applications. To ensure even stronger robustness against complex image distortions: we then apply a random-erasing augmentation, where a square area with a side length 20% of the image is erased; followed by a random text overlay with a random string of 10 alphanumeric characters. A visualization of these transformations can be found in Figure <ref type="figure" target="#fig_4">4</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Brightness Contrast</head><p>Median Blur </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Distortion Robustness</head><p>We use 1M randomly sampled images from the Diffu-sionDB dataset <ref type="bibr" target="#b80">[82]</ref> to carry out experiments for DCT-DWT watermarking, NeuralHash and our framework. We use 1M randomly sampled prompts of the dataset to generate images to benchmark Stable Signature. Figure <ref type="figure" target="#fig_6">6</ref> shows the Receiver Operating Characteristic (ROC) Curve for different hashing/watermarking methods under different transformations. The level of τ is varied from 0 to 96 to obtain different values for the TPR and FPR. The TPR is calculated by measuring the fraction of images whose degree of match, M , after the transformation equals or exceeds τ . Conversely, the FPR is approximated using Equation 2 since it is too small to be measured experimentally. Figure <ref type="figure" target="#fig_5">5</ref> reports results on the mean bit accuracy of the algorithms. We do not include the TPR-FPR plot for DCT-DWT due to its near-random performance.</p><p>We observe that all algorithms are roughly equally robust to the brightness and contrast transformations due to their non-destructive nature. We also observe that Dino-Hash is significantly more robust to transformations than NeuralHash and Stable Signature across both metrics. We do not report the results for the vanilla (no transformation) case since any hashing method would trivially achieve a 100% match in the cases without perturbations. This, however, does not always hold for watermarking methods since the watermark generation and extraction models may not always agree. Furthermore, all watermarking methods report the PSNR (Peak Signal-to-Noise Ratio) and SSIM (Structural Similarity Index) of the watermarked images. These metrics measure how perceptually similar the watermarked and the unwatermarked images are. Since hashing algorithms do not cause any modification to the underlying image, we achieve perfect PSNR and SSIM scores. Since Neu-ralHash is a proprietary algorithm, it is difficult to comment on why DinoHash performs better. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Experiments on DL detector</head><p>We fix a consistent setup to simulate real world conditions on a challenging dataset with postprocessing steps to evaluate our models as accurately as possible.</p><p>Dataset We report all results on the recently proposed Synthbuster dataset <ref type="bibr" target="#b8">[10]</ref> as it has images from widely used commercial tools, i.e. Dalle2 <ref type="bibr" target="#b69">[71]</ref>, Dalle3 <ref type="bibr" target="#b9">[11]</ref>, Midjourneyv5 <ref type="bibr" target="#b60">[62]</ref> and Adobe Firefly <ref type="bibr" target="#b35">[37]</ref>. It uses RAISE-1k <ref type="bibr" target="#b23">[25]</ref> as its real part. Each source contains 1000 images. We use 10000 pairs of real and synthetic images for all training purposes. This set is created using the strategy proposed in <ref type="bibr" target="#b21">[23]</ref>. We randomly select 10000 images from the train set of COCO- 2017 <ref type="bibr" target="#b51">[53]</ref>, generate their caption using BLIP <ref type="bibr" target="#b49">[51]</ref>, and generate images for these captions using Stable Diffusion XL <ref type="bibr" target="#b66">[68]</ref>. We use a validation set of 500 pairs of images created similarly using the validation set of COCO-2017.</p><p>Transformations In real life, images often suffer cropping and compression when shared. We perform a set of transformations on all images to make the model more robust and to test its robustness under such attacks. We perform random crop to 62.5% to 100% of the original scale followed by resizing to 200x200 pixels. We then perform random jpeg compression to between 85% to 100% of initial quality.</p><p>Testing Protocol Our testing dataset contains synthetic images from four different sources having 1000 images each and a real set of 1000 images. While computing metrics for one synthetic image source, we consider just that subset of dataset and the real images. So, we effectively have 1000 synthetic and real images, making the dataset balanced. Metrics We use area under ROC curve (AUC) and accuracy (ACC) with threshold of 0.5 as our metric. We use threshold of 0.5 to simulate a situation with no prior information about the detector.</p><p>Results Our models outperform the previous SoTA <ref type="bibr" target="#b21">[23]</ref> across both metrics. Linear SVM trained on top of frozen CLIP image encoder with ViT-H backbone, 378 input resolution and quickGELU activation function yields best results on most generators and on average. It shows improvements of 23.3% / 25.4% in AUC/ACC respectively over previous SoTA. Other models also perform better than Cozzolino et al. <ref type="bibr" target="#b21">[23]</ref>, we present detailed results in Tab. 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Limitations and Future Work</head><p>Incorporating FHE into the querying process increases computational overhead, which could impact performance in real-time applications. Future research could focus on optimizing FHE-based indexing methods for quick retrieval to meet computational demands, or augmenting the Worldcoin Iris matching system or Apple's Wally for our use case.</p><p>One advantage of watermarking over hashing is that watermarking only requires storing one hash per image creator for provenance, as it needs only to identify the image's creator, not each specific image. In contrast, perceptual hashing requires storing one hash per image, which increases the search space to make matching more robust but requires more memory and increased latency.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>Our three-part framework addresses significant challenges in AI content provenance detection by combining perceptual hashing, FHE, and a robust AI content detection model. Our perceptual hashing method with DINOV2 overcomes the limitations of traditional watermarking by capturing semantic and structural image features that persist through common transformations without altering the base image while also maintaining robustness to adversarial attacks. Applying FHE within this framework ensures that users can query content databases securely, preserving privacy without compromising the system's integrity, even if some data is exposed. Finally, the AI-generated content detection model increases the framework's robustness by identifying AI-generated images that may be generated outside the known database.</p><p>Provenance Detection for AI-Generated Images: Combining Perceptual Hashing, Homomorphic Encryption, and AI Detection Models Supplementary Material Figure <ref type="figure">7</ref>. Area Under ROC curve for various models on postprocessed images. Arranged in descending order of average AUC.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Benchmarking existing DL detectors</head><p>Existing litreature contains various methods for detecting AI generated images using machine learning models. These methods can be classified primarily into a) Artifact based methods and b) VLM based methods. Artifact based methods <ref type="bibr" target="#b14">[16,</ref><ref type="bibr" target="#b39">41,</ref><ref type="bibr" target="#b57">59,</ref><ref type="bibr" target="#b62">64,</ref><ref type="bibr" target="#b79">81]</ref> leverage fingerprints of image generators or noise patterns of camera <ref type="bibr" target="#b16">[18]</ref> to detect AI generated image. While this method is effective, it often does not generalize well to unseen generators and artifacts are often lost under operations like JPEG compression, resizing and random crop. VLM based methods <ref type="bibr" target="#b21">[23,</ref><ref type="bibr" target="#b63">65]</ref> leverage the join image-language feature space to detect fake images. In this era of social media and freely available text-toimage generators the task of detection AI generated images has gained a lot of attention. A lot of different approaches are available but we found a lack of common benchmark. A lot of authors often do not report results on realistic scenarios like highly compressed images. Cozzolino et al. <ref type="bibr" target="#b21">[23]</ref> benchmark state-of-the-art detectors and show through extensive experiments that VLM based method perform well on postprocessed images while performance of artifact based methods often fall to near random chance. Despite this effort there still existed new detectors <ref type="bibr" target="#b16">[18,</ref><ref type="bibr" target="#b62">64]</ref> that were not benchmarked under the same condition. We benchmark all detectors on the dataset and under transformations described in Section 4.3. The Area Under Curve and Accuracy for the models not benchmarked in <ref type="bibr" target="#b21">[23]</ref> are visualized in Figure <ref type="figure">7</ref> and Figure <ref type="figure" target="#fig_7">8</ref> respectively. Our benchmarking reinforced the findings of Cozzolino et al. <ref type="bibr" target="#b21">[23]</ref> and shows the superiority of VLM based detectors. Hence, we choose to leverage VLM based detector in our framework.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.">Ablation Study</head><p>Section 7 clearly motivates the use of VLMs for generalizable and robust detector. Choice of architecture and exact method of detection can significantly affect detection. We have to choose which VLM to use, size of backbone (B/L/H) to use and the method of detection. We can either use zero shot capablities of VLMs or train a classifier on top of features extracted from VLMs. If we choose zero shot methods we could either use fixed text template or generate custom text using state of the art models like BLIP. We explain each choice in detail below.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.1.">Choice of Backbone</head><p>Radford et al. <ref type="bibr" target="#b67">[69]</ref> introduced contrastive learning of joint language image embedding space. The pioneering CLIP model was adopted and used extensively due to its generalization and few shot capabilities. Follow-up work <ref type="bibr" target="#b34">[36,</ref><ref type="bibr" target="#b85">87]</ref> improved this through various strategies, including additional loss terms, a new dataset created using novel data filtering strategies and changes in normalization. Open CLIP <ref type="bibr" target="#b43">[45]</ref> has trained a range of these models on varying backbones, datasets and resolutions. We find that DFN <ref type="bibr" target="#b34">[36]</ref> and SigLIP-based models <ref type="bibr" target="#b85">[87]</ref> have the highest zero-shot imagenet accuracies. Our task involves using these models for downstream tasks, so we use zero-shot ImageNet accuracies to indicate which model could perform well on our task. Thus, we experiment with DFN and SigLIP-based models along with Open AI's CLIP. We have three different backbones, i.e. ViT-L, ViT-H and so-ViT-400M. Results are detailes in Table <ref type="table" target="#tab_2">3</ref>. We observe that the DFN-based ViT-H backbone outperforms the CLIP-based ViT-L backbone and SigLIP-based so-ViT-400M backbone when using the same classification strategy, i.e. SVM. It also outperforms CLIPbased ViT-L when we do zero-shot classification. So, the DFN-based ViT-H backbone is the clear choice for our detection model. We note that the SigLIP-based so-ViT-400M backbone has performance comparable performance, so we include it in further experiments.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.2.">Method of Detection</head><p>Cozzolino et al. <ref type="bibr" target="#b21">[23]</ref> tested Support Vector Machine, Logistic Regression (LR), Mahalanobis distance (MAH), Gaussian Naive Bayes classifier (GNB), Soft voting k-Nearest Neighbor (SNN) with Open AI's CLIP and found out that SVM performs the best on the task of detection AI generated images. However, CLIP's zero shot capablities were not tested. So we test three classification strategies, namely zero-shot classification with fixed text template, zero-shot classification with BLIP generated text template and SVM. Table <ref type="table" target="#tab_2">3</ref> clearly shows SVM performs better, so we use SVM in our final detector.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.">Adversarial Training</head><p>In this section we discuss the adversarial fine-tuning implementation details for DinoHash and DL based detector.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.1.">DinoHash</head><p>Given a hashing model, H, we would like to finetune it such that an adversarial perturbed image, x ′ , produces the same hash as the original image, x where ∥x − x ′ ∥ ∞ ≤ ϵ, i.e. we would like that H(x ′ ) ≈ H(x). Hence, we initially formulated the following objective for finetuning:</p><formula xml:id="formula_3">H robust = arg min H n i=1 max ∥x ′ i −xi∥ ∞ ≤ϵ ∥H(x ′ i ) − H(x i )∥ 1 .<label>(3)</label></formula><p>The downside of this approach was that it led to a collapse of the hashing function and caused it to produce the same hash for all images, which is undesirable. This behaviour can be explained since the proposed loss function is perfectly minimized. This led us to formulate our second optimization problem:</p><formula xml:id="formula_4">H robust = arg min H n i=1 max ∥x ′ i −xi∥ ∞ ≤ϵ ∥H(x ′ i ) − H orig (x i )∥ 1 .<label>(4)</label></formula><p>Where H orig denotes the original, non-robust hashing model. This ensured that the model retains its original hashing capability. The inner maximization problem was solved by adapting APGD 24, a popular algorithm for adversarial attacks, to our use case.</p><p>Since the heaviside step function is non-differentiable, we used cross-entropy loss on the logits before the binarization step. Furthermore, we observed that adding a cleanloss term aided the optimization process and resulted in faster convergence. The final loss function used in code was:</p><formula xml:id="formula_5">L(x i ) = CE( Ĥ(A(x i )), Ĥorig (x i )) + α • CE( Ĥ(x i ), Ĥorig (x i ))<label>(5)</label></formula><p>Here A(x) represents the attacked version of image x generated by APGD with ϵ = 8/255, CE represents the cross-entropy loss with the second term as the target logit, Ĥ represents the deep hashing model without the binarization step, and α represents the loss weightage for clean examples and was set to 500 in our experiments. We fine-tune DinoHash on DiffusionDB using the loss function defined above for 20, 000 steps with a batch size of 256 using the We compare the adversarial robustness of DinoHash against different baseline models in Table <ref type="table" target="#tab_5">5</ref>. We note that for all baseline models, the adversarial attack achieves nearperfect accuracy, significantly underscoring the insecurity of their application as compared to DinoHash.</p><p>We would like to mention that we were initially experimenting with DISCO <ref type="bibr" target="#b42">[44]</ref> to enhance robustness against adversarial attacks. However, our experiments indicated that DISCO is extremely vulnerable to standard PGD attacks, despite prior claims that the Backward Pass Differentiable Approximation Attack 9 was the strongest. This suggests that its reported robustness is heavily overstated.  We also found that deep perceptual hashing models are, in general, more robust to attacks than classification models. This is due to the differing objectives of both adversaries, hence different image spaces available for attacks. Take a trained classifier with 1000 output logits and a hashing model with a 1000-dimensional hash as well. To successfully perform an attack on the classifier, the adversary needs to find an input image that perturbs only one logit, the one corresponding to the correct class. On the other hand to successfully attack a hashing model the adversary needs to perturb atleast 500 logits, leading to a much tighter searchspace. To validate this claim we varied the resulting dimension of the PCA post-processing step and observed that as the number of dimensions of the hash increased, the attack success rate decreased.</p><p>Future work can attempt to also try additional meth-ods such as Ensemble Adversarial Training <ref type="bibr" target="#b76">[78]</ref>, Adversarial Logit Pairing <ref type="bibr" target="#b46">[48]</ref>, and PGD Adversarial Training <ref type="bibr" target="#b56">[58]</ref>-with input transformation defenses like DefenseGAN <ref type="bibr" target="#b70">[72]</ref>, BaRT <ref type="bibr" target="#b68">[70]</ref>, Feature Squeezing <ref type="bibr" target="#b82">[84]</ref> and Randomized Smoothing <ref type="bibr" target="#b18">[20]</ref> to further increase robustness against attacks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.2.">DL based detector</head><p>Schlarmann et al. <ref type="bibr" target="#b71">[73]</ref> proposed an unsupervised method to adversarially finetune CLIP that preserves performance on downstream tasks. We use this method for adversarial finetuning of our model. We first discuss the method below. Then we discuss our results.</p><p>Method We aim to minimize the distance between the embeddings of unattacked images for original CLIP model and corresponding adversarially attacked image for the robust model. The idea is that if embeddings are unaffacted by attack then performance on downstream task will be preserved. In the following we denote with ϕ Org the original CLIP encoder which is frozen. ϕ(z) is the encoder that is being trained. x is the input image and z is the corresponding adversarially attacked image. We propose the following embedding loss:</p><formula xml:id="formula_6">L ours (ϕ, x) = max ∥z−x∥ ∞ ≤ϵ ∥ϕ(z) − ϕ Org (x)∥ 2 2 .<label>(6)</label></formula><p>Training Details We use PGD attack for training with ϵ 4 and l ∞ norm. We use 10 iterations of attack per image with batch size of 128. We train for 20000 iterations on ImageNet dataset. We use ADAM optimizer with a learning rate of 1e-5, weight decay of 1e-4 and learning rate warmup of 1400 steps. We use L2 loss for attack. The training parameters are consistent with <ref type="bibr" target="#b71">[73]</ref>.</p><p>Results We do the adversarial evaluation for just the finetuned version of our detector with DFN ViT-H backbone and 224 resolution. We evaluate using 100 iterations of APGD attack with binary cross entropy loss. We evaluate non-robust and adversarially finetuned model on clean data, attacked data with epsilon 4 and attacked data with epsilon 8. We present the results in Table <ref type="table" target="#tab_3">4</ref>. We observe that the adversarially trained model's performance does not degrade much on clean data but it performs much better on attacked data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.">Searching pHash in the Database</head><p>We have implemented our protocol as a PoC in an opensource library, available on GitHub. For this, we utilize Phantom Zone [1], an experimental library designed for the practical realization of MP-FHE. In our benchmarking scenario, the pHash values of the images stored in the database are encrypted using a shared key between two parties. This allows us to efficiently query and match encrypted pHash values, demonstrating the feasibility of our protocol in realworld applications.</p><p>In our implementation, we use the FheBool class from the PhantomZone library to perform homomorphic boolean logic. In this approach, each bit of the vectors is encrypted individually. As a result, encrypting a 96-bit vector involves creating 96 individual ciphertexts. A key advantage of treating each bit separately is the potential for parallelization during the evaluation phase of MP-FHE, which significantly speeds up the computation.</p><p>When a specific pHash value is queried, it is first encrypted locally by the client before being sent to the server for comparison with the encrypted database. The server then performs an XOR operation between the queried pHash value and each database entry. This operation is executed bit by bit and in parallel across all bits of the vectors. After the XOR operations are completed, the Hamming distance for each result is computed. This step is optimized using a 6-layer parallel boolean logic adder tree, which efficiently calculates the Hamming distance for all entries. If the distance for an entry is below the specified threshold (e.g., 8 bits), the result for that entry is set to True (1); otherwise, it is set to False (0). Once all entries are processed, the results are combined using a parallel OR tree. The final result is then sent back to the querying party for partial decryption. If the decrypted result is 1, it indicates that the queried pHash value is sufficiently similar to one or more entries in the encrypted database. Method Complexity. The employed MP-FHE scheme supports Boolean operations on encrypted data. For simplicity, we assume each bit of the pHash values is encrypted individually Thus, for pHash values of length l, we have l ciphertexts. However, these ciphertexts are further compressed into a single one to minimize communication complexity, requiring only a few kilobytes of storage. Our MP-FHE setup includes a parallel XOR array of length l and a bit-counter of size l, which outputs the count of 1s in an encrypted value. A comparator of size log l then compares this count with an encrypted threshold value, Enc(τ ), and outputs an encrypted bit: it is 0 if the Hamming distance ex-ceeds the threshold, indicating a difference above this limit. This comparison process is repeated in parallel for every encrypted value in the registry. Finally, an OR tree with n leaves calculates the OR value of all comparisons, where n is the number of registry entries.</p><p>Table <ref type="table">6</ref> presents the average latency cost of determining whether two encrypted 96-bit vectors are close in FHEW, measured on a dataset with 1,000 entries. The table reports a cost breakdown of each phase of the FHEW evaluation. The columns "XOR," "HD," and "Full Query" represent the average latency of calculating the XOR value, Hamming distance, and determining whether two 96-bit encrypted vectors are close or not, respectively. We conducted experiments on three different machines: 1) A midrange Dell Latitude 5531 with a 12 th Gen Intel Core-i5 processor, 2) A Macbook Pro with a 10-core Apple Silicon M4 processor, and 3) A Google Cloud server equipped with 56 vCPUs and 112 GB memory running on an AMD EPYC 7B13 processor.</p><p>One of the key features of the proposed method is that each entry in the data is homomorphically encrypted using the same multi-party key. Consequently, FHE evaluations can be trustlessly distributed across multiple untrusted parties, as no single entity can leak or decrypt any data during query execution without access to all shared key fragments. This property enables the system to scale with minimal security considerations, making it cost-efficient.</p><p>Although our current PoC implementation results indicate that a CPU-only device (without GPU acceleration) requires over 100 seconds to execute a query on a database with only 1,000 entries, the system can be scaled inexpensively by distributing computations across multiple trustless parties. The results from each party can then be merged using a parallel OR tree. The concept of clustering databases has also been utilized in previous work to enhance scalability <ref type="bibr" target="#b6">[8]</ref>.</p><p>Related work. There are two categories of related work relevant to our constructions. The first group focuses on preserving the privacy of user queries against a database that is visible to the query executor <ref type="bibr" target="#b6">[8,</ref><ref type="bibr" target="#b41">43]</ref>. In such setups, it is crucial to ensure that the database owner cannot infer any information about the user's queries. However, our system model is fundamentally different from these works. Specifically, in our target application, the database contains confidential user history that must remain undisclosed to any entity at all times. The key distinction is that, in our setting, even the data owner should not be able to reconstruct the query database. This constraint makes our protocol and the underlying problem significantly more complex than those addressed in <ref type="bibr" target="#b6">[8,</ref><ref type="bibr" target="#b41">43]</ref>.</p><p>Another line of work targets the same type of scenario as ours, where the database must remain unreconstructible precisely, the user asserts the following statement: S R ∆ , [q], i, h X , h x : ∃ X, x s.t. x=f ↓(X) and h X = H C (X) and h x = H C (x) and q = H P (x) and ∃ O(R ∆ , q i , i } <ref type="bibr" target="#b5">(7)</ref> We note that the prover generates n distinct proofs for i ∈ {1, . . . , n} to ensure each party has received a unique share of [q]. 7 The parties in the MPC-based database verify their received proofs and execute the query for the shared pHash value [q]. They then participate in the MPC to execute the given query on the shared DB. Based on the query result, the parties engage in a collaborative zkSNARK protocol to achieve public auditability, as follows:</p><p>-Match: If there is a match, the result of the execution includes the index of the matched values. Therefore, the parties claim the following statement:</p><formula xml:id="formula_7">S R ∆ , [q], t : ∃ id ∈ N s.t. γ = n 0 DB i [id]</formula><p>and R ∆ = Merkle Root(∪ q i ) and HD(q, γ)≤t</p><p>-No Match: If there are no matches found in the database, then parties will claim following statement:</p><p>S R ∆ , [q], t : ∀ id ∈ N {DB} γ = n 0 DB i and R ∆ = Merkle Root(∪ q i ) and HD(q, γ)&gt;t</p><p>It should be noted that while proving the statement in equation 8 is relatively feasible, the statement in equation 9 is computationally expensive. However, we argue that in most scenarios, the most critical supporting proof would be the case where a match is found, as expressed in equation 8.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. System Overview. We combine the strengths of our own perceptual hashing model, DinoHash, Multi-Party Fully Homomorphic Encryption (MP-FHE) and improved AI Detection Model to build a robust provenance framework.</figDesc><graphic coords="1,426.28,391.10,63.10,63.09" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Deep neural feature extractor architecture. The pipeline consists of a feature extractor network and Locality Sensitive Hashing (LSH) step. The PCA whitening decorrelates components of the feature vector, so that the hashes of two random different images have the least probability of being the same.</figDesc><graphic coords="3,194.63,111.04,97.12,79.83" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Overview of the protocol. The database is kept private, content generators can write encrypted data to it, and the public can run private queries that return only provenance data.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>Figure 3 illustrates a scenario involving two parties (for simplicity) executing a secure protocol: one as the content creator (the owner of generative model) and the other as a regulator or trusted entity (a community representative). Each party possesses their own set of private and public keys. The protocol operates in the following phases: -Setup Phase: Parties exchange shares of their public keys to create an aggregated m-of-n MPC public key. The shared key is used universally to encrypt pHash values. Note that all parties generating and signing data are incentivized to contribute up to (n − m) live servers to the protocol, so that they can help ensure that no one decrypts database values and people conform to the protocol. More servers means they could affect liveness, and less servers means they have less control over decryption. -Encryption Phase: pHash value of each image is encrypted by the generator using the aggregated public key (P shared ) and stored in database. To enhance the accuracy of future claims of copyright violations, parties may decide to also store MPC-encrypted version of each image for a ceremony-based opening under specific conditions, like when pHash matches show very low hamming distance. -Evaluation Phase: When a new image is submitted for evaluation, the pHash value of the image is encrypted using the same shared key (P shared ) and undergoes a fully homomorphic computation of the Hamming distance across the database. The result is an encrypted output indicating the number of pHash values with close Hamming distances. The precise FHE function may vary depending on the specific scenario, database size, or the quality of the pHash values. -Decryption Phase: To decrypt evaluation results, both parties exchange decryption shares in an MPC process.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. Transformations used to benchmark hashing and watermarking methods. With screenshot simulation as pre-processing, and random erasing followed by text overlay as post-processing.</figDesc><graphic coords="6,338.32,290.80,93.47,93.47" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Bit Accuracy Comparison. The mean bit accuracy of different methods after a simulated screenshot followed by the respective transformations.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. Detection Results. The TPR/FPR detection curve of different methods after a simulated screenshot followed by the respective transformations, random erasing and text overlay.</figDesc><graphic coords="7,317.25,334.95,247.50,185.63" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 8 .</head><label>8</label><figDesc>Figure 8. Accuracy for various models on postprocessed images. Arranged in descending order of average accuracy.</figDesc><graphic coords="13,323.16,142.37,224.44,167.34" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>AUC/Accuracy scores for various methods across different commercial tools with average values. Accuracy values here are calculated with threshold of 0.5. Bold represent highest value in a column and italics represent second highest value.</figDesc><table><row><cell>Method</cell><cell>Backbone</cell><cell>Resolution</cell><cell>DALL-E 2</cell><cell>DALL-E 3</cell><cell>Firefly</cell><cell>Midjourney v5</cell><cell>AVG</cell></row><row><cell>Cozzolino et al. [23]</cell><cell>-</cell><cell>-</cell><cell cols="3">0.706 / 0.612 0.794 / 0.639 0.766 / 0.635</cell><cell>0.698 / 0.602</cell><cell>0.741 / 0.622</cell></row><row><cell>Corvi et al. [21]</cell><cell>-</cell><cell>-</cell><cell cols="3">0.689 / 0.502 0.287 / 0.500 0.574 / 0.501</cell><cell>0.481 / 0.500</cell><cell>0.508 / 0.501</cell></row><row><cell>Ours-frozen</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>DFN [36]</cell><cell>ViT-H</cell><cell>378</cell><cell cols="3">0.767 / 0.584 0.999 / 0.980 0.936 / 0.754</cell><cell>0.949 / 0.804</cell><cell>0.913 / 0.780</cell></row><row><cell>DFN [36]</cell><cell>ViT-H</cell><cell>224</cell><cell cols="3">0.792 / 0.605 0.997 / 0.974 0.921 / 0.720</cell><cell>0.934 / 0.771</cell><cell>0.911 / 0.767</cell></row><row><cell>SigLIP[87]</cell><cell>So-ViT-400M</cell><cell>224</cell><cell cols="3">0.663 / 0.574 0.996 / 0.965 0.896 / 0.730</cell><cell>0.909 / 0.785</cell><cell>0.866 / 0.764</cell></row><row><cell>SigLIP[87]</cell><cell>So-ViT-400M</cell><cell>384</cell><cell cols="3">0.731 / 0.600 0.997 / 0.972 0.924 / 0.742</cell><cell>0.926 / 0.772</cell><cell>0.895 / 0.771</cell></row><row><cell>Ours-finetuned</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>DFN [36]</cell><cell>ViT-H</cell><cell>378</cell><cell cols="3">0.742 / 0.534 0.991 / 0.965 0.870 / 0.585</cell><cell>0.906 / 0.706</cell><cell>0.877 / 0.697</cell></row><row><cell>DFN [36]</cell><cell>ViT-H</cell><cell>224</cell><cell cols="3">0.818 / 0.559 0.998 / 0.972 0.910 / 0.623</cell><cell>0.880 / 0.689</cell><cell>0.901 / 0.711</cell></row><row><cell>SigLIP[87]</cell><cell>So-ViT-400M</cell><cell>224</cell><cell cols="3">0.781 / 0.542 0.997 / 0.966 0.887 / 0.620</cell><cell>0.937 / 0.737</cell><cell>0.901 / 0.716</cell></row><row><cell>SigLIP[87]</cell><cell>So-ViT-400M</cell><cell>384</cell><cell cols="3">0.772 / 0.592 0.993 / 0.966 0.903 / 0.664</cell><cell>0.938 / 0.777</cell><cell>0.902 / 0.750</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc>Training configurations for various methods, including backbone, resolution, epochs, and learning rate.</figDesc><table><row><cell>Method</cell><cell>Backbone</cell><cell cols="4">Resolution Epoch LR Batch Size</cell></row><row><cell cols="2">SigLIP [87] So-ViT-400M</cell><cell>384</cell><cell>5</cell><cell>5e-6</cell><cell>8</cell></row><row><cell cols="2">SigLIP [87] So-ViT-400M</cell><cell>224</cell><cell>3</cell><cell>5e-6</cell><cell>8</cell></row><row><cell>DFN [36]</cell><cell>ViT-H-14</cell><cell>378</cell><cell>4</cell><cell>5e-6</cell><cell>8</cell></row><row><cell>DFN [36]</cell><cell>ViT-H</cell><cell>224</cell><cell>3</cell><cell>5e-6</cell><cell>8</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 .</head><label>3</label><figDesc>Ablation study on AI detection model architecture with individual model performance. Table contains accuracy values on non postprocessed images.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 4 .</head><label>4</label><figDesc>Comparison of Non-Robust and Robust Models Across Attack Types and Generators AdamW optimizer. The adversarial examples were generated using APGD with 10 steps.</figDesc><table><row><cell>'</cell><cell cols="2">Clean Data</cell><cell cols="2">Adversarial</cell><cell cols="2">Adversarial</cell></row><row><cell>ε</cell><cell>-</cell><cell></cell><cell>4</cell><cell></cell><cell>8</cell><cell></cell></row><row><cell></cell><cell cols="6">Non-Robust Robust Non-Robust Robust Non-Robust Robust</cell></row><row><cell>DALL•E 2</cell><cell>0.559</cell><cell>0.54</cell><cell>0.645</cell><cell>0.838</cell><cell>0.662</cell><cell>0.822</cell></row><row><cell>DALL•E 3</cell><cell>0.972</cell><cell>0.847</cell><cell>0.66</cell><cell>0.867</cell><cell>0.685</cell><cell>0.864</cell></row><row><cell>Firefly</cell><cell>0.623</cell><cell>0.574</cell><cell>0.632</cell><cell>0.826</cell><cell>0.641</cell><cell>0.825</cell></row><row><cell>Midjourney v5</cell><cell>0.689</cell><cell>0.614</cell><cell>0.651</cell><cell>0.85</cell><cell>0.662</cell><cell>0.838</cell></row><row><cell>Average</cell><cell>0.711</cell><cell>0.644</cell><cell>0.647</cell><cell>0.845</cell><cell>0.663</cell><cell>0.837</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5 .</head><label>5</label><figDesc>Performance of different models under adversarial perturbations with the APGD attack performed using 100 steps</figDesc><table /></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>due to its sensitive nature of stored data. The most notable recent work in this category are <ref type="bibr" target="#b11">[13,</ref><ref type="bibr" target="#b50">52]</ref>, in which the authors propose secretly sharing the original database among multiple parties, enabling user queries to be executed in an MPC-based manner. However, our MP-FHE-based protocol achieves stronger security guarantees. Notably:</p><p>• Query execution can be performed by any party, not just the shareholders. • There are no costs associated with maintaining database shares, as the entire database remains encrypted and does not leak any information. • No interaction is required among shareholders during query execution; the only interaction occurs when decrypting the final query result. This results in significantly lower communication complexity as pointed in recent work, such as <ref type="bibr" target="#b50">[52]</ref>. However, it is important to acknowledge that a pure MPCbased setup generally achieves higher performance compared to our FHE-based approach <ref type="bibr" target="#b50">[52]</ref>. Therefore, while our construction represents an ideal and highly secure solution, it may not be practical for large-scale deployments. For this reason, can also extend and refine the MPC-based World Iris protocol <ref type="bibr" target="#b11">[13]</ref>. Other algorithms, such as KD-Trees, allow indexing for nearest-neighbor search of multidimensional vectors, however these frameworks cannot be used in conjunction with FHE schemes and keep perfect privacy. 2 , 3 The user u i submits a prompt to the server and receives the generated image as the result. <ref type="bibr" target="#b2">4</ref> The TEE calculates the pHash of the resulting image ∆ i and distributes the shared pHash components (sh 1 , . . . , sh n ) among n parties (DB 1 , . . . , DB n ). During this phase, neither the generated image nor its related information is stored. No single party can retrieve any information about the image without collaboration from the others. <ref type="bibr" target="#b3">5</ref> When a new image is checked against the shared database, its pHash is first calculated, and then this value is distributed among the n parties. <ref type="bibr" target="#b4">6</ref> The proof of ownership for the original image is calculated and sent to the databases alongside the shared pHash value. Given the input size of the pHash model is 224 × 224, the owner of the query image x proves knowledge of a larger image X that has been resized to 224 × 224. The user also demonstrates that the resized image x has a pHash value of q, which is shared as [q] = {q 1 , . . . , q n }. Moreover, since no party will ever gain access to all of these shares (q 1 , . . . , q n ), it is necessary to prove to each party that they posses a unique and correct share of of [q]. To this end, we propose building a Merkle tree ∆ out of these shares and prove each party is given a certain unique leaf of ∆. Finally, to connect these claims, commitments for both the original and resized versions of the image are needed, for which we employ collision-resistant image hashing techniques from prior work <ref type="bibr" target="#b24">[26,</ref><ref type="bibr" target="#b31">33]</ref>. More</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.">Preserving Database Confidentiality without FHE, using MPC</head></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<idno>2024-10-08. 5</idno>
+		<ptr target="https://platform.openai.com/docs/models/how-we-use-your-data" />
+		<title level="m">How we use your data</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<idno>cessed: 2024-10-26. 5</idno>
+		<ptr target="https://help.openai.com/en/articles/7039943-data-usage-for-consumer-services-faq" />
+		<title level="m">Data usage for consumer services faq</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Getting vit in shape: Scaling laws for compute-optimal model design</title>
+		<author>
+			<persName><forename type="first">Xiaohua</forename><surname>Ibrahim M Alabdulmohsin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Beyer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Alberto Del Bimbo, and Rita Cucchiara</title>
+		<author>
+			<persName><forename type="first">Roberto</forename><surname>Amoroso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Davide</forename><surname>Morelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marcella</forename><surname>Cornia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lorenzo</forename><surname>Baraldi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.00500v1</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Parents and Children: Distinguishing Multimodal DeepFakes from Natural Images</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Waves: Benchmarking the robustness of image watermarks</title>
+		<author>
+			<persName><forename type="first">Bang</forename><surname>An</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mucong</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tahseen</forename><surname>Rabbani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aakriti</forename><surname>Agrawal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuancheng</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chenghao</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sicheng</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abdirisak</forename><surname>Mohamed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxin</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Goldstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Furong</forename><surname>Huang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Image quality analysis of png images on whatsapp messenger sending</title>
+		<author>
+			<persName><forename type="first">Fahmi</forename><surname>Anwar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abdul</forename><surname>Fadlil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Imam</forename><surname>Riadi</surname></persName>
+		</author>
+		<ptr target="No.85/M/KPT/2020.2" />
+	</analytic>
+	<monogr>
+		<title level="j">Telematika</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="12" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note>Accreditated SINTA &quot;2&quot; Kemenristek/BRIN</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Scalable private search with wally</title>
+		<author>
+			<persName><forename type="first">Hilal</forename><surname>Asi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fabian</forename><surname>Boemer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Genise</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhammad</forename><surname>Haris Mughees</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tabitha</forename><surname>Ogilvie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rehan</forename><surname>Rishi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guy</forename><forename type="middle">N</forename><surname>Rothblum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kunal</forename><surname>Talwar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karl</forename><surname>Tarbe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruiyu</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marco</forename><surname>Zuliani</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Obfuscated gradients give a false sense of security: Circumventing defenses to adversarial examples</title>
+		<author>
+			<persName><forename type="first">Anish</forename><surname>Athalye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">A</forename><surname>Wagner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+				<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Synthbuster: Towards detection of diffusion model generated images</title>
+		<author>
+			<persName><forename type="first">Quentin</forename><surname>Bammey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE OJSP</title>
+		<imprint>
+			<biblScope unit="issue">7</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">James</forename><surname>Betker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Brooks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfeng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Linjie</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Long</forename><surname>Ouyang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juntang</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joyce</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yufei</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wesam</forename><surname>Manassra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Casey</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunxin</forename><surname>Jiao</surname></persName>
+		</author>
+		<ptr target="https://openai.com/dall-e-3" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Exploiting and defending against the approximate linearity of apple&apos;s neuralhash</title>
+		<author>
+			<persName><forename type="first">Jagdeep</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bhatia</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Meng</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Large-scale MPC: Scaling private iris code uniqueness checks to millions of users</title>
+		<author>
+			<persName><forename type="first">Remco</forename><surname>Bloemen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bryan</forename><surname>Gillespie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Kales</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Sippl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roman</forename><surname>Walch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cryptology ePrint Archive</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">5</biblScope>
+			<date type="published" when="2024">2024/705, 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Fully homomorphic encryption without modulus switching from classical gapsvp</title>
+		<author>
+			<persName><forename type="first">Zvika</forename><surname>Brakerski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Annual cryptology conference</title>
+				<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="868" to="886" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">(leveled) fully homomorphic encryption without bootstrapping</title>
+		<author>
+			<persName><forename type="first">Zvika</forename><surname>Brakerski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Craig</forename><surname>Gentry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vinod</forename><surname>Vaikuntanathan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Transactions on Computation Theory (TOCT)</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1" to="36" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">What makes fake images detectable? understanding properties that generalize</title>
+		<author>
+			<persName><forename type="first">Lucy</forename><surname>Chai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Bau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ser-Nam</forename><surname>Lim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Phillip</forename><surname>Isola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer vision-ECCV 2020: 16th European conference</title>
+				<meeting><address><addrLine>Glasgow, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">August 23-28, 2020. 2020</date>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="103" to="120" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">A survey of current youtube video characteristics</title>
+		<author>
+			<persName><forename type="first">Xianhui</forename><surname>Che</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Barry</forename><surname>Ip</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ling</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE MultiMedia</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="56" to="63" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">A single simple patch is all you need for ai-generated image detection</title>
+		<author>
+			<persName><forename type="first">Jiaxuan</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jieteng</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Niu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2402.01123</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Coalition for Content Provenance and Authenticity. C2PA technical specification. Content Authenticity Initiative</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Certified adversarial robustness via randomized smoothing</title>
+		<author>
+			<persName><forename type="first">Elan</forename><surname>Jeremy M Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Zico</forename><surname>Rosenfeld</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kolter</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">On the detection of synthetic images generated by diffusion models</title>
+		<author>
+			<persName><forename type="first">Riccardo</forename><surname>Corvi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Davide</forename><surname>Cozzolino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giada</forename><surname>Zingarini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giovanni</forename><surname>Poggi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Koki</forename><surname>Nagano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luisa</forename><surname>Verdoliva</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICASSP 2023-2023 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)</title>
+				<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Forensic-Transfer: Weakly-supervised domain adaptation for forgery detection</title>
+		<author>
+			<persName><forename type="first">Davide</forename><surname>Cozzolino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Justus</forename><surname>Thies</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Rössler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Riess</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Nießner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luisa</forename><surname>Verdoliva</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1812.02510v2</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Raising the Bar of AI-generated Image Detection with CLIP</title>
+		<author>
+			<persName><forename type="first">Davide</forename><surname>Cozzolino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giovanni</forename><surname>Poggi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Riccardo</forename><surname>Corvi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Nießner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luisa</forename><surname>Verdoliva</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR Workshops</title>
+				<imprint>
+			<date type="published" when="2002">2024. 4, 6, 7, 8, 1, 2</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Reliable evaluation of adversarial robustness with an ensemble of diverse parameter-free attacks</title>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Croce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Hein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 37th International Conference on Machine Learning. JMLR.org</title>
+				<meeting>the 37th International Conference on Machine Learning. JMLR.org</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Raise: A raw images dataset for digital image forensics</title>
+		<author>
+			<persName><forename type="first">Duc-Tien</forename><surname>Dang-Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cecilia</forename><surname>Pasquini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valentina</forename><surname>Conotter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giulia</forename><surname>Boato</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 6th ACM multimedia systems conference</title>
+				<meeting>the 6th ACM multimedia systems conference</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="219" to="224" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">VerITAS: Verifying image transformations at scale. Cryptology ePrint Archive</title>
+		<author>
+			<persName><forename type="first">Trisha</forename><surname>Datta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Binyi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Boneh</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1066">2024/1066, 2024</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Imagenet: A large-scale hierarchical image database</title>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li-Jia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2009 IEEE Conference on Computer Vision and Pattern Recognition</title>
+				<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="248" to="255" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Sylvain Gelly, Jakob Uszkoreit, and Neil Houlsby. An image is worth 16x16 words: Transformers for image recognition at scale</title>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Dosovitskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dirk</forename><surname>Weissenborn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohua</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mostafa</forename><surname>Dehghani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Minderer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Georg</forename><surname>Heigold</surname></persName>
+		</author>
+		<editor>ICLR</editor>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Perceptual hashing for image authentication: A survey</title>
+		<author>
+			<persName><forename type="first">Ling</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Anthony</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Runmin</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Signal Processing: Image Communication</title>
+				<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="page">115713</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Towards Generalizable Deepfake Detection with Locality-Aware AutoEncoder</title>
+		<author>
+			<persName><forename type="first">Mengnan</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiva</forename><surname>Pentyala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuening</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xia</forename><surname>Hu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CIKM</title>
+				<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="325" to="334" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Watch Your Up-Convolution: CNN Based Generative Deep Neural Networks Are Failing to Reproduce Spectral Distributions</title>
+		<author>
+			<persName><forename type="first">Ricard</forename><surname>Durall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margret</forename><surname>Keuper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Janis</forename><surname>Keuper</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+				<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="7890" to="7899" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Fourier spectrum discrepancies in deep network generated images</title>
+		<author>
+			<persName><forename type="first">Tarik</forename><surname>Dzanic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karan</forename><surname>Shah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Freddie</forename><forename type="middle">D</forename><surname>Witherden</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+				<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="3022" to="3032" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">VIMz: Verifiable image manipulation using folding-based zkSNARKs</title>
+		<author>
+			<persName><forename type="first">Stefan</forename><surname>Dziembowski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Shahriar Ebrahimi, and Parisa Hassanizadeh</title>
+				<imprint>
+			<date type="published" when="1063">2024/1063, 2024</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Janus: Safe biometric deduplication for humanitarian aid distribution</title>
+		<author>
+			<persName><forename type="first">Kasra</forename><surname>Edalatnejad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wouter</forename><surname>Lueks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Justinas</forename><surname>Sukaitis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent</forename><forename type="middle">Graf</forename><surname>Narbel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Massimo</forename><surname>Marelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carmela</forename><surname>Troncoso</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2024 IEEE Symposium on Security and Privacy (SP)</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="655" to="672" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Somewhat practical fully homomorphic encryption</title>
+		<author>
+			<persName><forename type="first">Junfeng</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frederik</forename><surname>Vercauteren</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cryptology ePrint Archive</title>
+		<imprint>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Albin</forename><forename type="middle">Madappally</forename><surname>Jose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amit</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ludwig</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Toshev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vaishaal</forename><surname>Shankar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.17425</idno>
+		<title level="m">Data filtering networks</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">1</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Adobe</forename><surname>Firefly</surname></persName>
+		</author>
+		<ptr target="https://www.adobe.com/sensei/generative-ai/firefly.html" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Leveraging Frequency Analysis for Deep Fake Image Recognition</title>
+		<author>
+			<persName><forename type="first">Joel</forename><surname>Frank</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thorsten</forename><surname>Eisenhofer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lea</forename><surname>Schönherr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Asja</forename><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dorothea</forename><surname>Kolossa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thorsten</forename><surname>Holz</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="3247" to="3258" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Model inversion attacks that exploit confidence information and basic countermeasures</title>
+		<author>
+			<persName><forename type="first">Matt</forename><surname>Fredrikson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Somesh</forename><surname>Jha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Ristenpart</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd ACM SIGSAC Conference on Computer and Communications Security</title>
+				<meeting>the 22nd ACM SIGSAC Conference on Computer and Communications Security<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="1322" to="1333" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Fully homomorphic encryption using ideal lattices</title>
+		<author>
+			<persName><forename type="first">Craig</forename><surname>Gentry</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the forty-first annual ACM symposium on Theory of computing</title>
+				<meeting>the forty-first annual ACM symposium on Theory of computing</meeting>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="169" to="178" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Are gan generated images easy to detect? a critical analysis of the state-of-the-art</title>
+		<author>
+			<persName><forename type="first">Diego</forename><surname>Gragnaniello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Davide</forename><surname>Cozzolino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Marra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giovanni</forename><surname>Poggi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luisa</forename><surname>Verdoliva</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2021 IEEE international conference on multimedia and expo (ICME)</title>
+				<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="1" to="6" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Model inversion attacks against collaborative inference</title>
+		<author>
+			<persName><forename type="first">Zecheng</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruby</forename><forename type="middle">B</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 35th Annual Computer Security Applications Conference</title>
+				<meeting>the 35th Annual Computer Security Applications Conference<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="148" to="162" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Private web search with tiptoe</title>
+		<author>
+			<persName><forename type="first">Alexandra</forename><surname>Henzinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Emma</forename><surname>Dauterman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Henry</forename><surname>Corrigan-Gibbs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nickolai</forename><surname>Zeldovich</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 29th symposium on operating systems principles</title>
+				<meeting>the 29th symposium on operating systems principles</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="396" to="416" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Disco: Adversarial defense with local implicit functions</title>
+		<author>
+			<persName><forename type="first">Chih-Hui</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nuno</forename><surname>Vasconcelos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Ilharco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mitchell</forename><surname>Wortsman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Wightman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cade</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rohan</forename><surname>Taori</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Achal</forename><surname>Dave</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vaishaal</forename><surname>Shankar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongseok</forename><surname>Namkoong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hannaneh</forename><surname>Hajishirzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Farhadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ludwig</forename><surname>Schmidt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Openclip</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">A survey on locality sensitive hashing algorithms and their applications</title>
+		<author>
+			<persName><forename type="first">Omid</forename><surname>Jafari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Preeti</forename><surname>Maurya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Parth</forename><surname>Nagarkar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Khandker</forename><forename type="middle">Mushfiqul</forename><surname>Islam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chidambaram</forename><surname>Crushev</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<author>
+			<persName><forename type="first">Hyeonseong</forename><surname>Jeon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Young</forename><surname>Oh Bang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junyaup</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Woo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">. T-Gd</forename></persName>
+		</author>
+		<title level="m">Transferable GAN-generated Images Detection Framework</title>
+				<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="4746" to="4761" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">Adversarial logit pairing</title>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Harini Kannan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ian</forename><surname>Kurakin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Goodfellow</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Assessment of quality of experience (QoE) of image compression in social cloud computing</title>
+		<author>
+			<persName><forename type="first">Asif</forename><surname>Ali Laghari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hui</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhammad</forename><surname>Shafiq</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Asiya</forename><surname>Khan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Multiagent and Grid Systems</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">25</biblScope>
+			<date type="published" when="2017">2018. 2017. 2018. June 2018</date>
+		</imprint>
+	</monogr>
+	<note>Received: 13 September. Published: 26</note>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Efficient fhew bootstrapping with small evaluation keys, and applications to threshold homomorphic encryption</title>
+		<author>
+			<persName><forename type="first">Yongwoo</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniele</forename><surname>Micciancio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrey</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rakyong</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maxim</forename><surname>Deryabin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jieun</forename><surname>Eom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donghoon</forename><surname>Yoo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Annual International Conference on the Theory and Applications of Cryptographic Techniques</title>
+				<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Blip: Bootstrapping language-image pre-training for unified vision-language understanding and generation</title>
+		<author>
+			<persName><forename type="first">Junnan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongxu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Caiming</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Hoi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+				<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="12888" to="12900" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Panther: Private approximate nearest neighbor search in the single server setting</title>
+		<author>
+			<persName><forename type="first">Jingyu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhicong</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Min</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cheng</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenguang</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cryptology ePrint Archive</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">5</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Microsoft coco: Common objects in context</title>
+		<author>
+			<persName><forename type="first">Tsung-Yi</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Maire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Serge</forename><surname>Belongie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Hays</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pietro</forename><surname>Perona</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deva</forename><surname>Ramanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lawrence</forename><surname>Zitnick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer Vision-ECCV 2014: 13th European Conference</title>
+				<meeting><address><addrLine>Zurich, Switzerland</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2014">September 6-12, 2014. 2014</date>
+			<biblScope unit="page" from="740" to="755" />
+		</imprint>
+	</monogr>
+	<note>Proceedings, Part V 13</note>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Deep hashing for compact binary codes learning</title>
+		<author>
+			<persName><forename type="first">Erin</forename><surname>Venice</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiwen</forename><surname>Liong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gang</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pierre</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Moulin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Zhou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2015 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+				<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="2475" to="2483" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Detecting generated images by real images</title>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiuli</forename><surname>Bi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weisheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinbo</forename><surname>Gao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+				<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="95" to="110" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Deep supervised hashing for fast image retrieval</title>
+		<author>
+			<persName><forename type="first">Haomiao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruiping</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiguang</forename><surname>Shan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xilin</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+				<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="2064" to="2072" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<monogr>
+		<title level="m" type="main">Assessing the adversarial security of perceptual hashing algorithms</title>
+		<author>
+			<persName><forename type="first">Jordan</forename><surname>Madden</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2406.00918.5</idno>
+		<imprint>
+			<biblScope unit="page">2024</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">Towards deep learning models resistant to adversarial attacks</title>
+		<author>
+			<persName><forename type="first">Aleksander</forename><surname>Madry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aleksandar</forename><surname>Makelov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ludwig</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dimitris</forename><surname>Tsipras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adrian</forename><surname>Vladu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Detecting gan-generated images by orthogonal training of multiple cnns</title>
+		<author>
+			<persName><forename type="first">Sara</forename><surname>Mandelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicolò</forename><surname>Bonettini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paolo</forename><surname>Bestagini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Tubaro</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2022 IEEE International Conference on Image Processing (ICIP)</title>
+				<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="3091" to="3095" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<monogr>
+		<title level="m" type="main">Do GANs Leave Artificial Fingerprints?</title>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Marra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diego</forename><surname>Gragnaniello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luisa</forename><surname>Verdoliva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giovanni</forename><surname>Poggi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="506" to="511" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<monogr>
+		<title level="m" type="main">Incremental learning for the detection and classification of GAN-generated images</title>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Marra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cristiano</forename><surname>Saltori</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giulia</forename><surname>Boato</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luisa</forename><surname>Verdoliva</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1" to="6" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Midjourney</surname></persName>
+		</author>
+		<ptr target="https://www.midjourney.com/home" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Multiparty homomorphic encryption from ring-learning-with-errors</title>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Mouchet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juan</forename><surname>Troncoso-Pastoriza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jean-Philippe</forename><surname>Bossuat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jean-Pierre</forename><surname>Hubaux</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings on Privacy Enhancing Technologies</title>
+				<meeting>on Privacy Enhancing Technologies</meeting>
+		<imprint>
+			<date type="published" when="2005">2021. 2, 4, 5</date>
+			<biblScope unit="volume">2021</biblScope>
+			<biblScope unit="page" from="291" to="311" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Laa-net: Localized artifact attention network for quality-agnostic and generalizable deepfake detection</title>
+		<author>
+			<persName><forename type="first">Dat</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nesryne</forename><surname>Mejri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pal</forename><surname>Inder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Polina</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marcella</forename><surname>Kuleshova</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Astrid</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="17395" to="17405" />
+		</imprint>
+	</monogr>
+	<note>Anis Kacem, Enjie Ghorbel, and Djamila Aouada</note>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Towards universal fake image detectors that generalize across generative models</title>
+		<author>
+			<persName><forename type="first">Utkarsh</forename><surname>Ojha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><forename type="middle">Jae</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Learning robust visual features without supervision</title>
+		<author>
+			<persName><forename type="first">Maxime</forename><surname>Oquab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothée</forename><surname>Darcet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Theo</forename><surname>Moutakanni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Huy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marc</forename><surname>Vo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vasil</forename><surname>Szafraniec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pierre</forename><surname>Khalidov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Fernandez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francisco</forename><surname>Haziza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alaaeldin</forename><surname>Massa</surname></persName>
+		</author>
+		<author>
+			<persName><surname>El-Nouby</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Computer Vision and Pattern Recognition</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<monogr>
+		<title level="m" type="main">Distillation as a defense to adversarial perturbations against deep neural networks</title>
+		<author>
+			<persName><forename type="first">Nicolas</forename><surname>Papernot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Mcdaniel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xi</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Somesh</forename><surname>Jha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ananthram</forename><surname>Swami</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<monogr>
+		<title level="m" type="main">Sdxl: Improving latent diffusion models for high-resolution image synthesis</title>
+		<author>
+			<persName><forename type="first">Dustin</forename><surname>Podell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zion</forename><surname>English</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyle</forename><surname>Lacey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Dockhorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joe</forename><surname>Penna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Rombach</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.01952</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<monogr>
+		<title level="m" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jongwook</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jack</forename><surname>Clark</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Barrage of random transforms for adversarially robust defense</title>
+		<author>
+			<persName><forename type="first">Edward</forename><surname>Raff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><surname>Sylvester</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Forsyth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Mclean</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2019 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+				<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="6521" to="6530" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Nichol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Casey</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Chen</surname></persName>
+		</author>
+		<ptr target="https://openai.com/dall-e-2" />
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<monogr>
+		<title level="m" type="main">Defense-gan: Protecting classifiers against adversarial attacks using generative models</title>
+		<author>
+			<persName><forename type="first">Pouya</forename><surname>Samangouei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maya</forename><surname>Kabkab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rama</forename><surname>Chellappa</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<monogr>
+		<title level="m" type="main">Robust clip: Unsupervised adversarial fine-tuning of vision embeddings for robust large vision-language models</title>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Schlarmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naman</forename><forename type="middle">Deep</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Croce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Hein</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2402.12336</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">DE-FAKE: Detection and Attribution of Fake Images Generated by Text-to-Image Diffusion Models</title>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Sha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ning</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM SIGSAC Conference on Computer and Communications Security</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="3418" to="3432" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">How to share a secret</title>
+		<author>
+			<persName><forename type="first">Adi</forename><surname>Shamir</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Commun. ACM</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="612" to="613" />
+			<date type="published" when="1979">1979</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<monogr>
+		<title level="m" type="main">Deep image fingerprint: Accurate and low budget synthetic image detector</title>
+		<author>
+			<persName><forename type="first">Sergey</forename><surname>Sinitsa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ohad</forename><surname>Fried</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Learning to break deep perceptual hashing: The use case neuralhash</title>
+		<author>
+			<persName><forename type="first">Lukas</forename><surname>Struppek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Hintersdorf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Neider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristian</forename><surname>Kersting</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2022 ACM Conference on Fairness, Accountability, and Transparency</title>
+				<meeting>the 2022 ACM Conference on Fairness, Accountability, and Transparency</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<monogr>
+		<title level="m" type="main">Ensemble adversarial training: Attacks and defenses</title>
+		<author>
+			<persName><forename type="first">Florian</forename><surname>Tramèr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Kurakin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicolas</forename><surname>Papernot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ian</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Boneh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Mcdaniel</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">Subtle adversarial image manipulations influence both human and machine perception</title>
+		<author>
+			<persName><forename type="first">Vijay</forename><surname>Veerabadran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Josh</forename><surname>Goldman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shreya</forename><surname>Shankar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicolas</forename><surname>Papernot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Kurakin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ian</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathon</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jascha</forename><surname>Sohl-Dickstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">C</forename><surname>Mozer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gamaleldin</forename><forename type="middle">F</forename><surname>Elsayed</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Communications</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">4933</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<monogr>
+		<title level="m" type="main">Stable signature: Structural watermarking for diffusion models</title>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingdeng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhen</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yujun</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gui-Song</forename><surname>Qi</surname></persName>
+		</author>
+		<idno type="arXiv">arXivpreprintarXiv:2312.12391</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Cnn-generated images are surprisingly easy to spot... for now</title>
+		<author>
+			<persName><forename type="first">Sheng-Yu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oliver</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Owens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexei</forename><forename type="middle">A</forename><surname>Efros</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+				<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="8695" to="8704" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<monogr>
+		<title level="m" type="main">Diffusiondb: A large-scale prompt gallery dataset for text-toimage generative models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zijie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Evan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Montoya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Munechika</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Duen</forename><surname>Hoover</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chau</forename><surname>Horng</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<monogr>
+		<title level="m" type="main">Det-lsh: A locality-sensitive hashing scheme with dynamic encoding tree for approximate nearest neighbor search. Proceedings of the VLDB Endowment</title>
+		<author>
+			<persName><forename type="first">Jiuqi</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Botao</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaodong</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Themis</forename><surname>Palpanas</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="2241" to="2254" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title level="a" type="main">Feature squeezing: Detecting adversarial examples in deep neural networks</title>
+		<author>
+			<persName><forename type="first">Weilin</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Evans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanjun</forename><surname>Qi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings 2018 Network and Distributed System Security Symposium</title>
+				<meeting>2018 Network and Distributed System Security Symposium</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<analytic>
+		<title level="a" type="main">Attributing Fake Images to GANs: Learning and Analyzing GAN Fingerprints</title>
+		<author>
+			<persName><forename type="first">Ning</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Larry</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mario</forename><surname>Fritz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+				<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="7555" to="7565" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<monogr>
+		<title level="m" type="main">Implementation and benchmarking of perceptual image hash functions</title>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Zauner</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<analytic>
+		<title level="a" type="main">Sigmoid loss for language image pre-training</title>
+		<author>
+			<persName><forename type="first">Xiaohua</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Basil</forename><surname>Mustafa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Beyer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<analytic>
+		<title level="a" type="main">Ssdh: Semi-supervised deep hashing for large scale image retrieval</title>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxin</forename><surname>Peng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Circuits and Systems for Video Technology</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="212" to="225" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b87">
+	<monogr>
+		<title level="m" type="main">Deep semantic ranking based hashing for multi-label image retrieval</title>
+		<author>
+			<persName><forename type="first">Fang</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongzhen</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tieniu</forename><surname>Tan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b88">
+	<analytic>
+		<title level="a" type="main">Hidden: Hiding data with deep networks</title>
+		<author>
+			<persName><forename type="first">Jiren</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Russell</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Justin</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision</title>
+				<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="682" to="697" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

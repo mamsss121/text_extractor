@@ -1,0 +1,1731 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">LLM-EMPOWERED KNOWLEDGE GRAPH CONSTRUC-TION: A SURVEY</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2025-10-23">23 Oct 2025</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Haonan</forename><surname>Bian</surname></persName>
+							<email>23151214251@stu.xidian.edu.cn</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Xidian University Xi&apos;an China</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">LLM-EMPOWERED KNOWLEDGE GRAPH CONSTRUC-TION: A SURVEY</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2025-10-23">23 Oct 2025</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">AE688B7800A4615FC16B76AA352B8AB2</idno>
+					<idno type="arXiv">arXiv:2510.20345v1[cs.AI]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2" ident="GROBID" when="2026-03-06T16:54+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Knowledge Graphs (KGs) have long served as a fundamental infrastructure for structured knowledge representation and reasoning. With the advent of Large Language Models (LLMs), the construction of KGs has entered a new paradigm-shifting from rule-based and statistical pipelines to language-driven and generative frameworks. This survey provides a comprehensive overview of recent progress in LLM-empowered knowledge graph construction, systematically analyzing how LLMs reshape the classical three-layered pipeline of ontology engineering, knowledge extraction, and knowledge fusion. We first revisit traditional KG methodologies to establish conceptual foundations, and then review emerging LLM-driven approaches from two complementary perspectives: schema-based paradigms, which emphasize structure, normalization, and consistency; and schema-free paradigms, which highlight flexibility, adaptability, and open discovery. Across each stage, we synthesize representative frameworks, analyze their technical mechanisms, and identify their limitations. Finally, the survey outlines key trends and future research directions, including KG-based reasoning for LLMs, dynamic knowledge memory for agentic systems, and multimodal KG construction. Through this systematic review, we aim to clarify the evolving interplay between LLMs and knowledge graphs, bridging symbolic knowledge engineering and neural semantic understanding toward the development of adaptive, explainable, and intelligent knowledge systems.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Knowledge Graphs (KGs) have long served as a cornerstone for representing, integrating, and reasoning over structured knowledge. They provide a unified semantic foundation that underpins a wide range of intelligent applications, such as semantic search, question answering, and scientific discovery. Conventional KG construction pipelines are typically composed of three major components: ontology engineering, knowledge extraction, and knowledge fusion. Despite their success in enabling large-scale knowledge organization, traditional paradigms (e.g., <ref type="bibr" target="#b45">Zhong et al. (2023)</ref>; <ref type="bibr" target="#b21">Zhao et al. (2024)</ref>) continue to face three enduring challenges: (1) Scalability and data sparsity, as rulebased and supervised systems often fail to generalize across domains; (2) Expert dependency and rigidity, since schema and ontology design require substantial human intervention and lack adaptability; and (3) Pipeline fragmentation, where the disjoint handling of construction stages causes cumulative error propagation. These limitations hinder the development of self-evolving, large-scale, and dynamic KGs.</p><p>The advent of Large Language Models (LLMs) introduces a transformative paradigm for overcoming these bottlenecks. Through large-scale pretraining and emergent generalization capabilities, LLMs enable three key mechanisms: (1) Generative knowledge modeling, synthesizing structured representations directly from unstructured text; (2) Semantic unification, integrating heterogeneous knowledge sources through natural language grounding; and (3) Instruction-driven orchestration, coordinating complex KG construction workflows via prompt-based interaction. Consequently, LLMs are evolving beyond traditional text-processing tools into cognitive engines that seamlessly bridge natural language and structured knowledge (e.g., <ref type="bibr" target="#b46">Zhu et al. (2024b)</ref>; <ref type="bibr" target="#b43">Zhang &amp; Soh (2024)</ref>). This evolution marks a paradigm shift from rule-driven, pipeline-based systems toward LLM-driven, unified, and adaptive frameworks, where knowledge acquisition, organization, and reasoning emerge as interdependent processes within a generative and self-refining ecosystem <ref type="bibr" target="#b25">(Pan et al., 2024)</ref>.</p><p>In light of these rapid advances, this paper presents a comprehensive survey of LLM-driven knowledge graph construction. We systematically review recent research spanning ontology engineering, knowledge extraction, and fusion, analyze emerging methodological paradigms, and highlight open challenges and future directions at the intersection of LLMs and knowledge representation.</p><p>The remainder of this paper is organized as follows:</p><p>• Section 2 introduces the foundations of traditional knowledge graph construction, covering ontology engineering, knowledge extraction, and fusion techniques prior to the LLM era. • Section 3 reviews LLM-enhanced ontology construction, encompassing both top-down paradigms (LLMs as ontology assistants) and bottom-up paradigms (KGs for LLMs). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">PRELIMINARIES</head><p>The construction of Knowledge Graphs (KGs) traditionally follows a three-layered pipeline comprising ontology engineering, knowledge extraction, and knowledge fusion. Prior to the advent of Large Language Models (LLMs), these stages were implemented through rule-based, statistical, and symbolic approaches. This section briefly reviews these conventional methodologies to establish context for the subsequent discussion on LLM-empowered KG construction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">ONTOLOGY ENGINEERING</head><p>Ontology Engineering (OE) involves the formal specification of domain concepts, relationships, and constraints. In the pre-LLM era, ontologies were primarily manually constructed by domain experts, often supported by semantic web tools such as Protégé and guided by established methodologies including METHONTOLOGY and On-To-Knowledge. These systematic processes emphasized conceptual rigor and logical consistency but required extensive expert intervention.</p><p>As summarized by <ref type="bibr" target="#b47">Zouaq &amp; Nkambou (2010)</ref>, ontology design during this period was characterized by strong human supervision and limited scalability. Subsequent semi-automatic approaches-collectively known as ontology learning-sought to derive ontological structures from textual corpora, as reviewed in <ref type="bibr" target="#b0">Asim et al. (2018)</ref>. However, even advanced frameworks such as NeOn struggled with ontology evolution, modular reuse, and dynamic adaptation. As highlighted by <ref type="bibr" target="#b15">Kotis et al. (2020)</ref>, traditional OE frameworks offered precision and formal soundness but lacked flexibility and efficiency for large-scale or continuously evolving knowledge domains.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">KNOWLEDGE EXTRACTION</head><p>Knowledge Extraction (KE) aims to identify entities, relations, and attributes from unstructured or semi-structured data. Early approaches relied on handcrafted linguistic rules and pattern matching, which provided interpretability but were brittle and domain-specific. The evolution from symbolic and rule-based systems to statistical and neural methods has been systematically summarized in <ref type="bibr" target="#b24">Pai et al. (2024)</ref>.</p><p>The advent of deep learning architectures, such as BiLSTM-CRF and Transformer-based models, marked a paradigm shift toward data-driven feature learning, as discussed by <ref type="bibr" target="#b40">Yang et al. (2022b)</ref>.</p><p>Comprehensive analyses such as <ref type="bibr" target="#b5">Detroja et al. (2023)</ref>  Despite these advancements, traditional fusion pipelines continue to struggle with semantic heterogeneity, large-scale integration, and dynamic knowledge updating-challenges that contemporary LLM-based fusion frameworks are increasingly designed to address. The integration of Large Language Models (LLMs) has introduced a fundamental paradigm shift in Ontology Engineering (OE) and, by extension, Knowledge Graph (KG) construction. Current research generally follows two complementary directions: a top-down approach, which leverages LLMs as intelligent assistants for formal ontology modeling, and a bottom-up approach, which employs ontology construction to enhance the reasoning and representation capabilities of LLMs themselves.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">TOP-DOWN ONTOLOGY CONSTRUCTION: LLMS AS ONTOLOGY ASSISTANTS</head><p>The top-down paradigm extends the traditions of the Semantic Web and Knowledge Engineering, emphasizing ontology development guided by predefined semantic requirements. Within this framework, LLMs serve as advanced co-modelers that assist human experts in translating natural language specifications-such as competency questions (CQs), user stories, or domain descriptions-into formal ontologies, typically represented in OWL or related standards. This paradigm prioritizes conceptual abstraction, the precise definition of relations, and structured semantic representation to ensure that subsequent knowledge extraction and instance population adhere to well-defined logical constraints. Building on these advances, <ref type="bibr" target="#b17">Lippolis et al. (2025b)</ref> proposed two complementary prompting strategies: a "memoryless" approach for modular construction and a reflective iterative method inspired by Ontogenia. Empirical evaluations revealed that LLMs can autonomously identify classes, object properties, and data properties, while generating corresponding logical axioms with consistency comparable to that of junior human modelers. Collectively, these studies have led to semi-automated ontology construction pipelines encompassing the entire lifecycle-from CQ formulation and validation to ontology instantiation-with human experts intervening only at critical checkpoints. Through this evolution, LLMs have transitioned from passive analytical tools to active modeling collaborators in ontology design.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.2">NATURAL LANGUAGE-BASED ONTOLOGY CONSTRUCTION</head><p>Beyond CQ-driven paradigms, natural language-based ontology construction seeks to induce semantic schemas directly from unstructured or semi-structured text corpora, eliminating the dependency on explicitly formulated questions. The goal is to enable LLMs to autonomously uncover conceptual hierarchies and relational patterns from natural language, achieving a direct mapping from textual descriptions to formal logical representations. In summary, top-down research on LLM-assisted ontology construction emphasizes semantic consistency, structural completeness, and human-AI collaboration, marking a significant evolution of traditional knowledge engineering toward more intelligent, language-driven paradigms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">BOTTOM-UP ONTOLOGY SCHEMA CONSTRUCTION: KGS FOR LLMS</head><p>The bottom-up methodology has gained increasing attention as a response to paradigm shifts introduced by the era of Large Language Models (LLMs), particularly within Retrieval-Augmented Generation (RAG) frameworks. In this paradigm, the knowledge graph is no longer viewed merely as a static repository of structured knowledge for human interpretation. Instead, it serves as a dynamic infrastructure that provides factual grounding and structured memory for LLMs. Consequently, re-search focus has shifted from manually designing ontological hierarchies to automatically inducing schemas from unstructured or semi-structured data. This evolution can be delineated through three interrelated stages of progress.</p><p>Early studies such as GraphRAG <ref type="bibr" target="#b7">(Edge et al., 2024)</ref> and OntoRAG <ref type="bibr" target="#b32">(Tiwari et al., 2025)</ref>  More recent efforts have transitioned beyond algorithmic prototypes toward deployable knowledge systems. For example, AutoSchemaKG <ref type="bibr" target="#b1">(Bai et al., 2025)</ref> integrates schema-based and schemafree paradigms within a unified architecture, supporting the real-time generation and evolution of enterprise-scale knowledge graphs. In this stage, KGs operate as a form of external knowledge memory for LLMs-prioritizing factual coverage, scalability, and maintainability over purely semantic completeness. This transformation marks a pragmatic reorientation of ontology construction, emphasizing its service to LLM reasoning and interpretability in knowledge-intensive applications.</p><p>In summary, bottom-up ontology schema construction redefines the interplay between LLMs and knowledge engineering. The focus evolves from "LLMs for Ontology Engineering" to "Ontologies and KGs for LLMs". Whereas the top-down trajectory emphasizes semantic modeling, logical consistency, and expert-guided alignment-positioning LLMs as intelligent assistants in ontology design-the bottom-up trajectory prioritizes automatic extraction, schema induction, and dynamic evolution. This progression advances toward self-updating, interpretable, and scalable knowledge ecosystems that strengthen the grounding and reasoning capabilities of LLMs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">LLM-DRIVEN KNOWLEDGE EXTRACTION</head><p>Through a systematic examination of recent advances, it becomes evident that methodologies for Large Language Model (LLM)-driven knowledge extraction have evolved along two principal paradigms: schema-based extraction, which operates under explicit structural guidance, and schema-free extraction, which transcends the limitations of predefined templates. The former emphasizes normalization, structural consistency, and semantic alignment, while the latter prioritizes adaptability, openness, and exploratory discovery. Together, these paradigms delineate the conceptual landscape of contemporary research in LLM-based knowledge extraction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">SCHEMA-BASED METHODS</head><p>The central principle of schema-based extraction lies in its reliance on an explicit knowledge schema that provides both structural guidance and semantic constraints for the extraction process. Within this paradigm, the research trajectory demonstrates a clear evolution-from the use of static ontological blueprints toward adaptive and dynamically evolving schema frameworks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.1">STATIC SCHEMA-DRIVEN EXTRACTION</head><p>Early studies in LLM-driven knowledge extraction predominantly employed predefined, static schemas that rigidly constrained the extraction process. In this paradigm, the ontology functions as a fixed semantic backbone, directing the LLM to populate the knowledge base under strict structural supervision. The progression of this research line can be broadly characterized by three developmental stages.</p><p>Initial efforts, such as Kommineni et al. ( <ref type="formula">2024</ref>), utilized fully predefined ontological structures to ensure precision and interpretability. In their pipeline, the LLM first generates Competency Questions (CQs) to delineate the knowledge scope, constructs the corresponding ontology (TBox), and subsequently performs ABox population under explicit schema supervision-achieving high consistency but limited flexibility. Similarly, the KARMA framework <ref type="bibr" target="#b20">(Lu &amp; Wang, 2025</ref>) adopts a multi-agent architecture, in which each agent executes schema-guided extraction tasks to guarantee accurate entity normalization and relation classification within a fixed ontological boundary.</p><p>Building on these rigid frameworks, subsequent studies sought to enhance modularity and reusability through staged prompting. For instance, <ref type="bibr" target="#b10">Feng et al. (2024)</ref> proposed a two-step "ontology-grounded extraction" approach: first generating a domain-specific ontology directly from text, and then leveraging it as a directive prompt for RDF triple extraction. This approach strengthens structural alignment while maintaining partial adaptability.</p><p>More recent developments introduce localized flexibility within otherwise static frameworks.</p><p>ODKE+ <ref type="bibr" target="#b12">(Khorshidi et al., 2025)</ref> proposes ontology snippets-dynamically selected ontology subsets-to construct context-aware prompts tailored to specific entities, thus enabling limited schema adaptation at runtime. Likewise, <ref type="bibr" target="#b2">Bhattarai et al. (2024)</ref> utilize the medical ontology UMLS to dynamically generate task-specific prompts for clinical information extraction. Although these methods introduce local adaptability, they remain bounded by pre-existing macro-schemas, representing a transitional phase toward schema dynamism.</p><p>In summary, static schema-driven extraction forms the foundational paradigm of LLM-assisted knowledge extraction, emphasizing precision, logical consistency, and interpretability. However, its dependence on rigid ontological templates restricts scalability and cross-domain generalization.</p><p>The progression from fixed schema control to selective, context-aware schema prompting marks the field's gradual shift toward more adaptive, data-responsive frameworks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.2">DYNAMIC AND ADAPTIVE SCHEMA-BASED EXTRACTION</head><p>Recent approaches reconceptualize the schema as a dynamic, evolving component of the extraction process rather than a fixed template-a shift from schema guiding extraction to schema co-evolving with it.</p><p>AutoSchemaKG <ref type="bibr" target="#b1">(Bai et al., 2025)</ref>  Together, these methods enable adaptive schema learning, bridging symbolic structure and datadriven flexibility. They lay the groundwork for continual, self-updating knowledge graph construction where extraction and schema evolution progress synergistically.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">SCHEMA-FREE METHODS</head><p>In contrast to paradigms that depend on externally defined blueprints, schema-free extraction aims to acquire structured knowledge directly from unstructured text without relying on any predefined ontology or relation schema. The central idea is to leverage Large Language Models (LLMs) as autonomous extractors capable of identifying entities and relations through advanced prompt engineering, instruction tuning, and self-organizing reasoning. The evolution of this paradigm unfolds along two major trajectories: structured generative extraction and open information extraction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.1">STRUCTURED GENERATIVE EXTRACTION</head><p>The first trajectory, structured generative extraction, focuses on prompting LLMs to construct an implicit or on-the-fly schema during generation. Although no external ontology is provided, structured reasoning patterns and generative templates guide the model toward consistent and coherent knowledge generation.</p><p>Early studies, such as <ref type="bibr" target="#b23">Nie et al. (2024)</ref>, integrated the extraction process with Chain-of-Thought (CoT) prompting, encouraging stepwise reasoning for entity and relation identification. This approach demonstrated that explicit schemas can be effectively replaced by reasoning-driven organization. Building on this insight, AutoRE <ref type="bibr" target="#b37">(Xue et al., 2024)</ref> introduced an RHF (Relation-Head-Facts) pipeline via instruction fine-tuning, enabling the model to internalize relational regularities and improve coherence and scalability across documents.</p><p>Subsequent works further enhanced schema-free extraction by incorporating retrieval and interactivity. For instance, <ref type="bibr" target="#b26">Papaluca et al. (2024)</ref> proposed a Retrieval-Augmented prompting framework that dynamically enriches the context window with semantically related exemplars, thereby improving factual precision. In parallel, ChatIE <ref type="bibr" target="#b34">(Wei et al., 2024)</ref> reformulated extraction as a multiturn dialogue process, wherein the model iteratively refines entity and relation candidates through chained question answering. Similarly, KGGEN <ref type="bibr" target="#b22">(Mo et al., 2025)</ref> decomposed extraction into two sequential LLM invocations-first detecting entities, then generating relations-to reduce cognitive load and mitigate error propagation.</p><p>Collectively, these studies reveal that even without explicit schemas, LLMs can internalize latent relational structures through guided reasoning, modular prompting, and interactive refinement-laying the groundwork for open-ended and self-organizing knowledge generation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.2">OPEN INFORMATION EXTRACTION (OIE)</head><p>Open Information Extraction (OIE) extends structured generative methods toward schema-free extraction, aiming to discover all possible entity-relation-object triples from text without relying on predefined types. The EDC framework <ref type="bibr" target="#b43">(Zhang &amp; Soh, 2024)</ref> exemplifies this paradigm: its Extract stage uses few-shot prompting to generate comprehensive natural-language triples, producing a raw open knowledge graph that later undergoes definition and canonicalization. OIE prioritizes coverage and discovery over structural regularity. When combined with schema induction or canonicalization, it bridges unstructured text and emergent ontological organization-completing the continuum from schema-free to schema-generative knowledge construction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">LLM-POWERED KNOWLEDGE FUSION</head><p>An examination of recent advances and pioneering studies indicates that methodologies leveraging Large Language Models (LLMs) for knowledge fusion predominantly address challenges at two fundamental levels: (1) constructing a unified and normalized knowledge skeleton at the schema layer, and (2) integrating and aligning the specific knowledge flesh at the instance layer. According to this distinction, existing approaches can be categorized into three major classes: schema-level fusion, instance-level fusion, and hybrid frameworks that integrate both.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">SCHEMA-LEVEL FUSION</head><p>Schema-level fusion unifies the structural backbone of knowledge graphs-concepts, entity types, relations, and attributes-into a coherent and semantically consistent schema. By aligning heterogeneous elements, it ensures that all knowledge adheres to a unified conceptual specification. Research in this area has evolved through three major phases.</p><p>(1) Ontology-driven consistency. Early work relied on explicit ontologies as global constraints.</p><p>For instance, <ref type="bibr" target="#b14">Kommineni et al. (2024)</ref> enforced alignment between extracted triples and predefined ontological definitions, achieving high semantic consistency but limited flexibility across domains.</p><p>(2) Data-driven unification. To overcome this rigidity, LKD-KGC <ref type="bibr" target="#b31">(Sun et al., 2025)</ref> introduced adaptive, embedding-based schema integration. It automatically extracts and merges equivalent entity types via vector clustering and LLM-based deduplication, allowing schema alignment to emerge dynamically from data.</p><p>(3) LLM-enabled canonicalization. Recent approaches such as EDC <ref type="bibr" target="#b43">(Zhang &amp; Soh, 2024)</ref> extend fusion toward semantic canonicalization. By prompting LLMs to generate natural language definitions of schema components and comparing them via vector similarity, this method supports both self-alignment and cross-schema mapping with greater automation and semantic precision.</p><p>In summary, schema-level fusion has progressed from ontology-driven to data-driven to LLMenabled paradigms-marking a shift from rigid rule-based alignment toward flexible, semanticsoriented fusion mediated by LLM reasoning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">INSTANCE-LEVEL FUSION</head><p>Instance-level fusion integrates concrete knowledge instances by addressing entity alignment, disambiguation, deduplication, and conflict resolution. Its goal is to reconcile heterogeneous or redundant entities to maintain a coherent and semantically precise knowledge graph. Recent work reflects a clear evolution-from heuristic clustering to structured, reasoning-based frameworks.</p><p>Early studies such as KGGEN <ref type="bibr" target="#b22">(Mo et al., 2025)</ref> employed iterative LLM-guided clustering to merge equivalent entities and relations beyond surface matching. The framework performs progressive triple extraction followed by semantic grouping, revealing the potential of LLMs to aggregate semantically related entities through implicit reasoning rather than explicit rules. Later, LLM-Align <ref type="bibr" target="#b4">(Chen et al., 2024)</ref> and EntGPT <ref type="bibr" target="#b6">(Ding et al., 2025)</ref> reframed alignment as a contextual reasoning task, using multi-step prompting to enhance semantic discrimination. LLM-Align treats alignment as a constrained multiple-choice problem, while EntGPT introduces a two-phase refinement pipeline that first generates candidate entities and then applies targeted reasoning for final selection, significantly improving alignment precision. More recent efforts incorporate structural and retrieval cues-e.g., <ref type="bibr" target="#b27">Pons et al. (2025)</ref> leverage RAG-based fusion to exploit class-subclass hierarchies and entity descriptions for zero-shot disambiguation. This integration of graph topology enables more robust reasoning about unseen or ambiguous entities. Efficiency has also improved through hierarchical designs such as COMEM <ref type="bibr" target="#b33">(Wang et al., 2024)</ref>, which combines lightweight filtering with fine-grained reasoning. By cascading smaller and larger LLMs in a multi-stage pipeline, it achieves substantial efficiency gains while maintaining high semantic accuracy in large-scale fusion tasks.</p><p>Overall, LLMs have evolved from simple matchers to adaptive reasoning agents that integrate contextual, structural, and retrieved signals for scalable, self-correcting fusion-paving the way toward autonomous knowledge graph construction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">COMPREHENSIVE AND HYBRID FRAMEWORKS</head><p>Comprehensive and hybrid frameworks unify schema-level and instance-level fusion within a single, end-to-end workflow, moving beyond traditional modular pipelines toward integrated, promptdriven architectures.</p><p>The KARMA framework <ref type="bibr" target="#b20">(Lu &amp; Wang, 2025)</ref> exemplifies a multi-agent design where specialized agents collaboratively handle schema alignment, conflict resolution, and quality evaluation, achieving scalability and global consistency. Building on this, ODKE+ <ref type="bibr" target="#b12">(Khorshidi et al., 2025)</ref> employs an ontology-guided workflow coupling schema supervision with instance-level corroboration for improved semantic fidelity. More recently, Graphusion <ref type="bibr" target="#b39">(Yang et al., 2024)</ref> introduces a unified, prompt-based paradigm that performs all fusion subtasks-alignment, consolidation, and inference-within a single generative cycle.</p><p>Together, these frameworks signal a shift toward integrated, adaptive, and generative fusion systems, marking a crucial step toward autonomous, self-evolving knowledge graphs capable of continuous construction and reasoning in LLM-driven ecosystems.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">FUTURE APPLICATIONS</head><p>Research at the intersection of Large Language Models (LLMs) and Knowledge Graphs (KGs) is progressively advancing toward deeper intelligent interaction and greater autonomy in knowledge representation and reasoning. In light of these developments, several promising directions are emerging for future exploration.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">KNOWLEDGE GRAPH-BASED REASONING FOR LLMS</head><p>Future work is expected to further integrate structured KGs into the reasoning mechanisms of LLMs, enhancing their logical consistency, causal inference, and interpretability. This research direction signifies not only an improvement in reasoning capabilities but also a conceptual transition from knowledge construction to knowledge-driven reasoning. High-quality, well-structured KGs will provide the foundation for explainable and verifiable model inference. Existing studies such as KGbased Random-Walk Reasoning <ref type="bibr" target="#b13">(Kim et al., 2024)</ref> and KG-RAR <ref type="bibr" target="#b35">(Wu et al., 2025)</ref> have demonstrated the potential of this paradigm. A crucial complementary challenge, however, lies in how enhanced reasoning abilities can in turn support more robust and automated KG construction-forming a selfimproving, virtuous cycle between knowledge building and reasoning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">DYNAMIC KNOWLEDGE MEMORY FOR AGENTIC SYSTEMS</head><p>Achieving autonomy in LLM-powered agents requires overcoming the limits of finite context windows through persistent, structured memory. Recent architectures envision the knowledge graph (KG) as a dynamic memory substrate, evolving continuously with agent interactions rather than storing static histories. Frameworks such as A-MEM <ref type="bibr" target="#b36">(Xu et al., 2025)</ref> model memory as interconnected "notes" enriched with contextual metadata, enabling continual reorganization and growth. Similarly, Zep <ref type="bibr" target="#b28">(Rasmussen et al., 2025)</ref> employs a temporal knowledge graph (TKG) to manage fact validity and support time-aware reasoning and updates. These advances highlight dynamic KGs as long-term, interpretable memory systems that enable continuous learning, multi-agent collaboration, and self-reflective reasoning. Future work will focus on improving scalability, temporal coherence, and multimodal integration for fully autonomous, knowledge-grounded agents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">MULTIMODAL KNOWLEDGE GRAPH CONSTRUCTION</head><p>Multimodal Knowledge Graph (MMKG) construction aims to integrate heterogeneous modalities-such as text, images, audio, and video-into unified, structured representations that enable richer reasoning and cross-modal alignment. Representative work includes VaLiK (Vision-alignto-Language integrated KG) <ref type="bibr" target="#b18">(Liu et al., 2025)</ref>, which cascades pretrained Vision-Language Models (VLMs) to translate visual features into textual form, followed by a cross-modal verification module to filter noise and assemble MMKGs. This process achieves entity-image linkage without manual annotation. Beyond structure, representation learning methods such as KG-MRI <ref type="bibr" target="#b21">(Lu et al., 2024)</ref> employ multimodal embeddings with contrastive objectives to align heterogeneous modalities into coherent semantic spaces. Key challenges remain in modality heterogeneity, alignment noise, scalability, and robustness under missing or imbalanced modalities. As LLMs and VLMs continue to co-evolve, MMKGs will become a cornerstone for bridging perceptual input and symbolic reasoning across modalities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.4">NEW ROLES FOR KGS IN LLM APPLICATIONS: BEYOND RAG</head><p>Beyond their use as retrieval backbones in RAG systems, Knowledge Graphs (KGs) are increasingly envisioned as a cognitive middle layer bridging raw input and LLM reasoning. In this paradigm, KGs provide a structured scaffold for querying, planning, and decision-making, enabling more interpretable and grounded generation. Recent studies illustrate this shift. CogER <ref type="bibr" target="#b3">(Bing et al., 2023)</ref> formulates recommendation as cognition-aware KG reasoning, integrating intuitive and pathbased inference for explainability. In the biomedical domain, PKG-LLM <ref type="bibr" target="#b30">(Sarabadani et al., 2025)</ref> employs domain KGs for knowledge augmentation and predictive modeling in mental health diagnostics. Together, these approaches treat the KG as an interactive reasoning substrate, promising more robust and explainable generation in domains such as science, code, and healthcare.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">CONCLUSION</head><p>This survey presents a comprehensive overview of how Large Language Models (LLMs) are transforming Knowledge Graph (KG) construction across ontology engineering, knowledge extraction, and knowledge fusion. LLMs shift the paradigm from rule-based and modular pipelines toward unified, adaptive, and generative frameworks. Across these stages, three trends emerge: (1) the evolution from static schemas to dynamic induction, (2) the integration of pipeline modularity into generative unification, and (3) the transition from symbolic rigidity to semantic adaptability. Together, these shifts redefine KGs as living, cognitive infrastructures that blend language understanding with structured reasoning. Despite remarkable progress, challenges remain in scalability, reliability, and continual adaptation. Future advances in prompt design, multimodal integration, and knowledge-grounded reasoning will be key to realizing autonomous and explainable knowledgecentric AI systems.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Taxonomy of LLM for KGC</figDesc><graphic coords="3,117.90,316.62,376.16,179.03" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>3. 1</head><label>1</label><figDesc>.1 COMPETENCY QUESTION (CQ)-BASED ONTOLOGY CONSTRUCTION CQ-based methods represent a requirements-driven pathway toward automated ontology modeling. In this setting, LLMs parse CQs or user stories to identify, categorize, and formalize domain-specific concepts, attributes, and relationships. A pioneering framework, Ontogenia (Lippolis et al., 2025a), introduced the use of Metacognitive Prompting for ontology generation, enabling the model to perform self-reflection and structural correction during synthesis. By incorporating Ontology Design Patterns (ODPs), Ontogenia improves both the consistency and complexity of generated ontologies. Similarly, the CQbyCQ framework (Saeedizade &amp; Blomqvist, 2024) demonstrated that LLMs can directly translate CQs and user stories into OWL-compliant schemas, effectively automating the transition from requirements to structured ontological models.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>•</head><label></label><figDesc>Section 4 presents LLM-driven knowledge extraction, comparing schema-based and schema-free methodologies.• Section 5 discusses LLM-powered knowledge fusion, focusing on schema-level, instancelevel, and hybrid frameworks. • Section 6 explores future research directions, including KG-based reasoning, dynamic knowledge memory, and multimodal KG construction.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head></head><label></label><figDesc>Classical approaches relied on lexical and structural similarity measures, as reviewed in<ref type="bibr" target="#b42">Zeng et al. (2021)</ref>. The introduction of representation learning enabled embedding-based techniques that align entities within shared vector spaces, improving scalability and automation, as surveyed by<ref type="bibr" target="#b46">Zhu et al. (2024a)</ref>. Domain-specific applications, such as<ref type="bibr" target="#b38">Yang et al. (2022a)</ref>, demonstrate multi-feature fusion strategies combining structural, attribute, and relational similarities. Other graph-level models, such asLiu et al. (2022), further integrate semantic cues to enhance alignment robustness.</figDesc><table><row><cell>In summary, traditional KE methods established the technical foundation for modern extraction</cell></row><row><cell>pipelines but remained constrained by data scarcity, weak generalization, and cumulative error</cell></row><row><cell>propagation-limitations that motivate the LLM-driven paradigms discussed in later sections.</cell></row><row><cell>2.3 KNOWLEDGE FUSION</cell></row><row><cell>Knowledge Fusion (KF) focuses on integrating heterogeneous knowledge sources into a coherent</cell></row><row><cell>and consistent graph by resolving issues of duplication, conflict, and heterogeneity. A central sub-</cell></row><row><cell>task is entity alignment, which determines whether entities from different datasets refer to the same</cell></row><row><cell>real-world object.</cell></row><row><cell>on annotated</cell></row><row><cell>data and limited cross-domain generalization.</cell></row></table><note>further categorize supervised, weakly supervised, and unsupervised relation extraction paradigms, emphasizing their dependence</note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head></head><label></label><figDesc>established the foundation for data-driven ontology construction. These approaches first generate instance-level graphs from raw text via open information extraction, and then abstract ontological concepts and relations through clustering and generalization. This "data-to-schema" process transforms empirical knowledge into reusable conceptual structures, illustrating how instance-rich corpora can give rise to ontological blueprints.Building upon this foundation, the EDC (Extract-Define-Canonicalize) framework<ref type="bibr" target="#b43">(Zhang &amp; Soh, 2024)</ref> advanced the pipeline into a three-stage process consisting of open extraction, semantic definition, and schema normalization. It enables the alignment of automatically induced schemas with existing ontologies, or the creation of new ones when predefined structures are absent. Extending this adaptability, AdaKGC<ref type="bibr" target="#b41">(Ye et al., 2023)</ref> addressed the challenge of dynamic schema evolution, allowing models to incorporate novel relations and entity types without retraining. Collectively, these advances shift the focus from static schema construction toward continuous schema adaptation within evolving knowledge environments.</figDesc><table /></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<author>
+			<persName><forename type="first">Muhammad</forename><surname>Nabeel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Asim</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhammad</forename><surname>Wasim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhammad</forename><surname>Usman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ghani</forename><surname>Khan</surname></persName>
+		</author>
+		<title level="m">Waqar Mahmood, and Hafiza Mahnoor Abbasi. A survey of ontology learning techniques and applications. Database</title>
+				<imprint>
+			<date type="published" when="2018">2018. 2018</date>
+			<biblScope unit="page">101</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">AutoSchemaKG: Autonomous Knowledge Graph Construction through Dynamic Schema Induction from Web-Scale Corpora</title>
+		<author>
+			<persName><forename type="first">Jiaxin</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qing</forename><surname>Zong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><forename type="middle">Ting</forename><surname>Tsang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongyu</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yauwai</forename><surname>Yim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyu</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianshi</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xi</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huiwen</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leijie</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Renhai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yangqiu</forename><surname>Song</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2505.23628</idno>
+		<idno type="arXiv">arXiv:2505.23628</idno>
+		<ptr target="http://arxiv.org/abs/2505.23628" />
+		<imprint>
+			<date type="published" when="2025-08">aug 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Document-level Clinical Entity and Relation extraction via Knowledge Base-Guided Generation</title>
+		<author>
+			<persName><forename type="first">Kriti</forename><surname>Bhattarai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Inez</forename><forename type="middle">Y</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zachary</forename><forename type="middle">B</forename><surname>Abrams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Albert</forename><forename type="middle">M</forename><surname>Lai</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2024.bionlp-1.24</idno>
+		<ptr target="https://aclanthology.org/2024.bionlp-1.24" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 23rd Workshop on Biomedical Natural Language Processing</title>
+				<meeting>the 23rd Workshop on Biomedical Natural Language Processing<address><addrLine>Bangkok, Thailand</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="318" to="327" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Cognition-aware Knowledge Graph Reasoning for Explainable Recommendation</title>
+		<author>
+			<persName><forename type="first">Qingyu</forename><surname>Bing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiannan</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhicheng</forename><surname>Dou</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3539597.3570391</idno>
+		<ptr target="https://dl.acm.org/doi/10.1145/3539597.3570391" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Sixteenth ACM International Conference on Web Search and Data Mining</title>
+				<meeting>the Sixteenth ACM International Conference on Web Search and Data Mining<address><addrLine>Singapore, Singapore</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2023-02">feb 2023</date>
+			<biblScope unit="page" from="402" to="410" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">LLM-Align: Utilizing Large Language Models for Entity Alignment in Knowledge Graphs</title>
+		<author>
+			<persName><forename type="first">Xuan</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tong</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhichun</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2412.04690</idno>
+		<idno type="arXiv">arXiv:2412.04690</idno>
+		<ptr target="http://arxiv.org/abs/2412.04690" />
+		<imprint>
+			<date type="published" when="2024-12">dec 2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">A survey on relation extraction. Intelligent Systems with Applications</title>
+		<author>
+			<persName><forename type="first">Kartik</forename><surname>Detroja</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bhensdadia</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Brijesh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bhatt</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">200244, 2023</date>
+			<biblScope unit="volume">19</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">Yifan</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amrit</forename><surname>Poudel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingkai</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Weninger</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2402.06738</idno>
+		<idno type="arXiv">arXiv:2402.06738</idno>
+		<ptr target="http://arxiv.org/abs/2402.06738" />
+		<title level="m">Balaji Veeramani, and Sanmitra Bhattacharya. EntGPT: Entity Linking with Generative Large Language Models</title>
+				<imprint>
+			<date type="published" when="2025-05">may 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">From Local to Global: A Graph RAG Approach to Query-Focused Summarization</title>
+		<author>
+			<persName><forename type="first">Darren</forename><surname>Edge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ha</forename><surname>Trinh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Newman</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joshua</forename><surname>Bradley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Chao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Apurva</forename><surname>Mody</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Truitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Larson</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2404.16130</idno>
+		<idno type="arXiv">arXiv:2404.16130</idno>
+		<ptr target="http://arxiv.org/abs/2404.16130" />
+		<imprint>
+			<date type="published" when="2024-04">apr 2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<author>
+			<persName><forename type="first">Nadeen</forename><surname>Fathallah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steffen</forename><surname>Staab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alsayed</forename><surname>Algergawy</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2412.02035</idno>
+		<idno type="arXiv">arXiv:2412.02035</idno>
+		<ptr target="http://arxiv.org/abs/2412.02035" />
+		<title level="m">LLMs4Life: Large Language Models for Ontology Learning in Life Sciences</title>
+				<imprint>
+			<date type="published" when="2024-12">dec 2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">NeOn-GPT: A Large Language Model-Powered Pipeline for Ontology Learning</title>
+		<author>
+			<persName><forename type="first">Nadeen</forename><surname>Fathallah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arunav</forename><surname>Das</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><forename type="middle">De</forename><surname>Giorgis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrea</forename><surname>Poltronieri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Haase</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liubov</forename><surname>Kovriguina</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-031-78952-6_4</idno>
+		<ptr target="https://link.springer.com/10.1007/978-3-031-78952-6_4" />
+	</analytic>
+	<monogr>
+		<title level="m">The Semantic Web: ESWC 2024 Satellite Events</title>
+				<editor>
+			<persName><forename type="first">Albert</forename><surname>Meroño Peñuela</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Oscar</forename><surname>Corcho</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Paul</forename><surname>Groth</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Elena</forename><surname>Simperl</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Valentina</forename><surname>Tamma</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Andrea</forename><surname>Giovanni Nuzzolese</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Maria</forename><surname>Poveda-Villalón</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Marta</forename><surname>Sabou</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Valentina</forename><surname>Presutti</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Irene</forename><surname>Celino</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Artem</forename><surname>Revenko</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Joe</forename><surname>Raad</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Bruno</forename><surname>Sartini</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Pasquale</forename><surname>Lisena</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Nature Switzerland, Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<biblScope unit="volume">15344</biblScope>
+			<biblScope unit="page">2025</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Ontology-grounded Automatic Knowledge Graph Construction by LLM under Wikidata schema</title>
+		<author>
+			<persName><forename type="first">Xiaohan</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xixin</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Helen</forename><surname>Meng</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2412.20942</idno>
+		<idno type="arXiv">arXiv:2412.20942</idno>
+		<ptr target="http://arxiv.org/abs/2412.20942" />
+		<imprint>
+			<date type="published" when="2024-12">dec 2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">LLMs4OL: Large Language Models for Ontology Learning</title>
+		<author>
+			<persName><forename type="first">Hamed</forename><surname>Babaei Giglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D'</forename><surname>Jennifer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sören</forename><surname>Souza</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Auer</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2307.16648</idno>
+		<idno type="arXiv">arXiv:2307.16648</idno>
+		<ptr target="http://arxiv.org/abs/2307.16648" />
+		<imprint>
+			<date type="published" when="2023-08">aug 2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<author>
+			<persName><forename type="first">Samira</forename><surname>Khorshidi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Azadeh</forename><surname>Nikfarjam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suprita</forename><surname>Shankar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yisi</forename><surname>Sang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yash</forename><surname>Govind</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hyun</forename><surname>Jang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Kasgari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexis</forename><surname>Mcclimans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohamed</forename><surname>Soliman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vishnu</forename><surname>Konda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ahmed</forename><surname>Fakhry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoguang</forename><surname>Qi</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2509.04696</idno>
+		<idno type="arXiv">arXiv:2509.04696</idno>
+		<ptr target="http://arxiv.org/abs/2509.04696" />
+		<title level="m">ODKE+: Ontology-Guided Open-Domain Knowledge Extraction with LLMs</title>
+				<imprint>
+			<date type="published" when="2025-09">sep 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Causal Reasoning in Large Language Models: A Knowledge Graph Approach</title>
+		<author>
+			<persName><forename type="first">Yejin</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eojin</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juae</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">Howie</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2410.11588</idno>
+		<idno type="arXiv">arXiv:2410.11588</idno>
+		<ptr target="http://arxiv.org/abs/2410.11588" />
+		<imprint>
+			<date type="published" when="2024-10">oct 2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Towards the automation of knowledge graph construction using large language models</title>
+		<author>
+			<persName><forename type="first">Krishna</forename><surname>Vamsi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Birgitta</forename><surname>Kommineni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sheeba</forename><surname>König-Ries</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Samuel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal Name</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Ontology engineering methodologies for the evolution of living and reused ontologies: status, trends, findings and recommendations</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Konstantinos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">George</forename><forename type="middle">A</forename><surname>Kotis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dimitris</forename><surname>Vouros</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Spiliotopoulos</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0269888920000065</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Knowledge Engineering Review</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page">e4</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Ontogenia: Ontology Generation with Metacognitive Prompting in Large Language Models</title>
+		<author>
+			<persName><forename type="first">Anna</forename><surname>Sofia Lippolis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miguel</forename><surname>Ceriani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sara</forename><surname>Zuppiroli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrea</forename><surname>Giovanni Nuzzolese</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-031-78952-6_38</idno>
+		<ptr target="https://link.springer.com/10.1007/978-3-031-78952-6_38" />
+	</analytic>
+	<monogr>
+		<title level="m">The Semantic Web: ESWC 2024 Satellite Events</title>
+				<editor>
+			<persName><forename type="first">Albert</forename><surname>Meroño Peñuela</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Oscar</forename><surname>Corcho</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Paul</forename><surname>Groth</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Elena</forename><surname>Simperl</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Valentina</forename><surname>Tamma</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Andrea</forename><surname>Giovanni Nuzzolese</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Maria</forename><surname>Poveda-Villalón</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Marta</forename><surname>Sabou</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Valentina</forename><surname>Presutti</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Irene</forename><surname>Celino</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Artem</forename><surname>Revenko</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Joe</forename><surname>Raad</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Bruno</forename><surname>Sartini</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Pasquale</forename><surname>Lisena</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer Nature Switzerland</publisher>
+			<biblScope unit="volume">15344</biblScope>
+			<biblScope unit="page">2025</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<author>
+			<persName><forename type="first">Anna</forename><surname>Sofia Lippolis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Javad Saeedizade</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Keskisärkkä</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sara</forename><surname>Zuppiroli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miguel</forename><surname>Ceriani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aldo</forename><surname>Gangemi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eva</forename><surname>Blomqvist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrea</forename><surname>Giovanni Nuzzolese</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2503.05388</idno>
+		<idno type="arXiv">arXiv:2503.05388</idno>
+		<ptr target="http://arxiv.org/abs/2503.05388" />
+		<title level="m">Ontology Generation using Large Language Models</title>
+				<imprint>
+			<date type="published" when="2025-03">mar 2025b</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Aligning Vision to Language: Annotation-Free Multimodal Knowledge Graph Construction for Enhanced LLMs Reasoning</title>
+		<author>
+			<persName><forename type="first">Junming</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siyuan</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanting</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Song</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pinlong</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guohang</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yirong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zilin</forename><surname>Bian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ding</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Botian</forename><surname>Shi</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2503.12972</idno>
+		<idno type="arXiv">arXiv:2503.12972</idno>
+		<ptr target="http://arxiv.org/abs/2503.12972" />
+		<imprint>
+			<date type="published" when="2025-07">jul 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Knowledge graph alignment network with node-level strong fusion</title>
+		<author>
+			<persName><forename type="first">Shuang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Man</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yufeng</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niko</forename><surname>Lukač</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/app12199434</idno>
+		<ptr target="https://www.mdpi.com/2076-3417/12/19/9434" />
+	</analytic>
+	<monogr>
+		<title level="j">Applied Sciences</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">19</biblScope>
+			<biblScope unit="page">2022</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">KARMA: Leveraging Multi-Agent LLMs for Automated Knowledge Graph Enrichment</title>
+		<author>
+			<persName><forename type="first">Yuxing</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jinzhuo</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2502.06472</idno>
+		<idno type="arXiv">arXiv:2502.06472</idno>
+		<ptr target="http://arxiv.org/abs/2502.06472" />
+		<imprint>
+			<date type="published" when="2025-02">feb 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Enhancing multimodal knowledge graph representation learning through triple contrastive learning</title>
+		<author>
+			<persName><forename type="first">Yuxing</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weichen</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nan</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jinzhuo</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.24963/ijcai.2024/659</idno>
+		<idno type="arXiv">arXiv:2307.16699</idno>
+		<idno>doi: 10.48550/arXiv.2307.16699</idno>
+		<ptr target="http://arxiv.org/abs/2307.16699" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence, IJCAI-24</title>
+				<editor>
+			<persName><forename type="first">Kate</forename><surname>Larson</surname></persName>
+		</editor>
+		<meeting>the Thirty-Third International Joint Conference on Artificial Intelligence, IJCAI-24</meeting>
+		<imprint>
+			<date type="published" when="2023-07">aug 2024. jul 2023</date>
+			<biblScope unit="page" from="5963" to="5971" />
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+	<note>Ontology engineering with Large Language Models</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<author>
+			<persName><forename type="first">Belinda</forename><surname>Mo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyssen</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joshua</forename><surname>Kazdan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Proud</forename><surname>Mpala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lisa</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Cundy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Charilaos</forename><surname>Kanatsoulis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanmi</forename><surname>Koyejo</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kggen</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2502.09956</idno>
+		<idno type="arXiv">arXiv:2502.09956</idno>
+		<ptr target="http://arxiv.org/abs/2502.09956" />
+		<title level="m">Extracting Knowledge Graphs from Plain Text with Language Models</title>
+				<imprint>
+			<date type="published" when="2025-02">feb 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Knowledge graph efficient construction: Embedding chain-of-thought into llms</title>
+		<author>
+			<persName><forename type="first">Jixuan</forename><surname>Nie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xia</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenfeng</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingliang</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuozhe</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaqi</forename><surname>Shi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the VLDB Endowment</title>
+				<meeting>the VLDB Endowment</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">A survey on open information extraction from rule-based model to large language model</title>
+		<author>
+			<persName><forename type="first">Liu</forename><surname>Pai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenyang</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenjie</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lin</forename><surname>Ai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Gong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Songfang</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Zongsheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ehsan</forename><surname>Hoque</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julia</forename><surname>Hirschberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2024.findings-emnlp.560</idno>
+		<ptr target="https://aclanthology.org/2024.findings-emnlp.560/" />
+	</analytic>
+	<monogr>
+		<title level="m">Findings of the Association for Computational Linguistics: EMNLP 2024</title>
+				<editor>
+			<persName><forename type="first">Yaser</forename><surname>Al-Onaizan</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Mohit</forename><surname>Bansal</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yun-Nung</forename><surname>Chen</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Miami, Florida, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="9586" to="9608" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Unifying large language models and knowledge graphs: A roadmap</title>
+		<author>
+			<persName><forename type="first">Linhao</forename><surname>Shirui Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yufei</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiapu</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xindong</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Knowledge and Data Engineering</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="3580" to="3599" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Zero-and Few-Shots Knowledge Graph Triplet Extraction with Large Language Models</title>
+		<author>
+			<persName><forename type="first">Andrea</forename><surname>Papaluca</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Krefl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sergio</forename><forename type="middle">Rodríguez</forename><surname>Méndez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Artem</forename><surname>Lensky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanna</forename><surname>Suominen</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2024.kallm-1.2</idno>
+		<ptr target="https://aclanthology.org/2024.kallm-1.2" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 1st Workshop on Knowledge Graphs and Large Language Models</title>
+				<meeting>the 1st Workshop on Knowledge Graphs and Large Language Models<address><addrLine>Bangkok, Thailand</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2024">KaLLM 2024. 2024</date>
+			<biblScope unit="page" from="12" to="23" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Knowledge Graphs for Enhancing Large Language Models in Entity Disambiguation</title>
+		<author>
+			<persName><forename type="first">Gerard</forename><surname>Pons</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Besim</forename><surname>Bilalli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anna</forename><surname>Queralt</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-031-77844-59</idno>
+		<idno type="arXiv">arXiv:2505.02737</idno>
+		<ptr target="http://arxiv.org/abs/2505.02737" />
+		<imprint>
+			<date type="published" when="2025">2025</date>
+			<biblScope unit="page" from="162" to="179" />
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Zep: A Temporal Knowledge Graph Architecture for Agent Memory</title>
+		<author>
+			<persName><forename type="first">Preston</forename><surname>Rasmussen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pavlo</forename><surname>Paliychuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Travis</forename><surname>Beauvais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jack</forename><surname>Ryan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Chalef</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2501.13956</idno>
+		<idno type="arXiv">arXiv:2501.13956</idno>
+		<ptr target="http://arxiv.org/abs/2501.13956" />
+		<imprint>
+			<date type="published" when="2025-01">jan 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Navigating Ontology Development with Large Language Models</title>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Javad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saeedizade</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eva</forename><surname>Blomqvist</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-031-60626-7_8</idno>
+		<ptr target="https://link.springer.com/10.1007/978-3-031-60626-7_8" />
+		<editor>Albert Meroño Peñuela, Anastasia Dimou, Raphaël Troncy, Olaf Hartig, Maribel Acosta, Mehwish Alam, Heiko Paulheim, and Pasquale Lisena</editor>
+		<imprint>
+			<publisher>Springer Nature Switzerland</publisher>
+			<biblScope unit="volume">14664</biblScope>
+			<biblScope unit="page">2024</biblScope>
+			<pubPlace>Cham</pubPlace>
+		</imprint>
+	</monogr>
+	<note>The Semantic Web</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">PKG-LLM: A Framework for Predicting GAD and MDD Using Knowledge Graphs and Large Language Models in Cognitive Neuroscience</title>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Sarabadani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hadis</forename><surname>Taherinia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niloufar</forename><surname>Ghadiri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ehsan</forename><surname>Karimi Shahmarvandi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramin</forename><surname>Mousa</surname></persName>
+		</author>
+		<idno type="DOI">10.20944/preprints202502.0982.v1</idno>
+		<ptr target="https://www.preprints.org/manuscript/202502.0982/v1" />
+		<imprint>
+			<date type="published" when="2025-02">feb 2025</date>
+			<publisher>Preprints</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<author>
+			<persName><forename type="first">Jiaqi</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiyou</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhangchi</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zelin</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dingyu</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangtao</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lkd-Kgc</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2505.24163</idno>
+		<idno type="arXiv">arXiv:2505.24163</idno>
+		<ptr target="http://arxiv.org/abs/2505.24163" />
+		<title level="m">Domain-Specific KG Construction via LLM-driven Knowledge Dependency Parsing</title>
+				<imprint>
+			<date type="published" when="2025-05">may 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">OntoRAG: Enhancing Question-Answering through Automated Ontology Derivation from Unstructured Knowledge Bases</title>
+		<author>
+			<persName><forename type="first">Yash</forename><surname>Tiwari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Owais</forename><surname>Ahmad Lone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mayukha</forename><surname>Pal</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2506.00664</idno>
+		<idno type="arXiv">arXiv:2506.00664</idno>
+		<ptr target="http://arxiv.org/abs/2506.00664" />
+		<imprint>
+			<date type="published" when="2025-05">may 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Match, compare, or select? an investigation of large language models for entity matching</title>
+		<author>
+			<persName><forename type="first">Tianshu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoyang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongyu</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuanang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xianpei</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenyu</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Le</forename><surname>Sun</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2405.16884</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingyu</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ning</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaobin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shen</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengjun</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jinan</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yufeng</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meishan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenjuan</forename><surname>Han</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2302.10205</idno>
+		<idno type="arXiv">arXiv:2302.10205</idno>
+		<ptr target="http://arxiv.org/abs/2302.10205" />
+		<title level="m">ChatIE: Zero-Shot Information Extraction via Chatting with ChatGPT</title>
+				<imprint>
+			<date type="published" when="2024-05">may 2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Graph-Augmented Reasoning: Evolving Step-by-Step Knowledge Graph Retrieval for LLM Reasoning</title>
+		<author>
+			<persName><forename type="first">Wenjie</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongcheng</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yingjie</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenbin</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dacheng</forename><surname>Tao</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2503.01642</idno>
+		<idno type="arXiv">arXiv:2503.01642</idno>
+		<ptr target="http://arxiv.org/abs/2503.01642" />
+		<imprint>
+			<date type="published" when="2025-03">mar 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<author>
+			<persName><forename type="first">Wujiang</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zujie</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Mei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juntao</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongfeng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">. A-Mem</forename></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2502.12110</idno>
+		<idno type="arXiv">arXiv:2502.12110</idno>
+		<ptr target="http://arxiv.org/abs/2502.12110" />
+		<title level="m">Agentic Memory for LLM Agents</title>
+				<imprint>
+			<date type="published" when="2025-10">oct 2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">AutoRE: Document-Level Relation Extraction with Large Language Models</title>
+		<author>
+			<persName><forename type="first">Lilong</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2024.acl-demos.20</idno>
+		<ptr target="https://aclanthology.org/2024.acl-demos.20" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics</title>
+				<meeting>the 62nd Annual Meeting of the Association for Computational Linguistics<address><addrLine>Bangkok, Thailand</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="211" to="220" />
+		</imprint>
+	</monogr>
+	<note>System Demonstrations)</note>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Collective entity alignment for knowledge fusion of power grid dispatching knowledge graphs</title>
+		<author>
+			<persName><forename type="first">Linyao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Lv</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ji</forename><surname>Qiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weiping</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei-Yue</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/JAS.2022.105947</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE/CAA Journal of Automatica Sinica</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<date type="published" when="1990">1990-2004, 2022a</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Graphusion: Leveraging Large Language Models for Scientific Knowledge Graph Fusion and</title>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boming</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sixun</forename><surname>Ouyang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianwei</forename><surname>She</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aosong</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuang</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Freddy</forename><surname>Lecue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jinghui</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Irene</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2407.10794</idno>
+		<idno type="arXiv">arXiv:2407.10794</idno>
+		<ptr target="http://arxiv.org/abs/2407.10794" />
+	</analytic>
+	<monogr>
+		<title level="m">Construction in NLP Education</title>
+				<imprint>
+			<date type="published" when="2024-07">jul 2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">A survey of information extraction based on deep learning</title>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhilei</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuexiang</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuangshuang</forename><surname>Lian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fengjie</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiwei</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied Sciences</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">19</biblScope>
+			<biblScope unit="page">9691</biblScope>
+			<date type="published" when="2022">2022b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<author>
+			<persName><forename type="first">Hongbin</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Honghao</forename><surname>Gui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huajun</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ningyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2305.08703</idno>
+		<idno type="arXiv">arXiv:2305.08703</idno>
+		<ptr target="http://arxiv.org/abs/2305.08703" />
+		<title level="m">Schema-adaptable Knowledge Graph Construction</title>
+				<imprint>
+			<date type="published" when="2023-11">nov 2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">A comprehensive survey of entity alignment for knowledge graphs</title>
+		<author>
+			<persName><forename type="first">Kaisheng</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chengjiang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juanzi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ling</forename><surname>Feng</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.aiopen.2021.02.002</idno>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S2666651021000036" />
+	</analytic>
+	<monogr>
+		<title level="j">AI Open</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="1" to="13" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Extract, Define, Canonicalize: An LLM-based Framework for Knowledge Graph Construction</title>
+		<author>
+			<persName><forename type="first">Bowen</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Harold</forename><surname>Soh</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2024.emnlp-main.548</idno>
+		<ptr target="https://aclanthology.org/2024.emnlp-main.548" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing</title>
+				<meeting>the 2024 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Miami, Florida, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="9820" to="9836" />
+		</imprint>
+	</monogr>
+	<note>Association for Computational Linguistics</note>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">A survey of knowledge graph construction using machine learning</title>
+		<author>
+			<persName><forename type="first">Zhigang</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiong</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maojian</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ling</forename><surname>Ma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CMES-Computer Modeling in Engineering &amp; Sciences</title>
+		<imprint>
+			<biblScope unit="volume">139</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">2024</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">A comprehensive survey on automatic knowledge graph construction</title>
+		<author>
+			<persName><forename type="first">Lingfeng</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qian</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xindong</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Computing Surveys</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1" to="62" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Shumin Deng, Huajun Chen, and Ningyu Zhang. Llms for knowledge graph construction and reasoning: Recent capabilities and future opportunities</title>
+		<author>
+			<persName><forename type="first">Beibei</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruolin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junyi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Shao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kerun</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">;</forename><surname>Yuqi Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jing</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuofei</forename><surname>Qiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yixin</forename><surname>Ou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunzhi</forename><surname>Yao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Artificial Intelligence Review</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page">58</biblScope>
+			<date type="published" when="2024">2024a. 2024b</date>
+		</imprint>
+	</monogr>
+	<note>A survey: knowledge graph entity alignment research based on graph embedding. World Wide Web</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">A Survey of Domain Ontology Engineering: Methods and Tools</title>
+		<author>
+			<persName><forename type="first">Amal</forename><surname>Zouaq</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roger</forename><surname>Nkambou</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-642-14363-2_6</idno>
+		<ptr target="http://link.springer.com/10.1007/978-3-642-14363-2_6" />
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Intelligent Tutoring Systems</title>
+				<editor>
+			<persName><forename type="first">Roger</forename><surname>Nkambou</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Jacqueline</forename><surname>Bourdeau</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Riichiro</forename><surname>Mizoguchi</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Berlin Heidelberg, Berlin</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="volume">308</biblScope>
+			<biblScope unit="page" from="103" to="119" />
+		</imprint>
+	</monogr>
+	<note type="report_type">Heidelberg</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

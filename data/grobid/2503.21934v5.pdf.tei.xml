@@ -1,0 +1,943 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">PROOF OR BLUFF? EVALUATING LLMS ON 2025 USA MATH OLYMPIAD</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2025-09-04">4 Sep 2025</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Ivo</forename><surname>Petrov</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">INSAIT</orgName>
+								<orgName type="institution" key="instit2">Sofia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jasper</forename><surname>Dekoninck</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zurich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Lyuben</forename><surname>Baltadzhiev</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">INSAIT</orgName>
+								<orgName type="institution" key="instit2">Sofia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Maria</forename><surname>Drencheva</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">INSAIT</orgName>
+								<orgName type="institution" key="instit2">Sofia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Kristian</forename><surname>Minchev</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">INSAIT</orgName>
+								<orgName type="institution" key="instit2">Sofia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mislav</forename><surname>Balunović</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zurich</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">INSAIT</orgName>
+								<orgName type="institution" key="instit2">Sofia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Nikola</forename><surname>Jovanović</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zurich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Martin</forename><surname>Vechev</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zurich</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">INSAIT</orgName>
+								<orgName type="institution" key="instit2">Sofia University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">"</forename><surname>St</surname></persName>
+						</author>
+						<author>
+							<persName><surname>Kliment Ohridski</surname></persName>
+						</author>
+						<title level="a" type="main">PROOF OR BLUFF? EVALUATING LLMS ON 2025 USA MATH OLYMPIAD</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2025-09-04">4 Sep 2025</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">C5CAF82825457B6657578DA7EB026BF6</idno>
+					<idno type="arXiv">arXiv:2503.21934v5[cs.CL]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2" ident="GROBID" when="2026-03-06T16:53+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Recent math benchmarks for large language models (LLMs) such as MathArena indicate that state-of-the-art reasoning models achieve impressive performance on mathematical competitions like AIME, with the leading model, GEMINI-2.5-PRO, achieving scores comparable to top human competitors. However, these benchmarks evaluate models solely based on final numerical answers, neglecting rigorous reasoning and proof generation which are essential for real-world mathematical tasks. To address this, we introduce a comprehensive evaluation of full-solution reasoning for challenging mathematical problems. Using expert human annotators, we evaluated several state-of-the-art reasoning models on the six problems from the 2025 USAMO within hours of their release. Our results reveal that all tested models struggled significantly: only GEMINI-2.5-PRO achieves a non-trivial score of 25%, while all other models achieve less than 5%. Through detailed analysis of reasoning traces, we identify the most common failure modes and find several unwanted artifacts arising from the optimization strategies employed during model training. Overall, our results suggest that current LLMs are inadequate for rigorous mathematical reasoning tasks, highlighting the need for substantial improvements in reasoning and proof generation capabilities.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>The advancement of reasoning models has significantly improved the mathematical capabilities of large language models (LLMs). Evaluation efforts like MathArena <ref type="bibr" target="#b2">(Balunović et al., 2025)</ref> demonstrate that these models achieve impressive performance on mathematical competitions such as AIME and HMMT. However, these competitions only evaluate final numerical answers and do not require rigorous proof-based reasoning essential for most mathematical tasks.</p><p>Current benchmarks that mitigate this issue either rely on formal verification tools like Lean <ref type="bibr" target="#b13">(Zheng et al., 2022;</ref><ref type="bibr" target="#b7">Liu et al., 2023;</ref><ref type="bibr" target="#b12">Tsoukalas et al., 2024)</ref> or focus on the evaluation of constructive proofs <ref type="bibr">(Balunovic et al., 2025)</ref>. While these approaches are useful, the former does not take advantage of LLMs' strong natural language generation capabilities, and the latter covers only a limited subset of proofs. Only <ref type="bibr" target="#b3">Frieder et al. (2023)</ref> evaluate LLMs on full-solution reasoning, but their evaluation is focused on just two older non-reasoning models, therefore not presenting their analysis as a benchmark, and contains problems where some could appear in the training data. Therefore, it remains uncertain whether current reasoning LLMs can reliably address complex mathematical questions requiring rigorous reasoning, which are crucial in real-world mathematical contexts.</p><p>To overcome these limitations, we conduct the first evaluation of natural language proofs by LLMs on challenging problems from the 2025 USA Mathematical Olympiad (USAMO). The USAMO represents one of the highest tiers of high school mathematics competitions in the United States, demanding detailed proofs and explanations analogous to the International Mathematical Olympiad (IMO). Participants qualify through prior competitions, including the AIME, but USAMO problems require significantly more rigorous and well-explained solutions.</p><p>Overall, we find that current LLMs struggle significantly on USAMO problems, with the bestperforming model achieving an average score of less than 25%. Our evaluation reveals several critical failure modes, including flawed logic, unjustified assumptions, and a lack of creativity.</p><p>Problem 1: Let k and d be positive integers. Prove that there exists a positive integer N such that for every odd integer n &gt; N , the digits in the base-2n representation of n k are all greater than d.  These findings underscore the substantial limitations of current LLMs in generating rigorous mathematical proofs. In this report, we first outline our methodology in §2, present detailed results and identify critical weaknesses in §3, and discuss several qualitative observations in §4.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">METHODOLOGY</head><p>This section outlines the methodology used for evaluating the mathematical reasoning capabilities of the selected LLMs. Our approach prioritized accuracy, fairness, and transparency throughout each step, involving careful preparation and grading procedures.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">PROBLEM SELECTION AND PREPARATION</head><p>We selected the USAMO 2025, a highly prestigious mathematics competition comprising six proofbased problems administered over two days, as our benchmark. This competition aligns perfectly with our evaluation objectives, as the questions are challenging, require detailed proofs for full credit, and are uncontaminated. In Fig. <ref type="figure" target="#fig_1">1</ref>, we present two problems from the competition, with the remaining four available in App. B.</p><p>For evaluation, we provided each model with the problems, prompting them explicitly to produce comprehensive and detailed proofs formatted in L A T E X. The full prompt instructions and details of used hyperparameters are available in App. A.2. To reduce variance, each model solved every problem four separate times. Solutions, excluding thought traces, were anonymized and converted into PDF format for grading. Both GROK 3 and GEMINI-2.5-PRO were evaluated after our initial grading and were therefore not fully anonymous when presented to the judges.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">JUDGE SELECTION AND TRAINING</head><p>Our grading team consisted of four experts, each having substantial mathematical problem-solving experience as former national IMO team members or having participated in final-stage team selection processes for their countries. Prior to the grading, judges received instructions detailing evaluation goals and methodologies. These guidelines are accessible in our GitHub repository. A trial run with three USAMO 2024 problems was conducted to familiarize evaluators with the grading approach and resolve ambiguities. Small misunderstandings were clarified during this session.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">GRADING PROCEDURE</head><p>Each of the six problems from USAMO 2025 was independently evaluated by two evaluators, with each judge responsible for grading three unique problems. This double grading method, modeled after the IMO's evaluation process, ensures consistency in our grading and decreases personal biases.</p><p>Since the official USAMO does not release standard solutions or grading schemes, we carefully developed a standardized grading scheme for each problem, drawing from reliable mathematical community resources, particularly the Art of Problem Solving (AoPS) forums. All solutions from these sources were verified by our evaluators for accuracy before creating the grading scheme. Following USAMO conventions, each solution was graded out of a maximum of seven points with partial credit given for significant and meaningful progress. The finalized grading schemes are available in our GitHub repository and displayed on our website. An example can be found in App. A.3.</p><p>Judges independently reviewed each assigned solution against the pre-established grading scheme. When a solution did not perfectly align with the scheme, the approach was awarded points where appropriate. Each judge documented their reasoning, including justification for each partial credit awarded. These notes are also accessible on our website, with an example provided in App. A.3. Evaluators also documented prominent failure modes observed during grading, defined as the first instance of incorrect or inadequately explained reasoning. Specifically, mistakes were categorized into four classes:</p><p>• Logic: Errors due to logical fallacies or unjustified leaps disrupting the reasoning.</p><p>• Assumption: Errors coming from the introduction of unproven or incorrect assumptions that undermined subsequent steps. • Creativity: Errors resulting from fundamentally incorrect solution strategies due to the inability to identify the correct approach. • Algebra/Arithmetic: Errors arising from critical algebraic or arithmetic miscalculations.</p><p>We show examples of these errors in App. C.1.</p><p>Additionally, noteworthy behaviors or trends in model-generated solutions were systematically logged for further analysis. These observations were used to identify common pitfalls and areas for improvement in the models' reasoning capabilities and are presented in §4.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">RESULTS</head><p>We now present the results of our evaluation. In §3.1, we detail our primary findings, demonstrating that only GEMINI-2.5-PRO achieves a score above 5%. In §3.2, we analyze common failure patterns in depth, identifying typical mistakes and trends in the models' reasoning. Finally, in §3.3, we try and fail to automatically grade the models' solutions by giving a judge model the grading scheme and a ground-truth solution.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">MAIN RESULTS</head><p>We evaluate eight state-of-the-art reasoning models on the 2025 USAMO problems. Specifically, we chose QWQ <ref type="bibr" target="#b9">(Qwen, 2025)</ref>, R1 <ref type="bibr" target="#b5">(Guo et al., 2025)</ref>, GEMINI-2.5-PRO (Google DeepMind, 2025), FLASH-THINKING <ref type="bibr">(Reid et al., 2024)</ref>, O1-PRO <ref type="bibr">(Jaech et al., 2024)</ref>, O3-MINI (OpenAI, 2025), GROK 3 (xAI, 2025) and CLAUDE 3.7 <ref type="bibr" target="#b0">(Anthropic, 2025)</ref>. For brevity, we use a shorthand notation for each model in the main text, and we refer to App. A.1 for the full model names. The chosen hyperparameters and prompt can be found in App. A.2.</p><p>We provide a detailed, per-problem breakdown of model performance in Table <ref type="table" target="#tab_0">1</ref>, with average scores computed across four evaluation runs. Each USAMO problem is scored out of 7 points, with a total maximum score of 42 points per run. The table also includes the total cost of running each model over all problems and evaluation runs. If the model is free, we indicate this with "N/A".</p><p>While current state-of-the-art LLMs achieve performance comparable to top human competitors on numerical-answer-focused competitions such as AIME and HMMT, our evaluation uncovers a significant gap in their ability to generate rigorous proofs. Only GEMINI-2.5-PRO managed to score above 5%, achieving an average score of 24.4% across all problems. This model's performance is particularly noteworthy, as it can solve a problem correctly (scoring 6/7 or above) in six of its 24 attempts. The highest average score achieved by any other model falls below 5%, indicating substantial limitations in handling the complexity and rigor of USAMO problems. Notably, among nearly 175 evaluated solutions from all models except GEMINI-2.5-PRO, the only perfect 7/7 score was a single GROK 3 attempt on Problem 1. Although the USAMO presents more difficult problems compared to previously tested competitions, the complete failure of almost all models to successfully solve more than one problem underscores that current LLMs remain inadequate for rigorous olympiad-level mathematical reasoning tasks. Furthermore, while GEMINI-2.5-PRO achieved a non-trivial score, it still struggled significantly, with an average score of only 24.4% across all problems. This limitation suggests that existing optimization methods like GRPO <ref type="bibr">(Shao et al., 2024)</ref> may currently be insufficient for tasks requiring detailed logical precision.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">FAILURE MODES</head><p>The most frequent failure mode among human participants is the inability to find a correct solution.</p><p>Typically, human participants have a clear sense of whether they solved a problem correctly. In contrast, all evaluated LLMs consistently claimed to have solved the problems. This discrepancy poses a significant challenge for mathematical applications of LLMs as mathematical results derived using these models cannot be trusted without rigorous human validation. To further investigate this limitation, we conducted a thorough analysis of the errors identified during the grading process using the categories defined in §2.</p><p>Figure <ref type="figure" target="#fig_2">2</ref> illustrates the distribution of these error categories as determined by our judges. The most common errors were related to flawed logic, with solutions frequently using unjustified reasoning steps, incorrect rationale, or misinterpretations of previous progress. Another significant issue was the models' tendency to treat certain critical proof steps as trivial or standard procedure without proper justification. Notably, O3-MINI, despite being one of the best reasoning models, frequently skipped essential proof steps by labeling them as "trivial", even when their validity was crucial.</p><p>Another important observation is the lack of creativity in the models' reasoning. Each model often attempted the same (and wrong) solution strategy across all attempts, failing to explore alternative approaches. One exception to this observation was FLASH-THINKING, which attempted multiple strategies in the same run, but as a consequence only shallowly explored each one, failing to reach a valid conclusion. An example of this behavior is shown in App. C.2.</p><p>However, the models generally demonstrated strong performance in algebraic and arithmetic computations, successfully performing symbolic manipulations without external computational support.</p><p>Still, R1 showed a notably higher frequency of algebraic or arithmetic errors, indicating a clear area for targeted improvement in this model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">AUTOMATED GRADING</head><p>We explored the feasibility of replacing human graders with LLM-based evaluators, selecting O3-MINI and CLAUDE 3.7 as grading models. Both models were provided with a grading scheme developed by our evaluators, along with a verified solution and an example evaluation for reference. In App. A.2, we provide the full prompt used for this evaluation. As detailed in Table <ref type="table" target="#tab_1">2</ref>, neither model accurately graded the solutions, consistently overestimating their quality. Specifically, the models frequently awarded points for incorrect or unjustified reasoning, inflating the scores by a factor of up to 20.</p><p>Notably, FLASH-THINKING and GROK 3 received significantly lower scores from the automated evaluation compared to other models. We hypothesize this discrepancy arises because both tend to generate multiple solutions per attempt, or present the solutions in a chaotic manner, potentially confusing the LLM-based judges and resulting in lower scores. Conversely, QWQ achieved considerably higher scores, likely because it often generates simpler solution attempts, which are easier for the automated judges to interpret.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">QUALITATIVE DISCUSSION</head><p>During the evaluation, judges also documented common issues and noteworthy behaviors exhibited by the models. In this section, we discuss some of the most prominent issues that we observed.</p><p>Answer Boxing Current reinforcement learning optimization techniques rely on extracting rewards from a clearly identifiable final answer. To facilitate accurate reward extraction, models are typically instructed to enclose their final answers within a \boxed{} environment. However, this requirement often produces unintended artifacts in the solutions for the USAMO problems. Specifically, even though most of the evaluated problems do not require a final boxed answer, many models consistently provided answers within a boxed environment. In a particularly notable instance from problem 5, QWQ confused itself by dismissing the possibility of a non-integer solution, despite no such restriction existing in the problem statement. Consequently, it incorrectly insisted that the final answer was 2, even though it had otherwise correctly deduced that all even numbers satisfy the given conditions (see App. C.3). This behavior illustrates how alignment techniques like GRPO <ref type="bibr">(Shao et al., 2024)</ref> inadvertently encourage models to treat every mathematical problem as requiring an explicitly boxed final answer, negatively affecting their overall reasoning.</p><p>Generalizing Patterns Models frequently exhibited a tendency to overgeneralize patterns observed in smaller numerical cases to larger, untested cases. While this heuristic approach might be effective for problems that only require a numerical answer, it is fundamentally flawed for problems that demand rigorous proof. Models often incorrectly asserted that these patterns observed for small cases would hold generally, without providing a formal proof for such a claim (see App. C.4).</p><p>Non-Existent Citations One of the most frequent and concerning mistakes made by GEMINI-2.5-PRO is the generation of citations to sources that do not exist. This issue is especially prevalent in problems where the model struggles significantly and fails to produce a correct solution. In such cases, it often fabricates references to theorems or lemmas that appear plausible but, to the best of our knowledge, are not real. For example, in P6, all four generations include citations to works that we were unable to verify or locate. We suspect this behavior stems from the model's training with internet access: when it is unable to use internet in thought process, it appears to generate a convincing-sounding citation instead. An illustration of this phenomenon is provided in App. C.5. This tendency is particularly troubling, as it can result in the spread of misinformation which seem to use credible academic sources.</p><p>Solution Structure and Clarity There was significant variation in the clarity and structural coherence of the solutions provided by different models. Models such as O3-MINI and O1-PRO generally presented their solutions clearly, logically, and in an easily interpretable manner. Conversely, models like FLASH-THINKING and QWQ frequently produced chaotic and barely interpretable responses, sometimes confusing multiple unrelated ideas within a single solution. Further, GEMINI-2.5-PRO also had signicant issues with the clear presentation of results, sometimes boxing entire proofs are letting its thought process slip through in its final answer (App. C.6). The noticeable clarity in models trained by OpenAI suggests that additional training focused on solution coherence substantially improved their readability, an aspect evidently less emphasized in other models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">CONCLUSION</head><p>In this study, we comprehensively analyzed the performance of eight state-of-the-art LLMs on problems from the USAMO 2025 competition. Using a rigorous human evaluation setup, we found that all evaluated models performed very poorly, with even the best-performing model achieving an average accuracy of less than 25%. Through detailed examination of the models' reasoning traces, we identified several critical failure modes, including significant artifacts arising from the optimization strategies employed during model training. These findings underscore the substantial limitations of current LLMs in the rigorous mathematical reasoning required for high-level olympiad competitions, highlighting the need for substantial improvements in proof generation capabilities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A ADDITIONAL EXPERIMENTAL DETAILS</head><p>Here we describe any additional information related to our evaluation setup and details.</p><p>A.1 MODEL NAMES For brevity and visual clarity, we have shortened the model names as follows:</p><p>• O3-MINI (HIGH) as O3-MINI • O1-PRO (HIGH) as O1-PRO • DEEPSEEK R1 as R1</p><p>• QWQ-32B as QWQ • GEMINI-2.0-FLASH-THINKING-EXP as FLASH-THINKING • CLAUDE-3.7-SONNET-THINKING as CLAUDE 3.7</p><p>• GROK 3 BETA (THINK) as GROK 3</p><p>• GEMINI-2.5-PRO-EXP-03-25 as GEMINI-2.5-PRO</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.2 HYPERPARAMETERS AND PROMPT</head><p>Model Hyperparameters For O3-MINI, O1-PRO, CLAUDE 3.7, and FLASH-THINKING, we used the default hyperparameters provided by their official API. For O3-MINI and O1-PRO, we used the high reasoning setting, which provides the highest available reasoning budget. For CLAUDE 3.7and FLASH-THINKING, we set the maximum reasoning token limit to 32000.</p><p>As recommended by the authors of R1 and QWQ, we used a temperature of 0.6 and a top-p value of 0.95. Additionally, for QWQ, we set top-k to 40. These hyperparameters sets correspond to the default hyperparameters used by the official HuggingFace models 1 . The token limit was set to 32000. We use the TogetherAPI for both these models.</p><p>Prompt Every problem was ran with the following user prompt:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Prompt</head><p>Give a thorough answer to the following question. Your answer will be graded by human judges based on accuracy, correctness, and your ability to prove the result. You should include all steps of the proof. Do not skip important steps, as this will reduce your grade. It does not suffice to merely state the result. Use LaTeX to format your answer.</p><p>{problem}</p><p>Judge Prompt To judge model solutions, we used the same hyperparameters for generation as before. Additionally, we use the following prompt:</p><p>Judge Prompt</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head># Instruction</head><p>You are an expert mathematician that grades solutions of high-school olympiad-level problems. You will be given a mathematical problem, as well as a grading scheme that you should adhere to. Your task is to accurately grade a solution according to that grading scheme. Produce a scoring using the same format for the following solution. Reason carefully about the contents of the solution and make sure that all steps of the proof are included and rigorous.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>## Formatting instructions</head><p>Follow a JSON-style formatting as the above example, namely:</p><p>-The categories should be in the same order -The awarded number of points for each category should follow after the 'points' key -The reasoning for each decision should be explained after the 'desc' key.</p><p>-Output only the JSON response.</p><p>Here is the solution you should grade: {solution}</p><p>Both the grading scheme and example grading are provided in json format. Examples of these can be found in App. A.3.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.3 EXAMPLE GRADING SCHEME AND GRADING</head><p>Example Grading Scheme The grading scheme for each problem was developed by our expert judges. The grading scheme for Problem 1 is shown below:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Grading Scheme</head><p>{ "id": "1", "points": 7, "scheme": [ { "title": "Initial closed form expression for each digit", "points": 1, "desc": "Uses the base-2n representation of n k to find a closed form expression of each digit ai = n k (2n) i mod (2n)" }, { "title": "Interchanging the floor and mod", "points": 3, "desc": "Transforms the digit expression into a easily boundable one by interchanging the floor and modulo operations." }, { "title": "Bounding the expression", "points": 2, "desc": "Correctly bounds the aforementioned expression, usually by showing the numerator is divisible by n, so that ai &gt;= n 2 i ∥."</p><p>}, { "title": "Finishing", "points": 1, "desc": "Chooses a provably sufficiently large N . The point is not awarded if it has not proven that n^k has at most k digits." } ] }</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem 4</head><p>Let H be the orthocenter of acute triangle ABC, let F be the foot of the altitude from C to AB, and let P be the reflection of H across BC. Suppose that the circumcircle of triangle AF P intersects line BC at two distinct points X and Y . Prove that C is the midpoint of XY .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem 5</head><p>Determine, with proof, all positive integers k such that\frac{1}{n+1} \sum _ {i=0}^n \binom{n}{i}^kis an integer for all positive integers n.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem 6</head><p>Let m and n be positive integers with m ≥ n. There are m cupcakes of different flavors arranged around a circle and n people who like cupcakes. Each person assigns a nonnegative real number score to each cupcake, depending on how much they like the cupcake. Suppose that for each person P , it is possible to partition the circle of m cupcakes into n groups of consecutive cupcakes so that the sum of P 's scores of the cupcakes in each group is at least 1. Prove that it is possible to distribute the m cupcakes to the n people so that each person P receives cupcakes of total score at least 1 with respect to P . Since rm ̸ = r l (as the roots of P (x) are distinct), we must have Tj−1 = 0.</p><p>Continuing this logic, we would find that all Tj = 0, which is impossible, especially since T0 = 1.</p><p>Therefore, we can always find a choice of s k such that all σj ̸ = 0 for j = 1, 2, . . . , k, which means all coefficients of our divisor are nonzero. ...</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.1.2 EXAMPLE OF CREATIVITY ERROR</head><p>On problem 3, which is a game between 2 players -Alice and Bob, O3-MINI (and most other models) argued that Bob should win from the beginning while it can be proven that Alice has an optimal strategy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>O3-MINI</head><p>We will show that regardless of how Alice chooses the two fixed points P, Q ∈ R 2 and the "template-set" S ⊂ R 2 , Bob can place his cities so that the resulting road network fails to meet at least one of the two winning conditions for Alice. (Alice wins only if the road network is both connected and drawn with no two roads crossing.) In other words, Bob has a winning strategy. ...</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.1.3 EXAMPLE OF ASSUMPTION ERROR</head><p>On problem 4, many assumption errors are made, like this one from O3-MINI, where it assumes (not explicitly) that C is external to the circumcircle of AF P , which is incorrect.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>O3-MINI</head><p>... A key step is to prove the following claim:</p><p>- <ref type="figure">---------------------------</ref>CA is tangent to ω = ⊙(AF P ).</p><p>- <ref type="figure">---------------------------</ref>Once we have tangency, the radius drawn to the tangency point is perpendicular to the tangent line. Since that radius (from the center of ω) lies on the perpendicular bisector of any chord, we will see that the perpendicular from the center of ω to BC must pass through C. Consider a different graph. Bipartite graph with people P1, . . . , Pn on one side, and cupcakes C1, . . . , Cm on the other side. Edge between Pi and Cj . We want to select a matching M such that for each Pi, C j ∈M and (P i ,C j )∈M sij ≥ 1. This is not matching.</p><p>Let's use Hall's Theorem. For each person Pi, let Fi be the family of sets of consecutive cupcakes F such that C j ∈F sij ≥ 1. We want to choose Ai ∈ Fi for each i = 1, . . . , n such that Ai ∩ Aj = ∅ for i ̸ = j. For any subset of people X ⊆ {P1, . . . , Pn}, let F (X) = P i ∈X Fi. We need to show that for any X ⊆ {P1, . . . , Pn}, we can choose |X| disjoint sets from F (X). This is not Hall's theorem directly.</p><p>We need to show that there exist disjoint sets A1, . . . , An such that Ai is a consecutive group from some partition for Pi and score for Pi from Ai is at least 1. Since for each person Pi, there is a partition into n groups Gi,1, . . . , Gi,n with score ≥ 1. Let's consider these groups as possible choices.</p><p>For each person Pi, we have n choices Gi,1, . . . , Gi,n. We need to select one choice Ai ∈ {Gi,1, . . . , Gi,n} for each i such that Ai ∩ Aj = ∅ for i ̸ = j. Consider a bipartite graph. People P1, . . . , Pn on one side, and n 2 groups Gi,j on the other side. Edge from Pi to Gij . We need to find a matching of size n such that each Pi is matched to some Gi,j i , and G1,j 1 , . . . , Gn,j n are disjoint.</p><p>Final Answer: We will prove this by contradiction. Suppose it is impossible to distribute the cupcakes such that each person Pi receives cupcakes of total score at least 1.</p><p>For each person Pi, we are given that there exists a partition of the circle of m cupcakes into n consecutive groups Gi,1, Gi,2, . . . , Gi,n such that for each k = 1, . . . , n,</p><formula xml:id="formula_0">C j ∈G i,k sij ≥ 1.</formula><p>Consider a bipartite graph B = (U ∪ V, E) where U = {P1, . . . , Pn} and V = n i=1 {Gi,1, Gi,2, . . . , Gi,n} . We add an edge between Pi ∈ U and G ∈ V if and only if G ∈ {Gi,1, Gi,2, . . . , Gi,n}. We want to show that there exists a matching of size n in B. By Hall's Marriage Theorem, we need to show that for any subset X ⊆ U , |N (X)| ≥ |X|, where N (X) = P i ∈X {Gi,1, Gi,2, . . . , Gi,n}. For any X ⊆ U , |N (X)| = | P i ∈X {Gi,1, Gi,2, . . . , Gi,n}| ≤ P i ∈X |{Gi,1, Gi,2, . . . , Gi,n}| = P i ∈X n = n|X|. This does not help.</p><p>Let's consider a different approach using flows. Consider the network constructed earlier... Further investigation is needed to construct the correct argument. Here, we show QWQ confusing itself by requiring an integer answer, even though the solution is the set of all even integers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>QWQ ... ### Conclusion:</head><p>The expression is an integer for all n if and only if k is even. Therefore, the solution is all positive even integers.</p><p>### Final Answer:</p><p>The positive integers k are all even numbers. Thus, the solution is 2m for any positive integer m.</p><p>However, since the problem requires a boxed answer and the minimal solution is typically expected, the answer is 2 . But strictly speaking, the correct answer is all even positive integers. Given the problem's requirements, the boxed answer is:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2</head><p>C.4 OVERGENERALIZING PATTERNS Here, FLASH-THINKING chooses an explicit polynomial to test out on problem 2, but then decides to generalize its conclusion to all polynomials.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>for all positive integers n.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Two problems of USAMO 2025. The other problems are available in App. B</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Distribution of first encountered failure mode.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>#1</head><label></label><figDesc>See https://huggingface.co/deepseek-ai/DeepSeek-R1 and https://huggingface.co/Qwen/</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>OF DIFFERENT ERROR MODES C.1.1 EXAMPLE OF LOGICAL ERROR Here, CLAUDE 3.7 generalizes over all indices j, when it has proven it for a single one -a clear leap in logic. CLAUDE 3.7 ... Since P (x) has at least n distinct real roots and k &lt; n, we have at least n − (k − 1) ≥ 2 choices for s k . If we choose s k = rm and then s k = r l (where rm, r l ̸ ∈ {s1, s2, . . . , s k−1 }), we get: For s k = rm: σj = Tj + rm • Tj−1 For s k = r l : σj = Tj + r l • Tj−1 If both of these result in σj = 0 for the same j, then: Tj + rm • Tj−1 = 0 and Tj + r l • Tj−1 = 0 Subtracting, we get: (rm − r l ) • Tj−1 = 0</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head></head><label></label><figDesc>.4 EXAMPLE OF ALGEBRAIC/ARITHMETIC ERROR Here, R1 incorrectly computes a sum of combinations and arrives at the incorrect conclusion. The correct value of the sum is 3,395,016, which is divisible by 8. R1 ... 4. ** Case k = 4 ** :-Testing small values of n (up to n = 6) shows the expression is an integer. However, for n = 7: 798.875 is not an integer. -Thus, k = 4 fails for n = 7.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Final</head><label></label><figDesc>Answer: The final answer is Y es C.3 QWQ BOXES AN INTEGER</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Main results of our evaluation. Listed scores are averaged over four runs. We measure cost in USD, and report the average score across all generations and graders for each problem.</figDesc><table><row><cell>Model</cell><cell cols="7">P1 (/7) P2 (/7) P3 (/7) P4 (/7) P5 (/7) P6 (/7) Total (/42)</cell><cell>Cost</cell></row><row><cell>GEMINI-2.5-PRO</cell><cell>6.5</cell><cell>0.0</cell><cell>0.1</cell><cell>3.5</cell><cell>0.0</cell><cell>0.0</cell><cell>10.1</cell><cell>N/A</cell></row><row><cell>R1</cell><cell>0.5</cell><cell>0.0</cell><cell>0.0</cell><cell>1.5</cell><cell>0.0</cell><cell>0.0</cell><cell>2.0</cell><cell>2.03</cell></row><row><cell>GROK 3</cell><cell>2.0</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>2.0</cell><cell>N/A</cell></row><row><cell>FLASH-THINKING</cell><cell>1.5</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>0.2</cell><cell>0.0</cell><cell>1.8</cell><cell>N/A</cell></row><row><cell>CLAUDE 3.7</cell><cell>0.5</cell><cell>0.5</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>0.6</cell><cell>1.5</cell><cell>9.03</cell></row><row><cell>QWQ</cell><cell>1.2</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>1.2</cell><cell>0.42</cell></row><row><cell>O1-PRO</cell><cell>0.5</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>0.2</cell><cell>0.4</cell><cell>1.2</cell><cell>203.44</cell></row><row><cell>O3-MINI</cell><cell>0.5</cell><cell>0.1</cell><cell>0.0</cell><cell>0.0</cell><cell>0.0</cell><cell>0.2</cell><cell>0.9</cell><cell>1.11</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>Results of automated grading executed by O3-MINI and R1. The table shows the average total score which is at most 42.</figDesc><table><row><cell>Model</cell><cell cols="3">Ours O3-MINI CLAUDE 3.7</cell></row><row><cell>GEMINI-2.5-PRO</cell><cell>10.1</cell><cell>19.6</cell><cell>19.3</cell></row><row><cell>R1</cell><cell>2.0</cell><cell>19.3</cell><cell>14.9</cell></row><row><cell>GROK 3</cell><cell>2.0</cell><cell>15.1</cell><cell>9.1</cell></row><row><cell>FLASH-THINKING</cell><cell>1.8</cell><cell>10.5</cell><cell>14.1</cell></row><row><cell>CLAUDE 3.7</cell><cell>1.5</cell><cell>19.0</cell><cell>18.4</cell></row><row><cell>QWQ</cell><cell>1.2</cell><cell>23.8</cell><cell>18.8</cell></row><row><cell>O1-PRO</cell><cell>1.2</cell><cell>19.3</cell><cell>21.0</cell></row><row><cell>O3-MINI</cell><cell>0.9</cell><cell>19.5</cell><cell>17.1</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGEMENTS</head><p>This work has received funding from the Swiss National Science Foundation (SNSF) [200021_207967], the Ministry of Education and Science of Bulgaria (support for INSAIT, part of the Bulgarian National Roadmap for Research Infrastructure), and the Swiss State Secretariat for Education, Research and Innovation (SERI).</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Example Grading An example grading for Problem 1 is shown below for a (human-generated) completely correct solution:</p><p>Example Grading { "points": 7, "details": [ { "title": "Initial closed form expression for each digit", "points": 1, "desc": "Correctly uses the base-2n representation of n^k to find a closed form expression of each digit ai = n k (2n) i mod(2n)" }, { "title": "Interchanging the floor and mod", "points": 3, "desc": "Transforms the digit expression into a easily boundable one by interchanging the floor and modulo operations." }, { "title": "Bounding the expression", "points": 2, "desc": "Correctly bounds the aforementioned expression, usually by showing the numerator is divisible by n, so that ai &gt;= n 2 i ." }, { "title": "Finishing", "points": 1, "desc": "Chooses a provably sufficiently large N and has proven that n k has more than k digits." } ] }</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B USAMO PROBLEMS</head><p>We show the six problems from the USAMO 2025 competition in this section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem 1</head><p>Let k and d be positive integers. Prove that there exists a positive integer N such that for every odd integer n &gt; N , the digits in the base-2n representation of n k are all greater than d.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem 2</head><p>Let n and k be positive integers with k &lt; n. Let P (x) be a polynomial of degree n with real coefficients, nonzero constant term, and no repeated roots. Suppose that for any real numbers a0, a1, . . . , a k such that the polynomial a k x k + • • • + a1x + a0 divides P (x), the product a0a1 • • • a k is zero. Prove that P (x) has a nonreal root.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem 3</head><p>Alice the architect and Bob the builder play a game. First, Alice chooses two points P and Q in the plane and a subset S of the plane, which are announced to Bob. Next, Bob marks infinitely many points in the plane, designating each a city. He may not place two cities within distance at most one unit of each other, and no three cities he places may be collinear. Finally, roads are constructed between the cities as follows: for each pair A, B of cities, they are connected with a road along the line segment AB if and only if the following condition holds: \begin{center} For every city C distinct from A and B, there exists R ∈ S such that △P QR is directly similar to either △ABC or △BAC.</p><p>\end{center} Alice wins the game if (i) the resulting roads allow for travel between any pair of cities via a finite sequence of roads and (ii) no two roads cross. Otherwise, Bob wins. Determine, with proof, which player has a winning strategy.</p><p>Note: △U V W is directly similar to △XY Z if there exists a sequence of rotations, translations, and dilations sending U to X, V to Y , and W to Z.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.2 FLASH-THINKING STRUGGLING ON PROBLEM 6</head><p>Below, we see FLASH-THINKING attempting multiple strategies in the same run, leading to a confusing solution that fails to reach a valid conclusion.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FLASH-THINKING</head><p>Consider a bipartite graph. People on one side, cupcakes on the other side. Let's consider a different network flow approach.</p><p>Source S, Sink T . Nodes P1, . . . , Pn. Nodes C1, . . . , Cm.</p><p>For each person Pi, consider the partitions. Let's fix one partition for each person Pi, say Gi,1, . . . , Gi,n.</p><p>We want to show max flow is n.</p><p>Assume for contradiction that it is impossible to distribute the cupcakes as required. We will use Hall's Marriage Theorem, but need to define the sets correctly.</p><p>For each person Pi, let Gi be the set of all consecutive groups of cupcakes that give score at least 1 to person Pi. We need to select Ai ∈ Gi such that Ai ∩ Aj = ∅.</p><p>Let's reconsider the network flow approach. Construct a network as follows:</p><p>Source S, Sink T . Nodes for people P1, . . . , Pn. Nodes for cupcakes C1, . . . , Cm.</p><p>For each person Pi and each cupcake Cj , create an edge from Pi to Cj . Edge S → Pi capacity 1 for i = 1, . . . , n. Edge Pi → Cj capacity 1 for i = 1, . . . , n, j = 1, . . . , m. Edge Cj → T capacity 1 for j = 1, . . . , m. Cost on edge (Pi, Cj ) is −sij . Cost on other edges is 0. We want to send flow of value n from S to T with minimum cost. If we can send flow of value n, then we have selected n paths from S to T . Each path is S → Pi → Cj → T . Let xij be the flow on edge (Pi, Cj ). Then </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FLASH-THINKING</head><p>Now, let us choose specific real roots for P (x). Let ri = i for i = 1, 2, . . . , n.</p><p>for some nonzero real number c. Then P (x) is a polynomial of degree n with real coefficients, nonzero constant term, and no repeated roots.</p><p>Consider the divisor Q</p><p>Since 1, 2, . . . , k are all positive, ej (1, 2, . . . , k) &gt; 0 for j = 1, 2, . . . , k. Also e0(1, 2, . . . , k) = 1 &gt; 0 . Thus, for i = 0, 1, . . . , k, ai = (−1) k−i e k−i (1, 2, . . . , k) ̸ = 0. Therefore, for this divisor Q</p><p>However, the given condition states that for any real numbers a0, a1, . . . , a k such that</p><p>This is a contradiction. Hence, our assumption that P (x) has only real roots must be false. Therefore, P (x) has a nonreal root.</p><p>Final Answer: The final answer is P (x) has a nonreal root</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.5 HALLUCINATING CITATIONS</head><p>A common failure mode of GEMINI-2.5-PRO was its tendency to generate fake citations to support its points. One of the best examples is the case below, where the model hallucinates a paper with an emoji in the title.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>GEMINI-2.5-PRO</head><p>We will use the following lemma, which is a known result in fair division theory. This result can be </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.6 BOXING SOLUTIONS</head><p>The majority of models also struggled with presenting clear and structured solutions, making evaluation and understanding significantly more difficult. In the instance below, GEMINI-2.5-PRO boxed an entire solution at the end of its generation. This completes the proof.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Claude 3.7 sonnet system card</title>
+		<author>
+			<persName><surname>Anthropic</surname></persName>
+		</author>
+		<ptr target="https://assets.anthropic.com/m/785e231869ea8b3b/original/claude-3-7-sonnet-system-card.pdf" />
+		<imprint>
+			<date type="published" when="2025-03">March 2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Mathconstruct: Challenging LLM reasoning with constructive proofs</title>
+		<author>
+			<persName><forename type="first">Mislav</forename><surname>Balunovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jasper</forename><surname>Dekoninck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikola</forename><surname>Jovanovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ivo</forename><surname>Petrov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><forename type="middle">T</forename><surname>Vechev</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2502.10197</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2502.10197" />
+		<imprint>
+			<biblScope unit="page">2025</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Matharena: Evaluating llms on uncontaminated math competitions</title>
+		<author>
+			<persName><forename type="first">Mislav</forename><surname>Balunović</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jasper</forename><surname>Dekoninck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ivo</forename><surname>Petrov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikola</forename><surname>Jovanović</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Vechev</surname></persName>
+		</author>
+		<ptr target="https://matharena.ai/" />
+		<imprint>
+			<date type="published" when="2025-02">February 2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Mathematical capabilities of chatgpt</title>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Frieder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luca</forename><surname>Pinchetti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexis</forename><surname>Chevalier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ryan-Rhys</forename><surname>Griffiths</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tommaso</forename><surname>Salvatori</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Lukasiewicz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Petersen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julius</forename><surname>Berner</surname></persName>
+		</author>
+		<ptr target="http://papers.nips.cc/paper_files/paper/2023/hash/58168e8a92994655d6da3939e7cc0918-Abstract-Datasets_and_Benchmarks.html" />
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems 36: Annual Conference on Neural Information Processing Systems 2023</title>
+				<editor>
+			<persName><forename type="first">Alice</forename><surname>Oh</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Tristan</forename><surname>Naumann</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Amir</forename><surname>Globerson</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Kate</forename><surname>Saenko</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Moritz</forename><surname>Hardt</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Sergey</forename><surname>Levine</surname></persName>
+		</editor>
+		<meeting><address><addrLine>New Orleans, LA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2023">December 10 -16, 2023. 2023</date>
+			<biblScope unit="volume">2023</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Gemini Pro</title>
+		<author>
+			<persName><forename type="first">Google</forename><surname>Deepmind</surname></persName>
+		</author>
+		<ptr target="https://deepmind.google/technologies/gemini/pro/" />
+		<imprint>
+			<date type="published" when="2025-03">March 2025</date>
+			<biblScope unit="page" from="2025" to="2029" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning</title>
+		<author>
+			<persName><forename type="first">Daya</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dejian</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haowei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junxiao</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruoyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Runxin</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qihao</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shirong</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peiyi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Bi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2501.12948</idno>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">Aaron</forename><surname>Jaech</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Kalai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Lerer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Richardson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ahmed</forename><surname>El-Kishky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aiden</forename><surname>Low</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Helyar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aleksander</forename><surname>Madry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Beutel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Carney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Iftimie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Karpenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><forename type="middle">Tachard</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Neitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Prokofiev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Allison</forename><surname>Tam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ally</forename><surname>Bennett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ananya</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andre</forename><surname>Saraiva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrea</forename><surname>Vallone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Duberstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Kondrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrey</forename><surname>Mishchenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andy</forename><surname>Applebaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Angela</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ashvin</forename><surname>Nair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Barret</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Behrooz</forename><surname>Ghorbani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Rossen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Sokolowsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boaz</forename><surname>Barak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bob</forename><surname>Mcgrew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Borys</forename><surname>Minaiev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Botao</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bowen</forename><surname>Baker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brandon</forename><surname>Houghton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brandon</forename><surname>Mckinzie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brydon</forename><surname>Eastman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Camillo</forename><surname>Lugaresi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cary</forename><surname>Bassin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cary</forename><surname>Hudson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Chak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Charles</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chelsea</forename><surname>De Bourcy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chong</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Koch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Orsinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Claudia</forename><surname>Hesse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clive</forename><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Kappler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Levy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Selsam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Dohan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Farhi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Mely</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dimitris</forename><surname>Robinson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Doug</forename><surname>Tsipras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dragos</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eben</forename><surname>Oprica</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eddie</forename><surname>Freeman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edmund</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elizabeth</forename><surname>Wong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Enoch</forename><surname>Proehl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Mitchell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erik</forename><surname>Wallace</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Evan</forename><surname>Ritter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fan</forename><surname>Mays</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Freddie</forename><surname>Wang ; Von Lohmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoff</forename><surname>Sulit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giambattista</forename><surname>Salmon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gildas</forename><surname>Parascandolo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Grace</forename><surname>Chabot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Greg</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guillaume</forename><surname>Brockman</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Leclerc</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Salman</forename><surname>Hadi</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2412.16720</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2412.16720" />
+		<title level="m">Hyung Won Chung, Ian Kivlichan, Ian O&apos;Connell, Ian Osband, Ignasi Clavera Gilaberte, and Ilge Akkaya</title>
+				<meeting><address><addrLine>Florencia Leoni, Foivos Tsimpourlas, Francis Song, Fred; Haiming Bao, Hao Sheng, Hart Andrin, Hessam Bagherinezhad, Hongyu Ren, Hunter Lightman</addrLine></address></meeting>
+		<imprint/>
+	</monogr>
+	<note>Felipe Petroski Such, Filippo Raso. Openai o1 system card. CoRR, abs/2412.16720, 2024</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">FIMO: A challenge formal dataset for automated theorem proving</title>
+		<author>
+			<persName><forename type="first">Chengwu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianhao</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huajian</forename><surname>Xin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhengying</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ye</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haiming</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Ju</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuanyang</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yichun</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qun</forename><surname>Liu</surname></persName>
+		</author>
+		<idno>CoRR, abs/2309.04295</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Openai o3-mini system card</title>
+		<author>
+			<persName><surname>Openai</surname></persName>
+		</author>
+		<ptr target="https://cdn.openai.com/o3-mini-system-card-feb10.pdf" />
+		<imprint>
+			<date type="published" when="2025-01">January 2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Qwq-32b: Embracing the power of reinforcement learning</title>
+		<author>
+			<persName><surname>Qwen</surname></persName>
+		</author>
+		<ptr target="https://qwenlm.github.io/blog/qwq-32b/" />
+		<imprint>
+			<date type="published" when="2025-03">March 2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Gemini 1.5: Unlocking multimodal understanding across millions of tokens of context</title>
+		<author>
+			<persName><forename type="first">Machel</forename><surname>Reid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikolay</forename><surname>Savinov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Denis</forename><surname>Teplyashin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dmitry</forename><surname>Lepikhin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothy</forename><forename type="middle">P</forename><surname>Lillicrap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jean-Baptiste</forename><surname>Alayrac</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Radu</forename><surname>Soricut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Angeliki</forename><surname>Lazaridou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Orhan</forename><surname>Firat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julian</forename><surname>Schrittwieser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ioannis</forename><surname>Antonoglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rohan</forename><surname>Anil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Borgeaud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">M</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Katie</forename><surname>Millican</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ethan</forename><surname>Dyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mia</forename><surname>Glaese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thibault</forename><surname>Sottiaux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fabio</forename><surname>Viola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Malcolm</forename><surname>Reynolds</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuanzhong</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Molloy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jilin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Isard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><surname>Barham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Hennigan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Mcilroy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melvin</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johan</forename><surname>Schalkwyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eli</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eliza</forename><surname>Rutherford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erica</forename><surname>Moreira</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kareem</forename><surname>Ayoub</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Megha</forename><surname>Goel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clemens</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gregory</forename><surname>Thornton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhen</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Henryk</forename><surname>Michalewski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zaheer</forename><surname>Abbas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nathan</forename><surname>Schucher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ankesh</forename><surname>Anand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Ives</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Keeling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karel</forename><surname>Lenc</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Salem</forename><surname>Haykal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siamak</forename><surname>Shakeri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pranav</forename><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aakanksha</forename><surname>Chowdhery</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roman</forename><surname>Ring</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stephen</forename><surname>Spencer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eren</forename><surname>Sezener</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2403.05530</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2403.05530" />
+		<imprint>
+			<biblScope unit="page">2024</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Deepseekmath: Pushing the limits of mathematical reasoning in open language models</title>
+		<author>
+			<persName><forename type="first">Zhihong</forename><surname>Shao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peiyi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qihao</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Runxin</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junxiao</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingchuan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daya</forename><surname>Guo</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2402.03300</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2402.03300" />
+		<imprint>
+			<biblScope unit="page">2024</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Putnambench: Evaluating neural theorem-provers on the putnam mathematical competition</title>
+		<author>
+			<persName><forename type="first">George</forename><surname>Tsoukalas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jasper</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Jennings</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jimmy</forename><surname>Xin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michelle</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Jennings</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amitayush</forename><surname>Thakur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Swarat</forename><surname>Chaudhuri</surname></persName>
+		</author>
+		<idno>CoRR, abs/2407.11214</idno>
+		<ptr target="https://x.ai/news/grok-3" />
+		<imprint>
+			<date type="published" when="2024-02">2024. February 2025</date>
+			<biblScope unit="page" from="2025" to="2029" />
+		</imprint>
+	</monogr>
+	<note>Grok 3 beta -the age of reasoning agents</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">minif2f: a cross-system benchmark for formal olympiad-level mathematics</title>
+		<author>
+			<persName><forename type="first">Kunhao</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jesse</forename><surname>Michael Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stanislas</forename><surname>Polu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR. OpenReview.net</title>
+				<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

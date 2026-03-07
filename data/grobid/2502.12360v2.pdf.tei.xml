@@ -1,0 +1,1610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Detecting Systematic Weaknesses in Vision Models along Predefined Human-Understandable Dimensions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2025-03-06">6 Mar 2025</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Sujan</forename><forename type="middle">Sai</forename><surname>Gannamaneni</surname></persName>
+							<email>sujan.sai.gannamaneni@iais.fraunhofer.de</email>
+							<affiliation key="aff0">
+								<orgName type="department">Fraunhofer IAIS</orgName>
+								<orgName type="institution">University of Bonn</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Rohil</forename><forename type="middle">Prakash</forename><surname>Rao</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Fraunhofer IAIS</orgName>
+								<orgName type="institution">University of Bonn</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Michael</forename><surname>Mock</surname></persName>
+							<email>michael.mock@iais.fraunhofer.de</email>
+							<affiliation key="aff0">
+								<orgName type="department">Fraunhofer IAIS</orgName>
+								<orgName type="institution">University of Bonn</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Maram</forename><surname>Akila</surname></persName>
+							<email>maram.akila@iais.fraunhofer.de</email>
+							<affiliation key="aff0">
+								<orgName type="department">Fraunhofer IAIS</orgName>
+								<orgName type="institution">University of Bonn</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Stefan</forename><surname>Wrobel</surname></persName>
+							<email>stefan.wrobel@iais.fraunhofer.de</email>
+							<affiliation key="aff0">
+								<orgName type="department">Fraunhofer IAIS</orgName>
+								<orgName type="institution">University of Bonn</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Detecting Systematic Weaknesses in Vision Models along Predefined Human-Understandable Dimensions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2025-03-06">6 Mar 2025</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">01FBBD6A7750B52E686FF2DD135F2AC6</idno>
+					<idno type="arXiv">arXiv:2502.12360v2[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2" ident="GROBID" when="2026-03-06T16:55+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Slice discovery methods (SDMs) are prominent algorithms for finding systematic weaknesses in DNNs. They identify top-k semantically coherent slices/subsets of data where a DNNunder-test has low performance. For being directly useful, slices should be aligned with human-understandable and relevant dimensions, which, for example, are defined by safety and domain experts as part of the operational design domain (ODD). While SDMs can be applied effectively on structured data, their application on image data is complicated by the lack of semantic metadata. To address these issues, we present an algorithm that combines foundation models for zero-shot image classification to generate semantic metadata with methods for combinatorial search to find systematic weaknesses in images. In contrast to existing approaches, ours identifies weak slices that are in line with pre-defined humanunderstandable dimensions. As the algorithm includes foundation models, its intermediate and final results may not always be exact. Therefore, we include an approach to address the impact of noisy metadata. We validate our algorithm on both synthetic and real-world datasets, demonstrating its ability to recover human-understandable systematic weaknesses. Furthermore, using our approach, we identify systematic weaknesses of multiple pre-trained and publicly available state-of-the-art computer vision DNNs.</p><p>1 In the literature, slices are often also called subgroups or subsets of data. All three terms are used interchangeably in relation to systematic weakness analysis.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>With recent advances in machine learning (ML), there has been a significant improvement in the modeling of unstructured data, such as images. However, for safety-critical applications, ML models need to be developed with a focus on trustworthiness by investigating and correcting potential failure modes. To that end, systematic errors of DNNs need to be studied and rectified. Hidden stratification <ref type="bibr" target="#b32">(Oakden-Rayner et al., 2020)</ref> and fairness-related bias <ref type="bibr" target="#b2">(Buolamwini &amp; Gebru, 2018;</ref><ref type="bibr" target="#b44">Wang et al., 2020;</ref><ref type="bibr" target="#b23">Li et al., 2023)</ref> due to spurious correlations <ref type="bibr" target="#b46">(Xiao et al., 2020;</ref><ref type="bibr" target="#b16">Geirhos et al., 2020;</ref><ref type="bibr" target="#b29">Mahmood et al., 2021)</ref> and underrepresented subpopulations <ref type="bibr" target="#b41">(Santurkar et al., 2020;</ref><ref type="bibr" target="#b40">Sagawa et al., 2019)</ref> are some examples of potential failure modes where the error or weakness is systematic in nature. The existence of these modes implies that there are slices 1 of data where the performance of the DNN-under-test (DuT) is worse than the average performance on the entire test dataset. Although identifying slices with weak performance would be trivial by simply grouping samples on which models have high error, identifying slices that are both semantically coherent and have high error is challenging. This is due to the lack of semantic metadata that describes the slices for many data domains <ref type="bibr">(e.g., images, text)</ref>. Despite this challenge, identifying such slices provides a humanunderstandable global explanation of the model behavior. Moreover, semantically coherent weak slices offer actionable insights for debugging and auditing models.</p><p>From a safety and certification perspective, upcoming standards (e.g., ISO/PAS 8800 (ISO, 2024)), and works with a focus on AI in automotive <ref type="bibr" target="#b21">(Koopman &amp; Fratrik, 2019;</ref><ref type="bibr">Burton et al., 2022)</ref>, aerospace <ref type="bibr">(EASA, 2023)</ref> and railway <ref type="bibr" target="#b48">(Zeller et al., 2023)</ref> domains have highlighted the importance of data completeness and quality using, in most cases, Operational Design Domains (ODDs). In automotive, <ref type="bibr" target="#b18">Herrmann et al. (2022)</ref> have proposed ontologies for different traffic participants that can be used to build ODDs for automated driving. The goal of using such ODDs is to describe the scope of AI applications in terms of humanunderstandable, safety-relevant dimensions where comprehensible safety argumentations can be built w.r.t. robustness, explainability, and interpretability. To facilitate building such safety augmentations, testing approaches for ML developers and safety experts that evaluate DNN performance and identify systematic weaknesses are essential.</p><p>Although in recent years, several works <ref type="bibr" target="#b6">(Chung et al., 2019;</ref><ref type="bibr" target="#b39">Sagadeeva &amp; Boehm, 2021;</ref><ref type="bibr" target="#b9">d'Eon et al., 2022;</ref><ref type="bibr" target="#b12">Eyuboglu et al., 2022;</ref><ref type="bibr" target="#b30">Metzen et al., 2023;</ref><ref type="bibr" target="#b33">Plumb et al., 2023;</ref><ref type="bibr" target="#b20">Jain et al., 2023;</ref><ref type="bibr" target="#b16">Gao et al., 2023;</ref><ref type="bibr" target="#b4">Chen et al., 2023)</ref> have proposed methods for analyzing systematic weaknesses, there is a lack of focus on identifying weaknesses of models evaluated on real-world datasets, where the weaknesses align with human-understandable semantic concepts defined, for example, by safety experts in ODDs. We argue that it is more beneficial from a safety perspective if the approaches to identify systematic weaknesses are ODD-compliant for two main reasons: (i) the slices are useful as the identified vulnerabilities are aligned with human-understandable safety-relevant dimensions, and (ii) the slices are actionable as ML developers can gather more data to retrain or reweight existing samples to improve performance along the safety-relevant dimensions. We address the challenge of analyzing unstructured image data by designing an algorithm that leverages recent advances in foundational models and systematic weakness analysis methods for structured data. Our contributions can be summarized as follows:</p><p>• We introduce an algorithm that takes in an image dataset, ODD description and performance values of a DuT as inputs and outputs systematic weaknesses of the DuT (see section 3).</p><p>• Concretely, as part of the metadata generation module, we make use of CLIP <ref type="bibr" target="#b34">(Radford et al., 2021)</ref> to leverage its rich joint image, text embedding space. As part of the slice discovery module, we propose using SliceLine <ref type="bibr" target="#b39">(Sagadeeva &amp; Boehm, 2021)</ref> with modifications to identify weak slices that align with the ODD (see section 3).</p><p>• In addition, we address the noisy nature of metadata generation and propose a way to recover relevant weak slices even if CLIP labeling is suboptimal. We empirically evaluate the behavior of our algorithm at various levels of label quality using synthetic data (see section 4).</p><p>• Furthermore, we evaluate multiple pre-trained and publicly available DNNs-under-test using our algorithm on real-world datasets and provide insights into their systematic weaknesses (see section 5).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>In this section, we review the recent progress in analyzing systematic weaknesses using slice discovery methods (SDMs) <ref type="bibr" target="#b12">(Eyuboglu et al., 2022)</ref> for structured and unstructured data and highlight their connection to interpretability and feature attribution methods.</p><p>For structured data, methods such as SliceFinder <ref type="bibr" target="#b6">(Chung et al., 2019)</ref> and SliceLine <ref type="bibr" target="#b39">(Sagadeeva &amp; Boehm, 2021)</ref> leverage the rich metadata available in the form of features to slice the data and exhaustively search for top-k low-performing slices. The differences between these two approaches lie in the scoring of errors, the pruning strategy, and how they handle slice sizes. Although these two approaches were explicitly developed to identify systematic weaknesses, subgroup-discovery techniques <ref type="bibr" target="#b0">(Atzmueller, 2015)</ref>, a subset of data mining, have a similar problem formulation and could also potentially be used for slice discovery of structured data.</p><p>For unstructured data such as images, where metadata is not directly available, SOTA approaches have taken two lines of research. In the first line of prior work, for a given test dataset, DNN embeddings are used as proxies for coherency. Weak-performing slices of the data are obtained by clustering these embeddings along with model errors. Here, approaches such as Spotlight <ref type="bibr" target="#b9">(d'Eon et al., 2022)</ref> perform clustering on the embeddings of the final layers of the DuT itself. In contrast, recent approaches leverage the joint embedding space of foundational models such as CLIP <ref type="bibr" target="#b34">(Radford et al., 2021)</ref> and apply mixture models like in <ref type="bibr">DOMINO (Eyuboglu et al., 2022)</ref> or SVMs like in SVM-FD <ref type="bibr" target="#b20">(Jain et al., 2023)</ref> to identify coherent clusters. In Spotlight, an additional step involving humans is required to inspect and understand what uniquely constitutes a weak slice. DOMINO and SVM-FD automate the slice description process to reduce human effort and bias using an additional DNN. In all these approaches, as coherence is only loosely enforced based on DNN embeddings, it is not always clear what specific human-understandable concept uniquely constitutes a slice. Without this knowledge, it would be unclear to the ML developers what new data samples would need to be collected to retrain the model and fix the systematic weakness. To mitigate this problem, some approaches <ref type="bibr" target="#b16">(Gao et al., 2023;</ref><ref type="bibr" target="#b43">Slyman et al., 2023)</ref> propose iterative human-in-the-loop testing to ensure that the identified slices are human-understandable.</p><p>In the second line of prior work, inspired by counterfactuals and leveraging CLIP, several approaches <ref type="bibr" target="#b45">(Wiles et al., 2022;</ref><ref type="bibr" target="#b30">Metzen et al., 2023)</ref> propose synthetically generating new (counterfactual) images that would lead to erroneous predictions by controlling the content and data shift in the image. Among these, Promp-tAttack <ref type="bibr" target="#b30">(Metzen et al., 2023</ref>) also proposes to identify weaknesses that are aligned with the ODDs. However, while PromptAttack generates new samples using image-generation DNNs, which could potentially introduce biases due to domain shift, our approach is more closely aligned with earlier methods that evaluate a DNN on a given test dataset. In this direction, HiBug <ref type="bibr" target="#b4">(Chen et al., 2023)</ref> utilizes a GPT-based model to assign attributes to a given dataset. Building on this and appearing concurrently with our work, DebugAgent <ref type="bibr" target="#b5">(Chen et al., 2025)</ref> extends HiBug with a search algorithm to identify weak slices. While we also apply attributes to the data to perform a subsequent weak slice search, we, instead, opt for the less computeintensive <ref type="bibr">CLIP Radford et al. (2021)</ref> model to generate attributes. Additionally, we develop a Bayesian framework to compensate for the label noise that occurs from the attribution.</p><p>In contrast to SDMs, local interpretability and feature attribution methods <ref type="bibr" target="#b36">(Ribeiro et al., 2016;</ref><ref type="bibr" target="#b27">Lundberg &amp; Lee, 2017)</ref>, while linking achieved understandability to actionability <ref type="bibr" target="#b17">(Guidotti et al., 2022)</ref>, identify local explanations and not the global systematic weaknesses. In addition, the feature attribution methods themselves might not always be robust or consistent <ref type="bibr" target="#b22">(Krishna et al., 2022)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Method</head><p>In this section, we present our algorithm for weakness detection on the basis of human-understandable semantic dimensions. To this end, we introduce notation regarding metadata and slicing, discuss the generation of metadata, formulate DNN weakness within a Bayesian framework to account for the impact of noise, and lastly detail how such impact can be acknowledged within slice discovery algorithms.</p><p>Notation: Consider a DNN-under-test (DuT) M trained on some computer vision task. Let D be the (test) dataset containing the inputs and the corresponding task-related ground truth. For each sample s i ∈ D, using some per-sample performance metric (e.g., intersection over union (IoU)) and, if applicable, applying some threshold, we obtain binarized DuT errors, defined as e i ∈ {0, 1}. Each sample is either correctly (e i = 0) or incorrectly (e i = 1) predicted by the DuT. Here, we slightly deviate from conventional notation by considering individual samples rather than the DuT inputs. Although identical for image classification, in the case of object detection, multiple samples (i.e., objects) may be present in a given input image, over which inference is performed. Using a set of samples with individual errors e i allows us to define slices S ⊆ D of the data and their corresponding (average) error rate ē| S , defined as  this constraint alone could be trivially satisfied by selecting all samples where e i = 1. But, this, in general, would reveal no further information than the known data-points with bad performance.</p><p>As motivated in section 1, slice discovery methods aim to provide further information about DNN weaknesses by attempting to find semantically coherent slices. This is typically achieved using some scheme that determines whether a specific sample s i belongs to the set S. The scheme relies on additional information beyond what is provided solely by e i . This additional information may then be used to infer the cause of the weakness. Several existing works <ref type="bibr" target="#b9">(d'Eon et al., 2022;</ref><ref type="bibr" target="#b12">Eyuboglu et al., 2022;</ref><ref type="bibr" target="#b20">Jain et al., 2023)</ref> base their schemes on distance measures in the latent spaces of the samples, so that the resulting clusters, i.e., slices, require further interpretation. In contrast, this work bases the information on metadata, more concretely a predefined set Z of semantic dimensions and corresponding attributes that describe the samples. For instance, in pedestrian detection, such dimensions can be fairness-related, such as "gender" or "age", with attributes like "young" or "old" but may also include other safety-relevant aspects such as "occlusion" or "clothing-color". Such an algorithm offers direct interpretability of the slices, and selected dimensions can be aligned, e.g., with existing safety considerations in the form of Operational Design Domains (ODDs) for the respective systems. The set Z used in this work was inspired by <ref type="bibr" target="#b18">Herrmann et al. (2022)</ref> in the context of automotive ODDs.</p><p>In fig. <ref type="figure" target="#fig_0">1</ref>, we present our algorithm, where, using inputs such as a dataset, a predefined ODD, and a DuT, we transform the task of finding systematic weaknesses in the unstructured data domain into a problem in the structured data domain. The algorithm is designed with modular components for adaptability. The first module handles the generation of structured metadata, while the second module applies the weak slice search algorithm to the generated structured metadata. With a structured description of the data, we can formulate slices as rules over Z, e.g., gender = male ∧ occlusion = (0.9, 1.0]. This allows for a more probabilistic notation p(e|S) of the expected error given the slice. Slice discovery is then the task of finding (coherent) conditions S such that the conditional expectation is maximized.</p><p>Metadata Generation: While there is great interest from safety experts and certification bodies in ODDs for safety argumentation, metadata that align with the ODD are scarcely available for most, particularly image, domains. Human annotation of such metadata is often out of scope for large datasets due to cost and time constraints. However, an automated metadata generation module that captures different semantic dimensions of Z is feasible with existing technologies. For example, a multi-modal foundational model like CLIP <ref type="bibr" target="#b34">(Radford et al., 2021)</ref> with its joint image and text embedding space could be a potential candidate for such automated annotation out of the box or after fine-tuning. For a given attribute a we can use CLIP as a zero-shot classification function G, which maps a given sample s i onto the attributes, which represent the potential classes. As such, it therefore provides the coherence of the slices discussed above.</p><p>Taking the ontology for pedestrians from the automotive domain as a baseline, a qualitative evaluation of CLIP's capability was performed by <ref type="bibr" target="#b14">Gannamaneni et al. (2023)</ref>. While CLIP achieved SOTA level zeroshot performance on different dimensions such as gender, skin-color, and age for portrait shots of human faces in the celebA <ref type="bibr" target="#b26">(Liu et al., 2015)</ref> dataset, they observed a drop in performance on real-world datasets containing pedestrians like in the Cityscapes <ref type="bibr" target="#b7">(Cordts et al., 2016)</ref> dataset. The drop in performance can be attributed to more challenging conditions, such as complex poses, low illumination, and high occlusion. These observations, along with our experiments, show that the classification function G is subject to varying degrees and types of uncertainty, depending on the dimensions of Z: (i) the presence of data-based (aleatoric) uncertainties, i.e., where the image resolution is low or the object in question is heavily occluded or distant, leading to errors in the generated metadata. (ii) the presence of model-based (epistemic) uncertainties, i.e., where the function G exhibits suboptimal performance. While (i) can occur in the case of both human and CLIP-based annotation, (ii) occurs more prominently in non-human, automated labeling.<ref type="foot" target="#foot_0">2</ref> Therefore, any method that aims to consider metadata generated using such techniques should take into account the incurred noise in downstream tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bayesian Framework to Account for the Impact of Noise:</head><p>To address the uncertain nature of classification, we extend the previous slice notation of the error to the joint probability p(e, C, S), where C represents the outcome of automated labeling for some attribute of a dimension, while S denotes the corresponding ground truth. For simplicity, we drop the indices and make the additional assumption that S, C can be seen as binary, i.e. they may either be true (S, C) or not true (¬S, ¬C), respectively (for details on the non-binary case, see appendix B.4). Using Bayes' Theorem and marginalizing over C or S, we can express</p><formula xml:id="formula_0">p(e|S) =p(e|C, S)r C + p(e|¬C, S) (1 − r C ) ,</formula><p>(1)</p><formula xml:id="formula_1">p(e|C) =p(e|C, S)p C + p(e|C, ¬S) (1 − p C ) . (2)</formula><p>Here, p(e|S) represents the true slice error, while p(e|C) denotes the observed slice error. Furthermore, p C = p(S|C) and r C = p(C|S) are shorthand for precision and recall of the labeling function G measured towards the ground truth, and are used in our algorithm, fig. <ref type="figure" target="#fig_0">1</ref>, for the quality check. A detailed derivation of the equations is provided in appendix B.1. Making these relations explicit allows us to investigate the hypothesis typically underlying Slice Discovery Methods in more detail. Specifically, based solely on the observed slice performance/weakness p(e|C), one may conclude that a related data property S represents a weakness of the DuT, i.e., we assume that p(e|S) also has a comparable performance/weakness. While in our algorithm the relation between S and C is explicit as the latter is given by a classifier for the former, in other approaches <ref type="bibr" target="#b9">(d'Eon et al., 2022;</ref><ref type="bibr" target="#b12">Eyuboglu et al., 2022;</ref><ref type="bibr" target="#b20">Jain et al., 2023)</ref> the relation is implicit, as observed sets C are interpreted to indicate a meaning of S (typically referred to as a slice label). Another assumption typically made is the independence between the labeling function G and DuT. This independence would imply that the errors of the DuT do not depend on the noise (errors) of G. Specifically, for a semantic attribute, the error rates p(e|C, S) when G is correct and the error rate p(e|¬C, S) when it is not should be (approximately) equal. However, our experiments indicate that this is not always the case; therefore, we denote the difference by δp(e|S) = p(e|¬C, S) − p(e|C, S) .</p><p>(3)</p><p>Please note that δp describes intra-set variances of the error rate in the set S and is not a conditional probability on its own. Taking into account this potential dependence, we can derive the true error from the observed error exactly given the performance of the annotation process using</p><formula xml:id="formula_2">p(e|S) = p(e|C) p ¬C + p(e|¬C) (p C − 1) p C + p ¬C − 1 independence assumption + δp(e|S) κ S p C p ¬C p C + p ¬C − 1 − r C +δp(e|¬S) κ ¬S (p C − 1)p ¬C p C + p ¬C − 1 correction terms . (<label>4</label></formula><formula xml:id="formula_3">)</formula><p>As long as the independence assumption is (approximately) valid, implying δp(e|S) ≈ δp(e|¬S) ≈ 0, the slice error given the semantic attribute S is obtained by separating the two types of observed error probabilities p(e|C), which is possible as long as the denominator is non-zero. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Weak Slice discovery on Structured ODD Data with SliceLine:</head><p>We have now established methods to generate metadata and correct for noise during the metadata generation. With this background, in algorithm 1, we propose three-stages for Systematic Weakness Detection (SWD-1,2,3). In SWD-1, using the generated structured metadata and observed errors p(e|C), we employ algorithms such as SliceLine <ref type="bibr" target="#b39">(Sagadeeva &amp; Boehm, 2021)</ref> to provide a ranked list of top-k worst performing slices based on a scoring function that takes into account the errors and sizes of the slices (see eq. ( <ref type="formula">5</ref>) in appendix A.4 for details on how SliceLine works). As we have motivated, observed errors may not always provide a sufficient signal to identify the underlying error (see the top row in fig. <ref type="figure" target="#fig_2">2</ref>). Therefore, in SWD-2, using eq. ( <ref type="formula" target="#formula_2">4</ref>) to compensate for noise in the metadata, we provide corrected errors instead of observed errors to SliceLine to provide a second ranked list of top-k worst-performing slices S. However, as it requires extensive human effort to identify certain parameters, i.e., δp(e|S), δp(e|¬S) in eq. ( <ref type="formula" target="#formula_2">4</ref>), in particular for combinations of semantics, we make a cheaper approximation only considering the independence assumption part of the equation. This is implemented in computeCorrectedError() in algorithm 1. To operationalize this part of the equation, we estimate precision values based on human evaluation of metadata quality on only n = 60 samples per attribute (see appendix B.4). The subsequent corrected errors from this independence assumption are used in the SliceLine scoring function. Based on the slice quality indicators discussed above, we are also able to discard invalid slices due to denominator values close to zero. In addition to SWD-1 and SWD-2, we also consider a merge of the resulting slices from SWD-1 and SWD-2, as this might provide a complementary effect. We refer to this merged list as the output of SWD-3. The merge step includes sorting based on the score of the slice from the scoring function, removal of duplicate slices, and filtering of invalid slices. The SliceLine hyperparameters include the level (maximal search depth), i.e. the maximal number of semantic dimensions considered simultaneously, as well as a cut-off for the necessary slice error ē| S to consider S a valid slice. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Proof of Concept with Synthetic Data</head><p>To demonstrate the efficacy of our algorithm fig. <ref type="figure" target="#fig_0">1</ref>, we first present evaluations on a synthetic dataset. This is done to evaluate the impact of noise on the labeling process and to determine the degree to which our algorithm can compensate for it. The synthetic data is a tabular dataset containing columns for nine "real" semantic dimensions for 200 000 samples each containing binary attributes. For each of the "real" dimensions (GT), a "predicted" metadata column is included as a proxy for the metadata that would be generated by CLIP in our algorithm (see fig. <ref type="figure" target="#fig_0">1</ref>). In addition, one final column contains the binarized DuT errors (e). The first four dimensions are generated to be imbalanced with only ∼ 5% of the samples belonging to the attribute "1". The other five dimensions are generated such that both attributes have equal distribution. The error column is designed such that weak slices are induced for the specified ground-truth attributes.</p><p>We consider three regimes of noise, i.e., different quality of labeling of the simulated annotation process: (i) a regime of "good" quality CLIP labeling, represented with p C above 80%, (ii) a regime of "medium" quality CLIP labeling, represented with p C between 40% and 70%, and (iii) a regime of "bad" quality CLIP labeling, represented with p C between 10% and 40%. For all three regimes, we considered 100 runs of the experiments to account for statistical influence. Further details about the dataset generation can be found in appendix A.2. In fig. <ref type="figure" target="#fig_2">2</ref>, in the top row, the error distributions show how labeling quality impacts the spread of error between attributes for each semantic dimension, i.e., the upper and lower ends of the bars are given by the error rates for ē| S , ē| ¬S and similarly using C or the corrected errors. In the good labeling quality regime, as expected, observed errors and corrected errors both display the same spread as the GT error. But when labeling quality is medium or bad (where the impact of eq. ( <ref type="formula" target="#formula_2">4</ref>) is stronger), the spread of the observed error is significantly lower than that of the corrected error. In contrast, the corrected error either has close estimates to the true error or overestimates the true error (GT). From a safety perspective, we argue that overestimating the error within a DNN is better than underestimating it. In the bottom row, we evaluate the results of SWD-1,2,3. This is shown by comparing how well SWD-1,2,3 recover the top-k weak slices in comparison to top-k slices from Oracle, i.e., a situation where we have access to perfect "GT" labeling quality annotation. Precision and recall are calculated for the three data quality regimes w.r.t. the Oracle case by considering the overlap of identified weak slices at an increasing number of top-slices k. Note that precision and recall in this figure refer to quality metrics on weak slice discovery and not precision and recall of the CLIP labeling. While, at level 2, the maximum number of slices k is 162 for 9 binarized dimensions 4 , we consider only slices fulfilling the cut-off requirement as a weak slice. Of these 162 slices, only ∼ 30 are identified as weak slices. Although under good labeling quality, the slices identified by SWD-1,2,3 basically have 100% overlap with the slices from the Oracle, under medium and strong label noise, SWD-3 shows significantly more recall than SWD-1 and marginally over SWD-2. However, this comes with a small loss in precision. In cases of strong noise, SWD-1 only recovers a few slices where the error signal is dominant, which explains the high precision at the cost of low recall. SWD-3, on the other hand, has a reduced precision, but recovers most of the weak slices identified by Oracle. For the rest of this work, we focus primarily on the slices identified by SWD-3.  <ref type="bibr" target="#b24">(Li et al., 2021)</ref> are evaluated using four public datasets (CelebA <ref type="bibr" target="#b26">(Liu et al., 2015)</ref>, BDD100k <ref type="bibr" target="#b47">(Yu et al., 2020)</ref>, Cityscapes <ref type="bibr" target="#b7">(Cordts et al., 2016)</ref>, and RailSem19 <ref type="bibr" target="#b49">(Zendel et al., 2019</ref>)), respectively. We restrict the number of combinations (level) to 2 in this work. However, as presented in appendix B.4, our approach allows correction of errors even at higher levels of combinations. We used the cutoff for the slice error as 1.5 ē| D for all experiments except the PanopticFCN model evaluation. In the PanopticFCN evaluation, we utilize the cut-off point for the slice error as 1.0 ē| D as the global average error is already quite high. For a detailed experimental setup, see appendix A.1. To foster reproducibility, code and the prompts used for metadata generation with CLIP will be provided.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Evaluation of our Systematic Weaknesses Detection Method</head><p>Evaluating a ViT Model on CelebA: As our first experiment, we evaluated the weaknesses of the ViT-B-16 <ref type="bibr" target="#b10">(Dosovitskiy et al., 2020)</ref> model (DuT) trained on ImageNet21k <ref type="bibr" target="#b37">(Ridnik et al., 2021)</ref>. We use the model for the targeted task of identifying the class "person" in the CelebA dataset <ref type="bibr" target="#b26">(Liu et al., 2015)</ref> as a real-world proof of concept for our approach. Due to the extensive range of label categories in ImageNet <ref type="bibr" target="#b8">(Deng et al., 2009)</ref> and the significant noise in the labeling style, models trained on the full ImageNet dataset or its standard subset ImageNet1k <ref type="bibr" target="#b38">(Russakovsky et al., 2015)</ref> can suffer from systematic weaknesses. For example, although the primary foreground object in an image might be a human, in some instances the image can be labeled as belonging to the class "person" while in other similar instances the label might be about more granular classes like "bride" or "guitarist". To fix this issue, <ref type="bibr" target="#b37">(Ridnik et al., 2021)</ref> proposed 11 hierarchies based on WordNet <ref type="bibr" target="#b31">(Miller, 1995)</ref> semantic trees such that classes at higher hierarchy levels are superclasses that subsume classes at lower hierarchy levels. However, despite these efforts, considerable label noise in terms of class overlap still persists. For example, humans holding specific objects might occur at the same hierarchy level as the class "artifact" or "person". Similar problems exist, for example, for hairstyles (see "pompadour" existing at the same level as "person"). For a further analysis, also see the work of <ref type="bibr" target="#b31">(Northcutt et al., 2021)</ref>.</p><p>Earlier works <ref type="bibr" target="#b1">(Beyer et al., 2020;</ref><ref type="bibr" target="#b42">Shankar et al., 2020)</ref> have proposed using multi-label evaluation metrics as a way to deal with label noise. However, we consider the simplified task of identifying a dedicated class, "Person", in a dataset with only human faces (celebA) by focusing on the top-1 class predictions for level-0 of the label hierarchy proposed in ImageNet21k. We obtain an accuracy of 94.44% on the 202 599 images in the CelebA dataset. The softmax of the top-1 prediction, see fig. <ref type="figure" target="#fig_3">3</ref>, shows, besides the "person" class, the presence of several other classes, most prominently "artifact" and "pompadour". As this model is commonly used as a pre-trained backbone for various applications, uncovering potential shortcomings might also be beneficial for potential downstream use cases of various types. Furthermore, the CelebA dataset serves as an ideal testing ground for approaches identifying systematic weaknesses due to the availability of the groundtruth metadata attributes. As an ODD for this test case, we propose a simplified subset of these available metadata attributes in analogy to the work of <ref type="bibr" target="#b14">Gannamaneni et al. (2023)</ref>, for details see appendix A.3. As proposed in our algorithm, we generate metadata using CLIP for the given ODD dimensions. Subsequently, the generated metadata is combined with the errors of the DuT.</p><p>Weak Slice Discovery Since the CelebA dataset contains annotated metadata for 40 attributes, we have access to noiseless metadata which, when used with SliceLine, can be considered as the "Oracle" approach.</p><p>In table 1, we present the quantitative comparison of the top-7 slices identified by SWD-3 against corresponding slices in SWD-1 and Oracle. Basically, we list the top-7 slices of SWD-3 and evaluate where these slices would be ranked by SWD-1 and Oracle and what the corresponding statistics would be to highlight the importance of error correction. From the slice descriptions, all the identified weak slices contain some variation of the semantic concept "wearing hat". The discovery of these slices can be seen within the context of the frequent misclassification of images as class "artifact" by the DuT (see fig. <ref type="figure" target="#fig_3">3</ref>). In these cases, the model likely focuses on the hats as the foreground object and predicts the class "artifact". To evaluate the quality of the identified slices, we utilize the errors of the slices, i.e., p corr (e|S), p(e|C), and p(e|S) defined in section 3. We observe, based on the rank column, that the top-6 Oracle slices are captured in top-7 SWD-3 slices. Notably, while the observed error p(e|C) of SWD-1 underestimates the true error p(e|S) of Oracle, SWD-3 effectively corrects this in p corr (e|S). For instance, in the third row, which corresponds to the top-ranked weak slice identified by the Oracle, the difference between the Oracle slice error and the SWD-1 slice error is 0.3, while between SWD-3 and Oracle it is only 0.07. A thorough evaluation of our approach on the top-60 slices shown in fig. <ref type="figure" target="#fig_5">5 in appendix C</ref>.1 reveals that SWD-3 obtains 100% recall of weak slices at the cost of a reduction in precision. Note that precision and recall in this figure refer to quality metrics on weak slice discovery and not precision and recall of the CLIP labeling. From a safety perspective, given the noisy labeling, high recall (detection of all weak slices) at the cost of some reduction in precision can be considered acceptable. Interestingly, the top-1 slice of SWD-1 (not shown in table) refers to slice description "wearing hat: true" and "pale-skin: true". <ref type="bibr" target="#b14">Gannamaneni et al. (2023)</ref> discussed the limitations of CLIP in separating the latter dimension and corresponding low performance. This high level of noise in the generated metadata leads to SWD-1 identifying "pale-skin" as a top-1 slice while SWD-3 effectively corrects for this by discarding the wrongly detected slice as "invalid" using the quality indicators (see algorithm 1) and hence does not identify this dimension in top-7. For a qualitative evaluation of SWD-3, the top-1 slice with sample images from the slice are available in fig. <ref type="figure" target="#fig_3">3</ref>  Comparison to SOTA SDM method In addition to the evaluation of SWD-3, we compare three SOTA methods <ref type="bibr">DOMINO (Eyuboglu et al., 2022</ref><ref type="bibr">), Spotlight (d'Eon et al., 2022)</ref>, and SVM FD <ref type="bibr" target="#b20">(Jain et al., 2023)</ref> against Oracle. Similarly to our work, DOMINO and SVM FD use CLIP (ViT L/14) in their workflows. However, they encode the images in the CLIP embedding space and then search for weak slices without explicitly enforcing any semantic concepts. To describe the slices, both approaches perform an additional step, where the identified slices are explained using text from large language models. In contrast, Spotlight directly uses the embedding space of the DuT to cluster weak slices and provides no descriptions of the identified slices. The former methods follow a broader trend (like us) of using foundational models like CLIP in testing smaller models. However, they do not thoroughly address limitations in CLIP's capabilities and the limitations of their approaches w.r.t. actionability when the slice descriptions are not very meaningful.</p><p>Our approach tackles both these limitations as we address noise in CLIP labeling and also correctness of descriptions. However, our approach also has a limitation as it can only identify weaknesses w.r.  ) indicates the Jaccard similarity coefficient between the two slices. appendix C.2 contains samples from each slice of the SOTA methods along with slice descriptions and statistics. For overlap with the oracle slice, higher values are better. For the overlap with the FNs, low values indicate that a slice does not contain "significant" weaknesses or is highly specific, while high values indicate that potentially all weaknesses of the DuT are in one slice and it might, therefore, be too generic. This implies that in general one would expect or desire medium overlap ranges. methods, as will be shown below, can only be realized if the description or coherence of a slice is understandable and actionable to the end-user. To assess the actionability of the SOTA methods, we consider (i) slice descriptions based on the methods themselves, (ii) slice coherence based on human inspection, and (iii) slice coherence based on overlap with top-5 slices of Oracle.</p><formula xml:id="formula_4">|S 1 | p(e|C) J(S 1 , S O 1 ) J(S 1 , S O 2 ) J(S 1 , S O 3 ) J(S 1 , S O 4 ) J(S 1 , S O 5 ) |S1∩S F N | |S F N | DOMINO -0.</formula><p>Qualitative results and slice descriptions are provided for the three methods in appendix C.2. We identified that DOMINO descriptions can be very generic and not helpful in identifying the unique attributes of a slice. This problem was also discussed in other works <ref type="bibr" target="#b20">(Jain et al., 2023;</ref><ref type="bibr" target="#b16">Gao et al., 2023)</ref>. For Spotlight, descriptions are not available as part of the method. In contrast, in SVM FD, the slice description is targeted and covers one dimension of the weak slice identified by Oracle, namely, "wearing hat". However, as shown earlier, the weaknesses identified from Oracle stem from the combination of semantics. Therefore, slice descriptions from the SOTA methods are not enough for actionability. Second, to further evaluate the coherence of the slices, we manually inspect a sample of the images from a slice to identify the semantics. Such an approach is necessary for all methods that do not provide slice descriptions. For such manual inspection to identify the coherence of the slice, we consider samples from the slice and samples from the remaining data (last column) as a form of control group. For top-1 slices of all three approaches, it is hard to determine what uniquely constitutes the top-1 slice when considering the combination of semantics. Furthermore, such an exercise is time intensive and might potentially uncover spurious patterns.</p><p>Finally, to evaluate the coherence of the slice based on overlap with Oracle slices, we present in table 2 the top-1 slice identified by each method, their corresponding statistics and the overlap (Jaccard Similarity Coefficient) of the top-1 slice with the top-5 Oracle slices. From the slice statistics, it can be observed that the methods recover slices with significant performance degradation and observed error p(e|C). However, the overlap of the top-1 slices with top-5 of Oracle is quite low. This indicates that the methods might be uncovering weaknesses w.r.t. dimensions not present in the ODD. However, without useful descriptions, the actionability of these slices is low. Furthermore, we evaluate the overlap of the top-1 slice with a slice that is purely made up of FNs of the DuT. High values in this column might indicate that priority is given to identifying FNs rather than semantic coherence, as it is unlikely that all weaknesses of a DNN can be explained by one semantic concept. Therefore, grouping all FNs into one slice would be counterproductive. As DOMINO captures 64% of all false negatives in its top-1 slice, it is unlikely that such a slice is actionable. In contrast, Spotlight and SVM FD capture fewer FNs in the top-1 slice. Therefore, they might be capturing some form of combination of semantics. Based on these evaluations, we conclude that the SOTA methods, when integrated with improved slice description techniques, could complement our approach. However, in their current form, our approach offers greater actionability due to its inherent slice descriptions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Insights on SOTA Pedestrian Detection Models</head><p>Having shown the benefits of our proposed method, we evaluate a more safety-relevant task of pedestrian detection using models trained in real-world autonomous driving (AD) datasets to identify their systematic weaknesses when predicting the class "pedestrian". For this, we require pedestrian level performances (intersection-over-union (IoU)) and metadata. To avoid noisy labeling in our metadata generation step, we perform some additional steps which were not required for the previous experiment. First, we cropped all pedestrians from the images and considered these crops as D. This is done to focus the CLIP model only on pedestrians during metadata generation.<ref type="foot" target="#foot_6">8</ref> </p><p>Second, we calculate the pixel area of the pedestrians based on the ground truth bounding box area and use this to filter D by removing pedestrians that occupy small pixel areas ("smaller" pedestrians). Such filtering is necessary as: (i) Due to low resolution and high pixelation of "smaller" sized pedestrians, i.e., there is a high aleatoric uncertainty regarding the correct labels affecting both CLIP and human labelers in understanding the image content (e.g., to determine gender, age, etc.). (ii) "Smaller" pedestrians are more likely to be farther from the ego-vehicle<ref type="foot" target="#foot_7">9</ref> and, therefore, might be considered less safety-relevant (in terms of vehicle breaking time). (iii) As the small size can be strongly correlated to performance (due to distance <ref type="bibr" target="#b13">(Gannamaneni et al., 2021;</ref><ref type="bibr" target="#b28">Lyssenko et al., 2021)</ref> or occlusion), this signal can strongly dominate the search for systematic weaknesses by SliceLine, thus not providing any novel insights in terms of systematic weaknesses. For this reason, we remove the low-resolution "smaller" pedestrians to improve the quality of metadata generation and gain further novel insights about model failures w.r.t. more safety-relevant pedestrians.</p><p>The metadata generation using CLIP is performed using ODDs more suitable for automotive context (see appendix A.3). We also perform a manual evaluation of a subset of images (n = 60) for each attribute in each dataset to evaluate the quality of the generated metadata by estimating the precision p C and recall r C (as discussed in section 3) and show the results in table <ref type="table">3</ref>  <ref type="table">3</ref>: The estimated precision and recall using our proposed approach for evaluating the quality of the generated metadata. Here, we provide the mean and σ/2, for n of 60, of the estimated precision and recall. Certain dimensions like occlusion are available as part of the datasets themselves. We do not perform humanevaluation for these dimensions but these are considered in the weak slice search.</p><p>In these experiments, using SWD-3, we evaluate the weaknesses of an object detection model (Faster R-CNN), a segmentation model (SeTR PUP), and a panoptic segmentation model (Panoptic-FCN). The models are evaluated on their respective datasets, i.e., BDD100k, Cityscapes, and RailSem19. Samples of image crops of the identified top-1 weak slice for each experiment are shown in fig. <ref type="figure" target="#fig_4">4</ref> (see figs. 10 to 12 in appendix C.2 for top-5 weak slices). In table 4, we present the largest and worst performing slice of the top-5 to provide insights about the three models. In all three experiments, the performance degradation of the identified slices is significant. "Occlusion", skin-color and clothing-color are reoccurring slice descriptions for the first two models, which are tested on datasets that contain images with many nighttime scenes (BDD100k) or relatively high gray-toned scenes (Cityscapes). In contrast, the third model, which contains relatively brighter scenes, has a significant weakness for the dimension "age". The estimated precision p C and recall r C in table <ref type="table">3</ref> were provided as input to algorithm 1 to obtain these slices and to determine the quality of the identified weaknesses. Therefore, in contrast to SOTA SDMs, our approach identifies human-understandable safety-relevant systematic weaknesses in DNNs used for real-world applications. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>In this work, we present an algorithm for our Systematic Weakness Detector (SWD) to analyze the systematic weaknesses of DNNs that perform classification, object detection, and semantic segmentation tasks on image data. In the first step, we overcome the problem of missing metadata by generating metadata with a foundation model. Subsequently, in the second step, we perform slice discovery on the structured metadata, which comprises of DNN-under-test's per-object performance and previously acquired per-object metadata.</p><p>Using our algorithm, we transform the slice discovery of unstructured image data into an (approximate) slice discovery problem on structured data. In addition, we study the impact of noisy labeling in a Bayesian framework and operationalize it by integrating error correction and slice validity based on quality indicators</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model &amp; Dataset</head><p>Largest Slice (in top-5)</p><p>Worst Performing Slice (in top-5) From the top-5 weak slices, we show the largest slice and the weakest performing slice. Please refer to the appendix C.2 for the top-5 slices.</p><p>into our approach. In the ablation experiments, we show that our SWD detects the same weak slices as would be identified in hypothetical cases where we have access to perfect metadata. The primary advantage of our algorithm, in comparison to SOTA methods, is that the identified weak slices are aligned with humanunderstandable semantic concepts that can be derived from a description of the ODD. As upcoming safety and trustworthy AI specifications require evidences for building safety argumentations w.r.t. such ODDs, the results from our approach can directly contribute. In addition, the identification of human-understandable weak slices enables ML developers to take mitigation actions, such as a targeted acquisition or generation of data, addressing the weaker slices and, thus, facilitating effective re-training with a limited acquisition budget. Furthermore, we show that our approach has clear advantages over several metadata-free SOTA methods by giving more actionable results, and we demonstrate the applicability of our approach by identifying systematic weaknesses in multiple AD datasets. For this, we also provide a quantitative evaluation of the quality of the generated metadata.</p><p>Our algorithm does have certain limitations. Primarily, a minimum metadata labeling quality is required for the discovered slices to be meaningful. In addition to our proposed metadata quality estimation, future works could therefore focus on improving metadata quality by human correction of a subset of generated metadata, fine-tuning <ref type="bibr" target="#b12">(Eyuboglu et al., 2022)</ref> of CLIP, metadata acquisition from other sources (e.g., depth sensor). Secondly, all approaches based on ODD definitions, like ours or PromptAttack <ref type="bibr" target="#b30">(Metzen et al., 2023)</ref>, would suffer from the lack of completeness of the semantic concepts in ODD. A potential solution could be in the direction of <ref type="bibr" target="#b15">Gannamaneni et al. (2024)</ref> by performing a root-cause analysis of found weaknesses. Such approaches could address potential issues between correlation and causation for found small slices.</p><p>In addition, SDMs based on the evaluation of the test dataset can suffer from insufficient coverage of the application domain by the test dataset. Both aspects become more relevant with the increasing broadness of the assumed ODD scope. For instance, if one intends to investigate false positives in object detection, the description would effectively contain most other objects (and parts thereof) that could appear in the scene. While we, therefore, limit our scope to the more narrowly defined false negatives, our approach still provides valuable insights into, often more critical, missed detections in terms of human-understandable and, thereby, actionable weak slices. We believe that such results can contribute to the development of trustworthy AI models and their safety.</p><p>of the labeling method, that is the probability we will obtain correct identification of the semantic attribute given its presence. Using further the normalisation property</p><formula xml:id="formula_5">1 = C p(C|S) → p(¬C|S) = 1 − p(C|S) ,<label>(11)</label></formula><p>we arrive at the originally presented eq. ( <ref type="formula">1</ref>):</p><formula xml:id="formula_6">p(e|S) = r C p(e|C, S) + (1 − r C ) p(e|¬C, S)<label>(12)</label></formula><p>Along the same lines eq. ( <ref type="formula">2</ref>),</p><formula xml:id="formula_7">p(e|C) ≡ p C p(e|C, S) + (1 − p C ) p(e|C, ¬S) , (<label>13</label></formula><formula xml:id="formula_8">)</formula><p>can be derived, however with the identification</p><formula xml:id="formula_9">p C = p(S|C) ,<label>(14)</label></formula><p>i.e., the precision of the labeling process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.2 Derivation of Correction Equation</head><p>As discussed in section 3, the annotation process may not be a perfect process. Furthermore, there is no guarantee that the failure modes within this process do not overlap the failures of DuT, i.e., there is a possibility that some amount of correlation could exist between the errors of annotation process and the errors of DuT. Therefore, we frame this using the following</p><formula xml:id="formula_10">δp(e|S) = p(e|¬C, S) − p(e|C, S)<label>(15)</label></formula><p>By considering earlier equations and their complementary forms for ¬S and reducing the equation set, we obtain</p><formula xml:id="formula_11">A = p C 1 − p C 1 − p ¬C p ¬C , B = p(e|C) + (p C ) δp(e|¬S) p(e|¬C) + (p ¬C ) δp(e|S) , A p(e|C, S) p(e|¬C, ¬S) = B</formula><p>Here, the det(A) is given by p c + p −c − 1 and inverse of A is given by</p><formula xml:id="formula_12">A −1 = 1 p c + p −c − 1 p −c − 1 − p c − 1 − p −c p c . (<label>16</label></formula><formula xml:id="formula_13">)</formula><p>Solving for the intermediate value of p(e|¬C, S) and plugging this in eq. ( <ref type="formula" target="#formula_6">12</ref>) along with eq. ( <ref type="formula" target="#formula_10">15</ref>), we obtain the final equation eq. ( <ref type="formula" target="#formula_2">4</ref>):</p><formula xml:id="formula_14">p(e|S) = p(e|C) p ¬C + p(e|¬C) (p C − 1) p C + p ¬C − 1 independence assumption + δp(e|S) κ S p C p ¬C p C + p ¬C − 1 − r C +δp(e|¬S) κ ¬S (p C − 1)p ¬C p C + p ¬C − 1 correction terms . (<label>17</label></formula><formula xml:id="formula_15">)</formula><p>Regarding the denominator p C + p ¬C − 1, it can be zero (or approximately zero) for some combinations of precision of the metadata annotation process. In these cases, no statement can be made on S as the performance of the annotation classification does not allow separation of S from the rest of the data and any observable error differences on C potentially stems only from the correction factors. Besides this technical breakdown of the hypothesis, it should be pointed out that the scaling factors κ S,¬S depend only on the performance of the annotation process and thus can be determined without knowing the correction factors δp themselves. While the latter are challenging to determine in practice they are rarely non-zero, even in cases where the hypothesis holds, due to fluctuations (e.g. when errors are determined on finite sample sizes).</p><p>Knowing the magnitude of κ therefore allows us a degree of certainty on the statements of the hypothesis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.3 Quantitative Evaluation of Metadata Generation Process</head><p>Our metadata generation is a form of data labeling process. Within this work, we chose CLIP <ref type="bibr" target="#b34">(Radford et al., 2021)</ref> to generate the metadata but know that for certain attributes of the ODDs the performance might be far below human capabilities, compare, e.g., <ref type="bibr" target="#b14">Gannamaneni et al. (2023)</ref>. To estimate the performance of our metadata generation process without large-scale evaluation or manual labeling, we take a simplifying view.</p><p>For each slice C containing a semantic concept identified by CLIP, for instance, images containing gender "female", we randomly draw a few samples to create a smaller subset R. Let q denote the probability that images within C contain the correct semantic concept. By manually evaluating the smaller sample of images R ⊂ C (drawn with replacement), we can model the posterior distribution for q using Bayes theorem, that is</p><formula xml:id="formula_16">p(q|R) = p(q)p(R|q) p(R) ∝ p(R|q) . (<label>18</label></formula><formula xml:id="formula_17">)</formula><p>Therein, we assumed a flat prior, i.e. p(q) = const.. The probability of the observed sample R is given by</p><formula xml:id="formula_18">p(R|q) = n l q l (1 − q) n−l ,<label>(19)</label></formula><p>where n = |R| is the size of the observed sample taken from S and l ≤ n is the number of observed positive, i.e., correct instances. The true value for q for the entire slice would describe the precision of the labeling of the concept as it is the ratio of true instances to the overall number of samples. We can approximate it using the small set using</p><formula xml:id="formula_19">p precision (q|R) = (n + 1)! l!(n − l)! q l (1 − q) n−l , (<label>20</label></formula><formula xml:id="formula_20">)</formula><p>where the factorials serve as the normalisation. Using eq. ( <ref type="formula" target="#formula_19">20</ref>), we can, therefore, determine both the expected value of q as well as our uncertainty of its value, which we report in terms of the standard deviation σ. As a side note, for values of q near 0 or 1, the Binomial distribution is asymmetric and the standard deviation is not always a faithful measure of "true" deviation. However, we compared with a quantile based approach, taking the range from the 1/6 th to 5/6 th quantile, and found only minor discrepancies.</p><p>Besides estimating the precision, we are also interested in estimating the recall of the labeling process. This latter quantity is harder to evaluate as it depends both on the number of true positives and false negatives.</p><p>Let P and N denote the total number of data points that are classified as containing, or respectively, as not containing, the semantic concept. Then the probability over the total number of true positives is given by p precision (q|R P ), where R P is a random sample taken from the set C P of positively classified elements. A similar statement holds for the number of false negatives, where a sample R N from the non-detected set can be used. However, in this case, we either have to count (for l) the number of prediction errors or use the inverse outcome 1 − q. Given that both samples are free of intersection, that is R P ∩ R N = ∅, we make the assumption that the obtained probabilities q P and q N are independent from one another. In this case, we can formulate the recall as</p><formula xml:id="formula_21">p recall (q|R P , R N ) = 1 0 dq P 1 0 dq N ×δ q − P q P P q P + N (1 − q N ) ×p precision (q P |R P )p precision (q N |R N ) , (<label>21</label></formula><formula xml:id="formula_22">)</formula><p>where we interpret p precision such that in both cases correct predictions are counted while δ denotes a Dirac-Delta Distribution. We evaluate this function numerically and use the results of p recall in the same way as for the precision above regarding, e.g., the reported standard deviation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.4 Precision Sampling at different levels</head><p>In appendix B.3, we provide the framework for how precision and recall can be estimated by sampling data in slices. In this section, we present the concrete steps taken at level 1 to operationalize it and also the steps taken to calculate precision and recall at higher levels. At level 1, in synthetic and celebA experiments, as GT labels are available in addition to classification function G labels, human evaluation of slices is not necessary. For each slice in the data, before running SliceLine, we sample with replacement (n=60), and using GT slice labels, calculate precision and recall based on appendix B.3. This gives us mean and standard deviations of precision and recall that can be used with eq. ( <ref type="formula" target="#formula_2">4</ref>). For AD datasets, as GT labels are not available, we performed human evaluation by first taking 60 samples for each level 1 slice. The results of this are shown in table 3.</p><p>At level 2 and higher, human sampling of precisions gets very labor-intensive even if considering only 9 semantic dimensions with binary attributes. Therefore, we incorporate the parent-level precisions calculated earlier to estimate corrected errors by accounting for their contributions. From level 2 onward, we construct a composite inverse matrix,</p><formula xml:id="formula_23">A −1 S1S2 = A −1 S1 ⊗ A −1 S2 , (<label>22</label></formula><formula xml:id="formula_24">)</formula><p>which is a direct product of the inverse matrices given in eq. ( <ref type="formula" target="#formula_12">16</ref>) for the respective semantic dimensions S 1 and S 2 . The direct product implies an element-wise multiplication of the differing elements of A −1 Si in all possible combinations. This approach can be understood by first considering that in the approximation the precision values in A S1S2 are given by products of the respective precisions for S 1,2 or its negations ¬S 1,2 . That is, for two 2 × 2 matrices A Si the resulting A S1S2 will be 4 × 4 dimensional. Second, the inverse of this direct product matrix is given by the direct product of its constituent matrices, leading to eq. ( <ref type="formula" target="#formula_23">22</ref>).</p><p>We can also extend the binary case of eq. ( <ref type="formula" target="#formula_12">16</ref>) to a multi-class setting by taking into account that the matrices A are based on normalized confusion matrices. That is, row-wise the entries in A give the rate or probability with which the classifier G will mistake a given element for an element of a foreign class. This notion easily generalizes to arbitrary classes by taking the full confusion matrix for all classes, thereby introducing all combinations besides "False Positives" or "False Negatives" from the binary case. For n classes this would result in a n × n matrix for A, the inverse of which can be used to obtain the hypothesis part of eq. ( <ref type="formula" target="#formula_14">17</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.1 Further results: CelebA Evaluations</head><p>In the synthetic data experiment, we provide the spread of errors and the precision and recall of slice recovery in comparison to an Oracle for different values of k. With the GT metadata in the celebA dataset, we build a similar Oracle for comparison and provide similar error spread and precision and recall values of SWD-1,2,3 in fig. <ref type="figure" target="#fig_5">5</ref>. Here, the plot depicting the spread of errors is restricted to level 1 errors for better visualization. However, the precision and recall plot is based on the full level 2 slices.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.2 Evaluation of Top-5 Weak Slices</head><p>In this section, we provide both the quantitative and qualitative results of our experiments. For the celebA dataset, figs. 6 to 9 contain the identified top-5 weak slices in the experiments SWD-3, DOMINO, Spotlight, and SVM FD respectively. We provide 8 samples from each of the top-5 slices found by the methods and 8 samples from the remaining data, except SVM FD which only provides 1 weak slice. In addition, we provide four slice descriptions given by DOMINO for each slice and the single slice description of SVM FD. While the actionability of our proposed approach is inherent as the identified weak slices are based on semantic concepts from the ODD, the textual descriptions from DOMINO are comparatively less useful. Furthermore, by focusing only on the samples from DOMINO, it is still hard to identify which semantic concepts uniquely constitute a slice. For example, if we consider an image from the remaining data (rightmost column), it is not straightforward to say if this image does or does not belong to any of the weak slices. Although the fifth slice does appear to capture a coherent slice, images of sports persons, the observed error p(e|C) is significantly lower than what is identified by our approach. It is important to note that both DOMINO and SliceLine judge performance in terms of class probabilities, not false negative counts. Therefore, weak slices can have slightly better performance in terms of p(e|C) compared to overall data, as observed for slice 3 found by DOMINO.</p><p>In figs. 10 to 12, pedestrian crop samples from the top-5 weak slices obtained using our method are provided for each autonomous driving experiment. The quantitative evaluation of the top-5 slices for the three experiments can be found in tables 7 to 9.  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure1: Our algorithm for finding systematic weaknesses of CV models. Given a model, a test dataset, and an ODD description for the objects we are interested in, we build a database of object-level performance and metadata in a structured format. Weak slice discovery methods are then applied to this database to identify top-k weak slices of the model.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Algorithm 1 :</head><label>1</label><figDesc>Systematic Weakness Detector (SWD) Input: Metadata {C Z1 , C Z2 , . . . }, errors e, Precision vectors {p C }, SliceLine hyper-parameters Output: Top-K slices T S 1 SWD-1: SliceLine with observed errors p(e|C i ); 2 [T S 1 ] ← SliceLine({C Z1 , C Z2 , . . . }, e, hyperparameters); 3 SWD-2: SliceLine with corrected errors (approximations to p(e|S i )); 4 [T S 2 , Quality Indicators] ← SliceLine({C Z1 , C Z2 , . . . }, computeCorrectedError(e, p C ), hyperparameters); 5 SWD-3: Combined Slices; 6 [T S] ← Merge(T S 1 ∪ T S 2 ); 7 return TS;</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Based on labeling quality, we divide the generated datasets into (i) good quality (left), (ii) medium quality (middle), and (iii) bad quality (right). In three cases, we look at the spread of error in GT (p(e|S)), Observed (p(e|C)), and Corrected (p(e|S)). In the second row, corresponding performance in terms of precision and recall of SWD-1,2,3 are shown. Precision and Recall in this figure are metrics to evaluate weak slice recovery and are not related to labeling quality. The legend for both rows are presented on the figures on left.</figDesc><graphic coords="8,104.34,199.07,145.07,74.09" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Left: The hierarchy level-0 (Ridnik et al., 2021) predictions of the pre-trained ViT-B-16 model on the full CelebA dataset converted into a binary classification problem. While a majority of the predictions are correct, there is a non-trivial subset of images with systematic errors due to label overlap issues. Right: Top-1 weak slice, identified by SWD-3, of a ViT-B-16 classification model trained on ImageNet21k and evaluated on the full celebA dataset. The statistics provide a quantitative evaluation of the entire slice. For qualitative evaluation, we provide some sample images from the slice.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Left: Samples from top-1 weak slice of a Faster R-CNN object detector trained and evaluated on BDD100k dataset. Middle: Samples from top-1 weak slice of SeTR model trained and evaluated on Cityscapes dataset. Right: Samples from top-1 weak slice of a Panoptic-FCN model trained and evaluated on RailSem19 dataset.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Similar to synthetic data experiment, we provide spread of error (top) and Precision and Recall at different levels of k for SWD-1,2,3 of algorithm 1 in comparison to the Oracle (bottom). The DuT is a ViT-B-16 classification model trained on ImageNet21k and evaluated on celebA dataset. Note that here precision and recall are quality metrics of weak slice discovery and not of labeling quality.</figDesc><graphic coords="24,72.00,345.26,468.00,283.91" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 :Figure 8 :</head><label>78</label><figDesc>Figure 7: Samples from top-5 weak slices of a ViT-B-16 classification model trained on ImageNet21k and evaluated on the full celebA dataset (DOMINO). From the 8 samples in each slice, 4 are true positives (green outline) and 4 are false negatives (red outline). 10</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head></head><label></label><figDesc>3 An analysis of properties of this equation w.r.t. the denominator allows us to automatically create quality indicators on the validity or invalidity of the obtained corrected slices for attribute S. The full derivation and further details on quality indicators can be found in appendix B.2.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 1 :</head><label>1</label><figDesc>(see fig. 6 in appendix C.2 for a qualitative evaluation of the top-5 slices). |S| corr p corr (e|S) rank(S) |S| p(e|C) rank(S) |S| p(e|S) Evaluation of top-7 slices of SWD-3 (see algorithm 1) by comparing its statistics with corresponding slice statistics of SWD-1 and Oracle. The rank column indicates the slice ranking in each approach.</figDesc><table><row><cell>Slice</cell><cell>Slice Description</cell><cell></cell><cell>SWD-3</cell><cell></cell><cell></cell><cell>SWD-1</cell><cell></cell><cell>Oracle</cell></row><row><cell cols="3">rank(S) S 1 Wearing-Hat: True Beard: False 1</cell><cell>7600</cell><cell>0.69</cell><cell>6</cell><cell>12152 0.33</cell><cell>2</cell><cell>6267 0.51</cell></row><row><cell>S 2</cell><cell>Wearing-Hat: True Smiling: False</cell><cell>2</cell><cell>5132</cell><cell>0.60</cell><cell>3</cell><cell>8573 0.36</cell><cell>9</cell><cell>6476 0.45</cell></row><row><cell>S 3</cell><cell>Wearing-Hat: True Gender: Female</cell><cell>3</cell><cell>4435</cell><cell>0.61</cell><cell>2</cell><cell>7393 0.38</cell><cell>1</cell><cell>2947 0.69</cell></row><row><cell>S 4</cell><cell>Wearing-Hat: True Age: Young</cell><cell>4</cell><cell>7974</cell><cell>0.54</cell><cell>4</cell><cell>12758 0.34</cell><cell>3</cell><cell>6937 0.50</cell></row><row><cell>S 5</cell><cell>Wearing-Hat: True Eyeglasses: False</cell><cell>5</cell><cell>8606</cell><cell>0.54</cell><cell>5</cell><cell>12594 0.33</cell><cell>6</cell><cell>8417 0.45</cell></row><row><cell>S 6</cell><cell>Wearing-Hat: True Goatee: False</cell><cell>6</cell><cell>8845</cell><cell>0.53</cell><cell>7</cell><cell>11453 0.33</cell><cell>4</cell><cell>8284 0.46</cell></row><row><cell>S 7</cell><cell>Wearing-Hat: True Bald: False</cell><cell>7</cell><cell>9676</cell><cell>0.51</cell><cell>8</cell><cell>15501 0.32</cell><cell>5</cell><cell>9795 0.44</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 2 :</head><label>2</label><figDesc>Comparison of three metadata-free SOTA methods with top-5 slices of Oracle. J(S 1 , S O x</figDesc><table><row><cell>5629 11726 0.6181</cell><cell>0.13</cell><cell>0.19</cell><cell>0.20</cell><cell>0.21</cell><cell>0.24</cell><cell>0.64</cell></row><row><cell>Spotlight -0.8622 4050 0.9179</cell><cell>0.32</cell><cell>0.32</cell><cell>0.32</cell><cell>0.31</cell><cell>0.31</cell><cell>0.33</cell></row><row><cell>SVM FD -0.3844 2642 0.4295</cell><cell>0.11</cell><cell>0.15</cell><cell>0.16</cell><cell>0.16</cell><cell>0.16</cell><cell>0.24</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head></head><label></label><figDesc>.</figDesc><table><row><cell>Sem. dim.</cell><cell>Attri.</cell><cell cols="3">Estimated Precision p C BDD100k Cityscapes RailSem19</cell><cell cols="3">Estimated Recall r C BDD100k Cityscapes RailSem19</cell></row><row><cell>Age</cell><cell cols="7">Adult Young 0.69 ± 0.06 0.56 ± 0.06 0.42 ± 0.06 0.93 ± 0.06 0.97 ± 0.06 0.94 ± 0.06 0.95 ± 0.03 0.99 ± 0.02 0.97 ± 0.02 0.76 ± 0.03 0.70 ± 0.02 0.55 ± 0.02</cell></row><row><cell>Gender</cell><cell cols="7">Female 0.84 ± 0.05 0.97 ± 0.02 0.85 ± 0.04 0.90 ± 0.05 0.95 ± 0.02 0.87 ± 0.04 Male 0.94 ± 0.03 0.97 ± 0.02 0.94 ± 0.03 0.88 ± 0.03 0.97 ± 0.02 0.92 ± 0.03</cell></row><row><cell>Cloth.-color</cell><cell>Bright-color Dark-color</cell><cell cols="6">0.81 ± 0.05 0.85 ± 0.04 0.79 ± 0.05 0.30 ± 0.05 0.23 ± 0.04 0.66 ± 0.05 0.76 ± 0.05 0.65 ± 0.06 0.82 ± 0.05 0.96 ± 0.05 0.97 ± 0.06 0.89 ± 0.05</cell></row><row><cell>Skin-</cell><cell>Dark</cell><cell cols="6">0.82 ± 0.05 0.55 ± 0.06 0.56 ± 0.06 0.92 ± 0.05 0.71 ± 0.06 0.76 ± 0.06</cell></row><row><cell>color</cell><cell cols="7">White 0.99 ± 0.02 0.95 ± 0.03 0.89 ± 0.04 0.96 ± 0.02 0.91 ± 0.03 0.75 ± 0.04</cell></row><row><cell>Blurry</cell><cell>True False</cell><cell cols="6">0.71 ± 0.06 0.63 ± 0.06 0.87 ± 0.04 0.42 ± 0.06 0.87 ± 0.06 0.64 ± 0.04 0.48 ± 0.06 0.95 ± 0.03 0.84 ± 0.05 0.74 ± 0.06 0.82 ± 0.03 0.95 ± 0.05</cell></row><row><cell>Constru.-</cell><cell>False</cell><cell>-</cell><cell>-</cell><cell>0.97 ± 0.02</cell><cell>-</cell><cell>-</cell><cell>0.98 ± 0.02</cell></row><row><cell>Worker</cell><cell>True</cell><cell>-</cell><cell>-</cell><cell>0.65 ± 0.06</cell><cell>-</cell><cell>-</cell><cell>0.55 ± 0.06</cell></row><row><cell>Table</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 4 :</head><label>4</label><figDesc>Quantitative analysis of three pre-trained autonomous driving models (results are only for SWD-3).</figDesc><table><row><cell></cell><cell>|S| |D| %</cell><cell>p corr (e|S)</cell><cell>Perf. Degr.</cell><cell>|S| |D| %</cell><cell>p corr (e|S)</cell><cell>Perf. Degr.</cell></row><row><cell>Faster R-CNN BDD100k</cell><cell>34.44%</cell><cell>0.1263</cell><cell cols="2">-0.0693 14.22%</cell><cell>0.2206</cell><cell>-0.1636</cell></row><row><cell>SeTR Cityscapes</cell><cell>13.34%</cell><cell>0.0594</cell><cell>-0.0446</cell><cell>9.24%</cell><cell>0.1046</cell><cell>-0.0897</cell></row><row><cell>Panoptic-FCN RailSem19</cell><cell>25.49%</cell><cell>0.8663</cell><cell>-0.222</cell><cell>8.13%</cell><cell>1.0</cell><cell>-0.4602</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 7 :</head><label>7</label><figDesc>Quantitative analysis of the top-5 weak slices obtained using SWD-3 for the Faster R-CNN object detector trained and evaluated on BDD100k dataset.</figDesc><table><row><cell cols="3">Slice No. |S| p corr (e|S)</cell><cell>Avg. Perf. Degra.</cell><cell>Slice Description</cell></row><row><cell>S 1</cell><cell cols="2">319 0.2206</cell><cell>-0.1636</cell><cell>blurry: false occluded: true</cell></row><row><cell>S 2</cell><cell cols="2">508 0.2099</cell><cell>-0.1528</cell><cell>blurry: false cloth.-color: dark-color</cell></row><row><cell>S 3</cell><cell>466</cell><cell>0.147</cell><cell>-0.0899</cell><cell>blurry: false age: adult</cell></row><row><cell>S 4</cell><cell cols="2">773 0.1263</cell><cell>-0.0693</cell><cell>blurry: false</cell></row><row><cell>S 5</cell><cell cols="2">582 0.1263</cell><cell>-0.0693</cell><cell>blurry: false gender: Male</cell></row><row><cell cols="3">Slice No. |S| p corr (e|S)</cell><cell>Avg. Perf. Degra.</cell><cell>Slice Description</cell></row><row><cell>S 1</cell><cell cols="2">690 0.1046</cell><cell>-0.0897</cell><cell>age: adult skin-color: dark</cell></row><row><cell>S 2</cell><cell cols="2">591 0.0921</cell><cell>-0.0773</cell><cell>skin-color: dark cloth.-color: dark-color</cell></row><row><cell>S 3</cell><cell cols="2">349 0.0896</cell><cell>-0.0748</cell><cell>gender: female skin-color: dark</cell></row><row><cell>S 4</cell><cell cols="2">766 0.0778</cell><cell>-0.0630</cell><cell>skin-color: dark blurry: false</cell></row><row><cell>S 5</cell><cell cols="2">997 0.0594</cell><cell>-0.0446</cell><cell>skin-color: dark</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 8 :</head><label>8</label><figDesc>Quantitative analysis of the top-5 weak slices obtained using SWD-3 for the SETR semantic segmentation model trained and evaluated on Cityscapes dataset.</figDesc><table /></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_0">High-quality human labeling typically requires multiple measures to reduce inter-observer variability or epistemic uncertainty in general (e.g. via labeling guides). However, in this work, we consider human labeling as high-quality compared to DNN-based labeling.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_1">For the sake of numeric stability, also denominators which are only approximately zero should be discarded.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_2">Evaluations of real-world DNNsIn this section, we first present our experimental setup. We then show the evaluation of our systematic weaknesses detection method on a publicly available pre-trained model for the CelebA dataset. Here, the dataset's rich metadata annotation allows us to investigate the influence of noisy metadata annotation. In addition, we compare against SOTA SDM methods to evaluate our claim that adherence to the ODD descriptions is useful to end users (e.g., safety experts, ML developers). Subsequently, we present the insights gained by using our approach on DNNs trained on autonomous driving datasets.4 9 × 2 + 9 2 × 2 2</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_3">https://github.com/huggingface/pytorch-image-models</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="6" xml:id="foot_4">https://github.com/SysCV/bdd100k-models/tree/main/det</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="7" xml:id="foot_5">https://github.com/open-mmlab/mmsegmentation</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="8" xml:id="foot_6">To avoid that the aspect ratio of pedestrians is changed by the CLIP pre-processing, we use padding to obtain square crops.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="9" xml:id="foot_7">Unless if small size is due to occlusion. For BDD100k dataset, where occlusion is available as annotation, we show impact of occlusion as well</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="13" xml:id="foot_8">This is a slight over-use of the notation, but it is apparent from context whether C is meant as the random variable for the labeling, or as its value in the sense of positive detection.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Acknowledgments</head><p>This work has been funded by the European Union and the German Federal Ministry for Economic Affairs and Climate Action as part of the safe.trAIn project.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Experiment Setup</head><p>A.1 Datasets, DNNs, Hyperparamters Datasets: We use four datasets in our experiments to test different black-box DNNs-under-test. First, as a proof-of-concept for our overall approach, we use the CelebA <ref type="bibr" target="#b26">(Liu et al., 2015)</ref> dataset with a rich collection of 40 facial attributes (metadata) for 202 599 images of celebrity faces. We used the aligned PNG images provided by the authors, which have a resolution of 178 × 218 pixels. Next, for pedestrian detection tasks, we consider BDD100k <ref type="bibr" target="#b47">(Yu et al., 2020)</ref>, Cityscapes <ref type="bibr" target="#b7">(Cordts et al., 2016)</ref>, and RailSem19 <ref type="bibr" target="#b49">(Zendel et al., 2019)</ref>. In these datasets, we focus only on the pedestrian class in the 2D-bounding box and semantic segmentation tasks. For BDD100k, we consider the predefined validation set of 10k samples of resolution 1280 × 720, while in Cityscapes and RailSem19, due to their smaller dataset sizes, we use the entire train and validation sets containing 3475 (the test set is not considered due to the lack of GT) and 8500 samples with image resolutions 2048 × 1024 and 1920 × 1080 respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models (DNNs-under-test):</head><p>We evaluate four black-box models for ODD aligned systematic weaknesses. For the first experiment, we consider the publicly available ViT-B-16 <ref type="bibr" target="#b10">(Dosovitskiy et al., 2020)</ref> model pretrained on ImageNet21k <ref type="bibr" target="#b37">(Ridnik et al., 2021)</ref> from the python library timm. 10 Second, we use the pretrained publicly available Faster R-CNN <ref type="bibr" target="#b35">(Ren et al., 2015)</ref> object detector with ConvNeXt-T <ref type="bibr" target="#b25">(Liu et al., 2022)</ref> backbone. The model weights are available on the BDD100k model Zoo. 11 Third, for the Cityscapes dataset, we use a pre-trained SETR PUP <ref type="bibr" target="#b50">(Zheng et al., 2021)</ref> semantic segmentation model. The model weights are available on the mmsegmentation codebase. 12 Finally, from the railway domain, we use a PanopticFCN <ref type="bibr" target="#b24">(Li et al., 2021)</ref> model, which has been trained by an industrial partner on a large proprietary dataset also including RailSem19 <ref type="bibr" target="#b49">(Zendel et al., 2019)</ref>. We consider this as a complete black box and have no details on the concrete training procedure. For the autonomous datasets, the black-box model performance per-object (i.e., pedestrian) is measured by the intersection-over-union (IoU).</p><p>Parameters of CLIP and SliceLine: For metadata generation, we use a pre-trained CLIP <ref type="bibr" target="#b34">(Radford et al., 2021)</ref> with image encoder (ViT-L/14 <ref type="bibr" target="#b10">(Dosovitskiy et al., 2020)</ref>). For SliceLine, we use a python implementation and choose default α and σ values of 0.95 and n/100 where n defines the size of the structured data as proposed in <ref type="bibr" target="#b39">Sagadeeva &amp; Boehm (2021)</ref>. For the synthetic data experiment, we incrementally increase k from 1 to 60.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.2 Synthetic Data Generation Parameters</head><p>The purpose of the synthetic data experiment is to evaluate the algorithm with control over the quality of labeling and without the influence of correlations. Therefore, we build a tabular dataset with 9 "real" semantic dimensions (dim1, . . . , dim9) containing 200,000 rows. For each of these dimensions, we generate a synthetic dimension as a proxy for labeling by CLIP. All dimensions contain binary attributes. For the first five dimensions, the distribution of true attribute is imbalanced, i.e., only 5% of overall samples <ref type="bibr">([8000, 9000, 10000, 11000, 12000]</ref>), respectively. The other dimensions are balanced between both attributes. The final column contains errors simulating the DuT performance. Next, we define a set of slices and induce errors for each of the slices. For our experiments, we induce the following errors: {dim1: 0.19, dim2 &amp; dim3: 0.18, dim3: 0.23, dim4: 0.3, dim5: 0.07, dim6: 0.04, dim7: 0.01, dim8: 0.05, dim9: 0.02}. As we have 100 runs for different labeling qualities, we introduce random fluctuations between -0.01 and 0.01 to these error values. The choice of errors and number of dimensions is to align the synthetic data with the celebA experiment and also to effectively induce errors. If all dimensions contribute roughly equally to the error rate, no strong signal for a specific slice, in contrast to the others, could be found. We generate 100 runs each for 3 different labeling qualities. That is, we generate the "observed" metadata from the "real" one using a random predefined "precision" value. For good quality, this precision value to detect attribute 10 https://github.com/huggingface/pytorch-image-models 11 https://github.com/SysCV/bdd100k-models/tree/main/det 12 https://github.com/open-mmlab/mmsegmentation 1 1 of each dimension is sampled from a uniform distribution between 0.8 and 1.0. For attribute 0, we sample between 0.8 and 1.0. For medium quality and attribute 1, we sample from 0.4 and 0.6 and for attribute 0 between 0.4 and 0.7. For bad quality, for attribute 1, we sample between 0.1 and 0.4 and for attribute 0 between 0.3 and 0.6.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.3 Human-understandable Dimensions</head><p>Herrmann et al. ( <ref type="formula">2022</ref>) have proposed ontologies for different dynamic objects (e.g., pedestrians) to build ODDs for AD vehicles. Although these proposed ontologies do not yet completely capture all safety-relevant features, they provide a reference to the direction safety experts intend to take to build evidences for safety augmentations of AD vehicles. To enable such a formulation of evidence, we performed our experiments on a subset of the concepts discussed in these ontologies as shown in tables 5 and 6. In the case of BDD100k, as information about occlusion is provided in the dataset, we combine our generated metadata with this additional information. For the CelebA experiment, as the input distribution is not directly related to the AD domain, we consider semantic concepts that are more suitable for this dataset as shown in table 5. Similar to <ref type="bibr" target="#b14">Gannamaneni et al. (2023)</ref>, we encode the input image using the CLIP image encoder. For celebA, we encode the entire input image, while for the AD experiments, we encode individual pedestrian crops as a single input. We consider each semantic dimension and its corresponding attributes to generate metadata for an input image. The ODD used for the celebA experiment. The first column represents the different semantic dimensions (in analogy to safety-relevant features). For each dimension, different attributes are considered and generated as metadata using our metadata generation process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Semantic dimension</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.4 SliceLine Workflow</head><p>SliceLine works on individual errors e i of data samples i. These, in the original work, can be defined as e i = 1 − p i with the DuT predicted probability p i for the correct class. In the remainder, we make the simplifying assumption that e i ∈ {0, 1} indicates whether i was classified correctly, e i = 0, or not, e i = 1. The workflow of SliceLine to identify weak slices is as follows: Initially, for depth level 1, a breadth search is performed on all attributes in the metadata such that only single features form a slice (e.g., a slice containing all data points with condition (gender : male)). Checks are performed over these slices to ensure that thresholds are met (e.g., minimum slice size specified via some parameter σ). Next, based on the slice scores from eq. ( <ref type="formula">5</ref>), the slices are ordered, and a list of top-k weak slices is populated. The hyperparameter α in eq. ( <ref type="formula">5</ref>) allows us to weight the size of the slice as well as the error signal. At depth level 2 and above, combinations of two attributes are chosen to form a slice (e.g., slice containing all data points with condition (gender = male)&amp;(occlusion = (0.9, 1.0])). The list of weak slices is updated after each depth level. The maximum depth level is a hyperparameter. In addition, pruning steps are also performed at each depth level in the original implementation. The conditions for pruning have a monotonicity property, which ensures that all potential sub-slices of a pruned slice would also fulfill the pruning condition. Due to the limited sizes of the ODDs for our experiment, we do not consider the pruning step in our implementation. Once the maximum depth level has been reached, the algorithm is terminated and the final list of top-k weak slices are available. For each dimension, different attributes are considered and generated as metadata using our metadata generation process. Metadata that is generated from CLIP but from available through other sources (e.g., GT) is not considered noisy and, therefore, we do not perform precision and recall estimation by human sampling. † Occlusion is available as GT from the BDD100k dataset and we only consider it in corresponding experiment. ‡ RailSem19 dataset contains several images where construction-workers are present near railway tracks. Therefore, we additionally consider this dimension for CLIP labeling to identify if models have weaknesses identifying construction workers. Size of pedestrian is estimated by calculating product of bounding width and height.</p><p>Scoring</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B Derivations</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.1 Derivation of p(e|C) and p(e|S)</head><p>To derive eq. ( <ref type="formula">1</ref>) and eq. ( <ref type="formula">2</ref>) from section 3, we first consider the joined probability p(e, C, S), where e denotes the DuT error, C labeling, and S the ground truth for some semantic attribute. Using Bayes' Theorem we can rewrite this as p(e, C, S) = p(e|C, S)p(C, S) = p(e|C, S)p(C|S)p(S) . </p><p>where the sum goes over all possible values C can take. We can write the conditional error probability (or rate if considered over finite data) as</p><p>At this point, using that C takes only binary values, which, for brevity, we denote as C if the attribute was detected and as ¬C else, 13 we can expand the sum:   </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Subgroup discovery</title>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Atzmueller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Data Mining and Knowledge Discovery</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="35" to="49" />
+			<date type="published" when="2015">2015</date>
+			<publisher>Wiley Interdisciplinary Reviews</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Olivier</forename><forename type="middle">J</forename><surname>Hénaff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2006.07159</idno>
+		<title level="m">Xiaohua Zhai, and Aäron van den Oord. Are we done with imagenet?</title>
+				<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Gender shades: Intersectional accuracy disparities in commercial gender classification</title>
+		<author>
+			<persName><forename type="first">Joy</forename><surname>Buolamwini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timnit</forename><surname>Gebru</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Conference on fairness, accountability and transparency</title>
+				<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="77" to="91" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Safety Assurance of Machine Learning for Perception Functions</title>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Burton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Hellert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fabian</forename><surname>Hüger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Mock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Rohatschek</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-031-01233-4_12</idno>
+		<idno>https://doi.org/10.1007/978-3-031-01233-4_12</idno>
+		<imprint>
+			<publisher>Springer International Publishing</publisher>
+			<biblScope unit="page">2022</biblScope>
+			<pubPlace>Cham</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Hibug: On human-interpretable model debug</title>
+		<author>
+			<persName><forename type="first">Muxi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">U</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Xu</surname></persName>
+		</author>
+		<ptr target="https://proceedings.neurips.cc/paper_files/paper/2023/file/0f53ecc0d36a5d5d3d3e94d42c4b23ca-Paper-Conference.pdf" />
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<editor>
+			<persName><forename type="first">A</forename><surname>Oh</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">T</forename><surname>Naumann</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Globerson</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">K</forename><surname>Saenko</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">M</forename><surname>Hardt</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">S</forename><surname>Levine</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="4753" to="4766" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Debugagent: Efficient and interpretable error slice discovery for comprehensive model debugging</title>
+		<author>
+			<persName><forename type="first">Muxi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chenchen</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2501.16751</idno>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Slice finder: Automated data slicing for model validation</title>
+		<author>
+			<persName><forename type="first">Yeounoh</forename><surname>Chung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Kraska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neoklis</forename><surname>Polyzotis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ki</forename><surname>Hyun Tae</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><forename type="middle">Euijong</forename><surname>Whang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2019 IEEE 35th International Conference on Data Engineering (ICDE)</title>
+				<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1550" to="1553" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">The cityscapes dataset for semantic urban scene understanding</title>
+		<author>
+			<persName><forename type="first">Marius</forename><surname>Cordts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohamed</forename><surname>Omran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Ramos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Rehfeld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Enzweiler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rodrigo</forename><surname>Benenson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Uwe</forename><surname>Franke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefan</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernt</forename><surname>Schiele</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="3213" to="3223" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Imagenet: A large-scale hierarchical image database</title>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li-Jia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2009 IEEE conference on computer vision and pattern recognition</title>
+				<imprint>
+			<publisher>Ieee</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="248" to="255" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The spotlight: A general method for discovering systematic errors in deep learning models</title>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Greg D'eon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">R</forename><surname>Eon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Wright</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Leyton-Brown</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2022 ACM Conference on Fairness, Accountability, and Transparency</title>
+				<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1962" to="1981" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">An image is worth 16x16 words: Transformers for image recognition at scale</title>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Dosovitskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dirk</forename><surname>Weissenborn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohua</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mostafa</forename><surname>Dehghani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Minderer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Georg</forename><surname>Heigold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sylvain</forename><surname>Gelly</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2010.11929</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Easa concept paper: guidance for level 1 &amp; 2 machine learning applications. proposed issue 02</title>
+	</analytic>
+	<monogr>
+		<title level="m">EASA</title>
+				<imprint>
+			<biblScope unit="volume">02</biblScope>
+			<biblScope unit="page">2023</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Domino: Discovering systematic errors with cross-modal embeddings</title>
+		<author>
+			<persName><forename type="first">Maya</forename><surname>Sabri Eyuboglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Khaled</forename><surname>Varma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jean-Benoit</forename><surname>Saab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Delbrouck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><surname>Lee-Messer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Dunnmon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ré</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2203.14960</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Semantic concept testing in autonomous driving by extraction of object-level annotations from carla</title>
+		<author>
+			<persName><forename type="first">Sujan</forename><surname>Gannamaneni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Houben</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maram</forename><surname>Akila</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV) Workshops</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision (ICCV) Workshops</meeting>
+		<imprint>
+			<date type="published" when="2021-10">October 2021</date>
+			<biblScope unit="page" from="1006" to="1014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Investigating clip performance for meta-data generation in ad datasets</title>
+		<author>
+			<persName><forename type="first">Sujan</forename><surname>Sai Gannamaneni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arwin</forename><surname>Sadaghiani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rohil</forename><surname>Prakash Rao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Mock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maram</forename><surname>Akila</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops</meeting>
+		<imprint>
+			<date type="published" when="2023-06">June 2023</date>
+			<biblScope unit="page" from="3840" to="3850" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Assessing systematic weaknesses of dnns using counterfactuals</title>
+		<author>
+			<persName><forename type="first">Sai</forename><surname>Sujan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Gannamaneni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maram</forename><surname>Mock</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Akila</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<publisher>AI and Ethics</publisher>
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Adaptive testing of computer vision models</title>
+		<author>
+			<persName><forename type="first">Irena</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Ilharco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Scott</forename><surname>Lundberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marco</forename><surname>Tulio Ribeiro ; Robert Geirhos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jörn-Henrik</forename><surname>Jacobsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Claudio</forename><surname>Michaelis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Zemel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wieland</forename><surname>Brendel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Bethge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Felix</forename><forename type="middle">A</forename><surname>Wichmann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2020">2023. 2020</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="665" to="673" />
+		</imprint>
+	</monogr>
+	<note>Shortcut learning in deep neural networks</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Stable and actionable explanations of black-box models through factual and counterfactual rules</title>
+		<author>
+			<persName><forename type="first">Riccardo</forename><surname>Guidotti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anna</forename><surname>Monreale</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Salvatore</forename><surname>Ruggieri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francesca</forename><surname>Naretto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Franco</forename><surname>Turini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dino</forename><surname>Pedreschi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fosca</forename><surname>Giannotti</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10618-022-00878-5</idno>
+		<ptr target="https://doi.org/10.1007/s10618-022-00878-5" />
+	</analytic>
+	<monogr>
+		<title level="j">Data Mining and Knowledge Discovery</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="38" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Using ontologies for dataset engineering in automotive ai applications</title>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Herrmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Witt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Laureen</forename><surname>Lake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefani</forename><surname>Guneshka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Heinzemann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Bonarens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Feifel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Funke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2022 Design, Automation &amp; Test in Europe Conference &amp; Exhibition (DATE)</title>
+				<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="526" to="531" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">-Road vehicles -Safety and artificial intelligence</title>
+		<idno>ISO. ISO/PAS 8800:2024</idno>
+		<ptr target="https://www.iso.org/standard/83303.html" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Distilling model failures as directions in latent space</title>
+		<author>
+			<persName><forename type="first">Saachi</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hannah</forename><surname>Lawrence</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ankur</forename><surname>Moitra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aleksander</forename><surname>Madry</surname></persName>
+		</author>
+		<ptr target="https://openreview.net/forum?id=99RpBVpLiX" />
+	</analytic>
+	<monogr>
+		<title level="m">The Eleventh International Conference on Learning Representations</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">How many operational design domains, objects, and events?</title>
+		<author>
+			<persName><forename type="first">Philip</forename><surname>Koopman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Fratrik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">SafeAI@AAAI</title>
+				<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">The disagreement problem in explainable machine learning: A practitioner&apos;s perspective</title>
+		<author>
+			<persName><forename type="first">Satyapriya</forename><surname>Krishna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tessa</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Javin</forename><surname>Pombra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shahin</forename><surname>Jabbari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Himabindu</forename><surname>Lakkaraju</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2202.01602</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Dark-skin individuals are at more risk on the street: Unmasking fairness issues of autonomous driving systems</title>
+		<author>
+			<persName><forename type="first">Xinyue</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenpeng</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><forename type="middle">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Federica</forename><surname>Sarro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuanzhe</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.02935</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Fully convolutional networks for panoptic segmentation</title>
+		<author>
+			<persName><forename type="first">Yanwei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hengshuang</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojuan</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liwei</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeming</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaya</forename><surname>Jia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+				<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="214" to="223" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">A convnet for the 2020s</title>
+		<author>
+			<persName><forename type="first">Zhuang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanzi</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao-Yuan</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Feichtenhofer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Trevor</forename><surname>Darrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saining</forename><surname>Xie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+				<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="11976" to="11986" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Deep learning face attributes in the wild</title>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ping</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaogang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoou</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Conference on Computer Vision (ICCV)</title>
+				<meeting>International Conference on Computer Vision (ICCV)</meeting>
+		<imprint>
+			<date type="published" when="2015-12">December 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">A unified approach to interpreting model predictions</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Scott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Su-In</forename><surname>Lundberg</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lee</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">30</biblScope>
+		</imprint>
+	</monogr>
+	<note>Advances in neural information processing systems</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">From evaluation to verification: Towards task-oriented relevance metrics for pedestrian detection in safetycritical domains</title>
+		<author>
+			<persName><forename type="first">Maria</forename><surname>Lyssenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Gladisch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Heinzemann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Woehrle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rudolph</forename><surname>Triebel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops</meeting>
+		<imprint>
+			<date type="published" when="2021-06">June 2021</date>
+			<biblScope unit="page" from="38" to="45" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Detecting spurious correlations with sanity tests for artificial intelligence guided radiology systems</title>
+		<author>
+			<persName><forename type="first">Usman</forename><surname>Mahmood</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robik</forename><surname>Shrestha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">Db</forename><surname>Bates</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lorenzo</forename><surname>Mannelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giuseppe</forename><surname>Corrias</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yusuf</forename><forename type="middle">Emre</forename><surname>Erdi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Kanan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in digital health</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">671015</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Identification of systematic errors of image classifiers on rare subgroups</title>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Hendrik Metzen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Hutmacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">Grace</forename><surname>Hua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valentyn</forename><surname>Boreiko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision (ICCV)</meeting>
+		<imprint>
+			<date type="published" when="2023-10">October 2023</date>
+			<biblScope unit="page" from="5064" to="5073" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Confident learning: Estimating uncertainty in dataset labels</title>
+		<author>
+			<persName><forename type="first">George</forename><forename type="middle">A</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Curtis</forename><surname>Northcutt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Isaac</forename><surname>Chuang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Artificial Intelligence Research</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="1373" to="1411" />
+			<date type="published" when="1995">1995. 2021</date>
+		</imprint>
+	</monogr>
+	<note>Communications of the ACM</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Hidden stratification causes clinically meaningful failures in machine learning for medical imaging</title>
+		<author>
+			<persName><forename type="first">Luke</forename><surname>Oakden-Rayner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><surname>Dunnmon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gustavo</forename><surname>Carneiro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Ré</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ACM conference on health, inference, and learning</title>
+				<meeting>the ACM conference on health, inference, and learning</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="151" to="159" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Towards a more rigorous science of blindspot discovery in image classification models</title>
+		<author>
+			<persName><forename type="first">Gregory</forename><surname>Plumb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nari</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Angel</forename><surname>Cabrera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ameet</forename><surname>Talwalkar</surname></persName>
+		</author>
+		<ptr target="https://openreview.net/forum?id=MaDvbLaBiF.ExpertCertification" />
+	</analytic>
+	<monogr>
+		<title level="j">Transactions on Machine Learning Research</title>
+		<idno type="ISSN">2835-8856</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jong</forename><forename type="middle">Wook</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jack</forename><surname>Clark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+				<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="8748" to="8763" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Faster r-cnn: Towards real-time object detection with region proposal networks</title>
+		<author>
+			<persName><forename type="first">Kaiming</forename><surname>Shaoqing Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">why should i trust you?&quot; explaining the predictions of any classifier</title>
+		<author>
+			<persName><forename type="first">Marco</forename><surname>Tulio Ribeiro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sameer</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carlos</forename><surname>Guestrin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd ACM SIGKDD international conference on knowledge discovery and data mining</title>
+				<meeting>the 22nd ACM SIGKDD international conference on knowledge discovery and data mining</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="1135" to="1144" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Imagenet-21k pretraining for the masses</title>
+		<author>
+			<persName><forename type="first">Tal</forename><surname>Ridnik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Emanuel</forename><surname>Ben-Baruch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Asaf</forename><surname>Noy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lihi</forename><surname>Zelnik-Manor</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2104.10972</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Imagenet large scale visual recognition challenge</title>
+		<author>
+			<persName><forename type="first">Olga</forename><surname>Russakovsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Krause</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanjeev</forename><surname>Satheesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sean</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiheng</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrej</forename><surname>Karpathy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Khosla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Bernstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International journal of computer vision</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="page" from="211" to="252" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Sliceline: Fast, linear-algebra-based slice finding for ml model debugging</title>
+		<author>
+			<persName><forename type="first">Svetlana</forename><surname>Sagadeeva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Boehm</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 International Conference on Management of Data</title>
+				<meeting>the 2021 International Conference on Management of Data</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="2290" to="2299" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title level="m" type="main">Distributionally robust neural networks for group shifts: On the importance of regularization for worst-case generalization</title>
+		<author>
+			<persName><forename type="first">Shiori</forename><surname>Sagawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pang</forename><surname>Wei Koh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tatsunori</forename><forename type="middle">B</forename><surname>Hashimoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Percy</forename><surname>Liang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1911.08731</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Breeds: Benchmarks for subpopulation shift</title>
+		<author>
+			<persName><forename type="first">Shibani</forename><surname>Santurkar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dimitris</forename><surname>Tsipras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aleksander</forename><surname>Madry</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2008.04859</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Evaluating machine accuracy on imagenet</title>
+		<author>
+			<persName><forename type="first">Vaishaal</forename><surname>Shankar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rebecca</forename><surname>Roelofs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Horia</forename><surname>Mania</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Recht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ludwig</forename><surname>Schmidt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+				<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="8634" to="8644" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Vlslice: Interactive vision-and-language slice discovery</title>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Slyman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Minsuk</forename><surname>Kahng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefan</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="15291" to="15301" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Towards fairness in visual recognition: Effective strategies for bias mitigation</title>
+		<author>
+			<persName><forename type="first">Zeyu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Klint</forename><surname>Qinami</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christos</forename><surname>Ioannis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyle</forename><surname>Karakozis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prem</forename><surname>Genova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenji</forename><surname>Nair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Olga</forename><surname>Hata</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Russakovsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+				<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="8919" to="8928" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Discovering bugs in vision models using off-the-shelf image generation and captioning</title>
+		<author>
+			<persName><forename type="first">Olivia</forename><surname>Wiles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Isabela</forename><surname>Albuquerque</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sven</forename><surname>Gowal</surname></persName>
+		</author>
+		<ptr target="https://openreview.net/forum?id=maBZZ_W0lD" />
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS ML Safety Workshop</title>
+				<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">Noise or signal: The role of image backgrounds in object recognition</title>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Logan</forename><surname>Engstrom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Ilyas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aleksander</forename><surname>Madry</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2006.09994</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Bdd100k: A diverse driving dataset for heterogeneous multitask learning</title>
+		<author>
+			<persName><forename type="first">Fisher</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haofeng</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenqi</forename><surname>Xian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yingying</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fangchen</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vashisht</forename><surname>Madhavan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Trevor</forename><surname>Darrell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+				<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="2636" to="2645" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Safety assurance of a driverless regional train-insight in the safe. train project</title>
+		<author>
+			<persName><forename type="first">Marc</forename><surname>Zeller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Waschulzik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Rothfelder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cornel</forename><surname>Klein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2023 IEEE 34th International Symposium on Software Reliability Engineering Workshops (ISSREW)</title>
+				<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="41" to="42" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Railsem19: A dataset for semantic rail scene understanding</title>
+		<author>
+			<persName><forename type="first">Oliver</forename><surname>Zendel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Murschitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marcel</forename><surname>Zeilinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Steininger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sara</forename><surname>Abbasi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Csaba</forename><surname>Beleznai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops</meeting>
+		<imprint>
+			<date type="published" when="2019-06">June 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Rethinking semantic segmentation from a sequence-to-sequence perspective with transformers</title>
+		<author>
+			<persName><forename type="first">Sixiao</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiachen</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hengshuang</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiatian</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zekun</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yabiao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanwei</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfeng</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Xiang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Philip Hs Torr</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+				<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="6881" to="6890" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,2311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Unveiling the Invisible: Reasoning Complex Occlusions Amodally with AURA</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2025-07-15">15 Jul 2025</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Zhixuan</forename><surname>Li</surname></persName>
+							<email>zhixuanli520@gmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="department">College of Computing and Data Science</orgName>
+								<orgName type="institution">Nanyang Technological University</orgName>
+								<address>
+									<country key="SG">Singapore</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Hyunse</forename><surname>Yoon</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Electrical and Electronic Engineering</orgName>
+								<orgName type="institution">Yonsei University</orgName>
+								<address>
+									<country key="KR">Korea</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Sanghoon</forename><surname>Lee</surname></persName>
+							<email>slee@yonsei.ac.kr</email>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Electrical and Electronic Engineering</orgName>
+								<orgName type="institution">Yonsei University</orgName>
+								<address>
+									<country key="KR">Korea</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Weisi</forename><surname>Lin</surname></persName>
+							<email>wslin@ntu.edu.sg</email>
+							<affiliation key="aff0">
+								<orgName type="department">College of Computing and Data Science</orgName>
+								<orgName type="institution">Nanyang Technological University</orgName>
+								<address>
+									<country key="SG">Singapore</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Unveiling the Invisible: Reasoning Complex Occlusions Amodally with AURA</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2025-07-15">15 Jul 2025</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">3DEEC67BF7C8CA5EAA31795AFE8D566C</idno>
+					<idno type="arXiv">arXiv:2503.10225v2[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2" ident="GROBID" when="2026-03-06T16:54+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Amodal segmentation aims to infer the complete shape of occluded objects, even when the occluded region’s appearance is unavailable. However, current amodal segmentation methods lack the capability to interact with users through text input and struggle to understand or reason about implicit and complex purposes. While methods like LISA integrate multi-modal large language models (LLMs) with segmentation for reasoning tasks, they are limited to predicting only visible object regions and face challenges in handling complex occlusion scenarios. To address these limitations, we propose a novel task named amodal reasoning segmentation, aiming to predict the complete amodal shape of occluded objects while providing answers with elaborations based on user text input. We develop a generalizable dataset generation pipeline and introduce a new dataset focusing on daily life scenarios, encompassing diverse real-world occlusions. Furthermore, we present AURA (Amodal Un- derstanding and Reasoning Assistant), a novel model with advanced global and spatial-level designs specifically tailored to handle complex occlusions. Extensive experiments validate AURA’s effectiveness on the proposed dataset. The code, model, and dataset are released on this page</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>With the development of the Segment Anything Model (SAM) series methods <ref type="bibr" target="#b23">[24,</ref><ref type="bibr" target="#b24">25,</ref><ref type="bibr" target="#b59">60]</ref>, predicting the segmentation mask of visible regions has been largely solved. Amodal segmentation aims to predict the entire shape of an object, including both visible and occluded regions, which is naturally challenging since visual cues for the occluded regions are unavailable. Predicting the intact shape of occluded objects is crucial for various real-world applications, such as autonomous driving <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b45">46,</ref><ref type="bibr" target="#b51">52]</ref>, robotics <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b4">5,</ref><ref type="bibr" target="#b21">22]</ref>, and image editing <ref type="bibr" target="#b60">[61,</ref><ref type="bibr" target="#b64">65]</ref>.</p><p>Existing amodal segmentation approaches have covered the fields including semantic <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b50">51]</ref>, instance <ref type="bibr" target="#b27">[28,</ref><ref type="bibr" target="#b37">38,</ref><ref type="bibr" target="#b72">73]</ref>, and panoptic <ref type="bibr" target="#b42">[43]</ref> segmentation. Although existing amodal segmentation methods <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b13">14,</ref><ref type="bibr" target="#b45">46,</ref><ref type="bibr" target="#b58">59]</ref> can address the problem of inferring occluded object shapes to some extent, they lack the ability to integrate with large language models (LLMs) <ref type="bibr" target="#b54">[55,</ref><ref type="bibr" target="#b55">56,</ref><ref type="bibr" target="#b66">67]</ref>, especially in performing reasoning and segmentation based on scene context, limiting their ability in interacting with users and understanding the implicit purpose underneath users questions. Meanwhile, although existing reasoning segmentation methods <ref type="bibr" target="#b25">[26,</ref><ref type="bibr" target="#b56">57]</ref> can work well on predicting the visible segmentation, they cannot predict the complete amodal segmentation mask, limiting their ability to reason in scenarios with complex occlusions. As a matter of fact, there is currently a significant gap in the availability of datasets designed for amodal reasoning segmentation, as well as in the development of algorithms specifically tailored to this task.</p><p>To address this gap, we propose a novel task named Amodal Reasoning Segmentation (ARS). As shown in Figure <ref type="figure">1</ref>, the ARS task aims to interact with the user through textual questions, reasoning in the complex scene, and predicting accurate segmentation masks with textual answers. For this task, we present a highly generalizable data collection pipeline and construct a new dataset, AmodalRea-sonSeg, which covers daily life scenes (encompassing both indoor and outdoor environments) derived from the challenging COCOA-cls dataset <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b72">73]</ref>. The AmodalReason-Seg dataset facilitates object reasoning and segmentation for visible and amodal masks across diverse scenes.</p><p>Along with the new task and dataset, we introduce a novel model named AURA (Amodal Understanding and Reasoning Assistant). AURA can understand the user's input questions, reason about the scene in the image, and predict both visible and amodal segmentation masks simultaneously. Given the challenge of predicting the shape of occluded parts, which are invisible in the image, we propose two key designs to enhance occlusion prediction capabilities. Specifically, we introduce the Occlusion Condition Encoder, which can distinguish whether objects are occluded and assess the occlusion degree comprehensively. Besides, the Spatial Occlusion Encoder can provide spatial guidance on whether each region is occluded, ensuring consistency between visible and amodal mask predictions. It is worth noticing that the proposed AmodalReasonSeg dataset and the designed AURA method support reasoning and mask prediction for various objects within a single-turn conversation, enhancing applicability to real-world scenarios. Furthermore, AURA supports multi-round conversations, increasing its versatility.</p><p>Extensive experiments on the proposed AmodalReason-Seg dataset show that AURA outperforms existing methods in prediction accuracy, reasoning capability, and generalizability for complex occlusion scenarios. The contributions of this paper can be summarized as follows: <ref type="bibr" target="#b0">(1)</ref> We propose a novel task: amodal reasoning segmentation, along with a generalizable dataset collection pipeline. We construct a new dataset, AmodalReasonSeg, covering a variety of complex scenes from daily life. <ref type="bibr" target="#b1">(2)</ref> We introduce AURA, a multi-modal method integrating vision and language for complex reasoning, capable of predicting both visible and amodal segmentation masks accurately. To the best of our knowledge, AURA is the first method explicitly designed for reasoning segmentation of amodal regions. <ref type="bibr" target="#b2">(3)</ref> Extensive experiments demonstrate the effectiveness of AURA through both quantitative and qualitative evaluations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Amodal Segmentation</head><p>Amodal segmentation <ref type="bibr" target="#b27">[28]</ref> aims to predict the complete shape of an occluded object, encompassing both visible and occluded parts. Several methods <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b27">28,</ref><ref type="bibr" target="#b29">30,</ref><ref type="bibr" target="#b31">32,</ref><ref type="bibr" target="#b37">38,</ref><ref type="bibr" target="#b38">39,</ref><ref type="bibr" target="#b45">46]</ref> are developed by extending the methods designed for visible segmentation or object detection <ref type="bibr">[4, 18-20, 23, 66]</ref>, while the relative occlusion order information is leveraged by many methods <ref type="bibr" target="#b43">[44,</ref><ref type="bibr" target="#b64">65,</ref><ref type="bibr" target="#b67">68,</ref><ref type="bibr" target="#b69">70]</ref>. Since shape prior knowledge is an essential approach for inferring the shape of the occluded region, several methods <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b8">9,</ref><ref type="bibr" target="#b10">11,</ref><ref type="bibr" target="#b28">29,</ref><ref type="bibr" target="#b30">31,</ref><ref type="bibr" target="#b34">35,</ref><ref type="bibr" target="#b53">54,</ref><ref type="bibr" target="#b58">59</ref>] are designed to learn and utilize it. For instance, VRSP <ref type="bibr" target="#b58">[59]</ref> designs a codebook to store and retrieve shape priors for amodal masks. A3D <ref type="bibr" target="#b28">[29]</ref> learns to reconstruct 3D shape priors to guide amodal segmentation. C2F-Seg <ref type="bibr" target="#b10">[11]</ref> works in a coarse-to-fine manner equipped with a Vector-Quantized codebook <ref type="bibr" target="#b8">[9]</ref>. Moreover, various datasets have been proposed for diverse scenarios, including daily life <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b72">73]</ref>, indoor <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b7">8,</ref><ref type="bibr" target="#b63">64,</ref><ref type="bibr" target="#b71">72]</ref>, autonomous driving <ref type="bibr" target="#b42">[43,</ref><ref type="bibr" target="#b45">46,</ref><ref type="bibr" target="#b47">48]</ref>, industrial <ref type="bibr" target="#b9">[10]</ref>, shopping <ref type="bibr" target="#b31">[32]</ref>, and gaming <ref type="bibr" target="#b13">[14]</ref>. However, existing amodal segmentation methods and datasets are limited to using images or videos as input, focusing solely on predicting amodal masks without user interaction or reasoning about implicit user purposes. In this paper, we present the first high-quality dataset for the newly proposed amodal reasoning segmentation task and introduce a Vision-Language Model-based approach specifically designed for this task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Large Models for Reasoning Segmentation</head><p>With the rapid advancement of Large Language Models (LLMs) <ref type="bibr" target="#b54">[55,</ref><ref type="bibr" target="#b55">56,</ref><ref type="bibr" target="#b66">67]</ref> such as GPT-4 <ref type="bibr" target="#b0">[1]</ref> and LLaMA <ref type="bibr" target="#b54">[55]</ref>, language-based approaches have demonstrated impressive zero-shot generalization abilities across diverse realworld applications. Additionally, Vision Language Models (VLMs) <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b36">37]</ref> like BLIP-2 <ref type="bibr" target="#b26">[27]</ref> and LLaVA <ref type="bibr" target="#b36">[37]</ref> have achieved state-of-the-art performance in comprehensively understanding both visual and textual information. To leverage the reasoning capabilities of VLMs, LISA <ref type="bibr" target="#b25">[26]</ref> introduces the task of reasoning segmentation, which predicts visible segmentation masks by reasoning based on user input questions. Building upon LISA, several recent methods, such as Pixel-LM <ref type="bibr" target="#b48">[49]</ref>, VISA <ref type="bibr" target="#b61">[62]</ref>, and LLM-Seg <ref type="bibr" target="#b56">[57]</ref>, have been proposed to enhance different aspects of the reasoning segmentation task, such as multi-object segmentation, video segmentation, and training efficiency, respectively. Despite these advancements, all existing methods are limited to segmenting only the visible region of target objects, leaving segmenting and analyzing the occluded region untouched. Our work aims to bridge this gap by enabling reasoning and segmenting in an amodal manner, specifically designed to handle complex occlusions in real-world scenarios.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Methodology</head><p>In this section, we first introduce the definition of the proposed amodal reasoning segmentation task in 3.1. Then the overall architecture of the designed method is presented in 3.2. Next, the special designs for learning and handling occlusion are introduced in 3.3. Finally, the loss functions that organize the training objectives are shown in 3.4.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Task Definition</head><p>For the proposed amodal reasoning segmentation (ARS) task, each image x img of the dataset is associated with various questions x text , answers y text , and segmentations y seg .</p><p>For each pair, x text is a question from the user input that does not directly point to objects in the image. y text is the ground-truth textual answer that responds to the question and includes the description of one or more objects alongside the [SEG] token representing the position of the segmentation mask. y seg represents the ground-truth visible and amodal segmentation masks (M v and M a ), corresponding to the [SEG] in the answer y text .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Overall Architecture</head><p>As shown in Figure <ref type="figure" target="#fig_0">2</ref>, the overall architecture of the proposed AURA includes three stages. Specifically, (1) the Vision Backbone takes the input image I as input for extracting its visual feature F I , and the Multi-Modal LLM E M LLM equipped with LoRA is employed to understand the input image I and the user's input question x text , and predict the textual answer ŷtext to respond the question. <ref type="bibr" target="#b1">(2)</ref> The Prompt Encoder E P takes the embedding e mllm of each [SEG] from the hidden states of the Multi-Modal LLM and predicts the refined embedding e r for each <ref type="bibr">[SEG]</ref>. (3) Finally the e r and F I are fed into the Visible Mask Decoder D V for predicting the visible segmentation mask Mv of each <ref type="bibr">[SEG]</ref>. Besides, the e r is used by the Occlusion Condition Encoder E OC , which learns to predict the occlusionaware embedding e oa that is contained within the occlusion condition information. Then the Amodal Mask Decoder D A uses the F I and e oa for predicting the amodal segmentation mask Ma of each <ref type="bibr">[SEG]</ref>. The Spatial Occlusion Encoder E SO is designed to constrain the predicted Mv and Ma to conform to the spatial occlusion relationship, which implic- itly improves the accuracy of the two predicted masks.</p><p>The textual prediction of the Multi-Modal LLM is supervised using the L text , which can be denoted as:</p><formula xml:id="formula_0">L text = L CE (ŷ text , y text ),<label>(1)</label></formula><p>where L CE is the Cross-Entropy loss <ref type="bibr" target="#b62">[63]</ref>. Moreover, for supervising the visible and amodal mask predictions, the L mask is used as shown in the following:</p><formula xml:id="formula_1">L mask = L CE ( Mv , M v ) + L CE ( Ma , M a )+ L Dice ( Mv , M v ) + L Dice ( Ma , M a ),<label>(2)</label></formula><p>where L Dice is the Dice loss <ref type="bibr" target="#b52">[53]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Occlusion Learning</head><p>Figure <ref type="figure" target="#fig_1">3</ref> illustrates the designed occlusion encoders for handling occlusion learning in AURA. Detailed network structures, inputs and outputs, and losses are presented.</p><p>Occlusion Condition Encoder is designed to improve the ability of the refined embedding e r predicted by the Prompt Encoder to be aware of the occlusion condition of the object(s) corresponding to the [SEG]. Specifically, the e r is fed into the Occlusion Condition Encoder E OC and predicts the occlusion-aware embedding e oa that is distinguishable by the degree of occlusion. The Occlusion Condition Encoder E OC additionally predicts the occlusion rate r of the object, which reflects the occlusion condition comprehensively and is supervised by L occ−oc with the ground-truth occlusion rate r. Moreover, a Linear layer and a Sigmoid layer are employed to predict the occlusion rate r based on the refined embedding e r .</p><p>Spatial Occlusion Encoder is proposed to constrain the spatial occlusion conditions between the predicted visible masks Mv and amodal masks Ma , enhancing the accuracy of visible and amodal segmentation prediction. Specifically, the Spatial Occlusion Encoder E SO takes both Mv and Ma as input and predicts the occlusion-aware spatial map Msp , which is supervised by L occ−sp with the ground-truth occlusion-aware spatial map M sp . The ground truth M sp is defined by setting regions belonging to the ground-truth visible mask M v as 1 and setting regions belonging to the ground-truth amodal mask M a but not M v as 2, and setting other background regions as 0. In this approach, the constraint between predicted masks Mv and Ma is constructed and contributes to accurate segmentation.</p><p>For supervising the predictions of the occlusion condition and the spatial occlusion map, the L occ is used as shown below:</p><formula xml:id="formula_2">L occ = L M SE (r, r) + L CE ( Msp , M sp ),<label>(3)</label></formula><p>where L M SE is the Mean Squared Error loss.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.">Loss Functions</head><p>The overall loss function L consists of four parts, supervising the textual answers ŷtext predicted by the Multi-Modal LLM, the predicted visible and amodal masks ( Mv and Ma ), and the predictions of two designed occlusion encoders including the occlusion rate r and the occlusionaware spatial map Msp . The overall loss function can be formulated as:</p><formula xml:id="formula_3">L = L text + L mask + L occ .<label>(4)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">AmodalReasonSeg Dataset</head><p>Existing amodal segmentation datasets <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b45">46,</ref><ref type="bibr" target="#b63">64]</ref> only contain images/videos and ground-truth masks without language annotations, which cannot fulfill the requirement of the amodal reasoning segmentation task. To this end, it is essential to construct a large-scale dataset with high-quality language annotations, including implicit user questions and the corresponding answers.</p><p>In this section, we first introduce the basic information of the newly constructed dataset in 4.1. Next, we demonstrate a general dataset generation pipeline that is generable for diverse scenarios and can be applied to generate new datasets efficiently in 4.2.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Overview of the Dataset</head><p>To construct the new dataset for the amodal reasoning segmentation task, the challenging amodal segmentation dataset COCOA-cls <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b72">73]</ref> is utilized. The COCOA-cls dataset is built upon the famous COCO <ref type="bibr" target="#b33">[34]</ref> dataset, which includes daily scenarios with indoor and outdoor scenes. Compared with existing amodal segmentation datasets, the AmodalReasonSeg dataset supports interacting with users by using textual questions as input, and the answers respond to the implicit purpose underneath the questions and alongside the visible and amodal segmentation predictions. Moreover, it is worth noticing that the answer corresponding to each image could refer to various objects, meaning the proposed dataset supports reasoning and predicting different targets in a single conversation, which is essential in real-world applications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Dataset Generation</head><p>A generalizable pipeline is designed to generate the new dataset, as shown in Figure <ref type="figure" target="#fig_2">4</ref>. Since manually annotating the question-and-answer pairs and the visible and amodal segmentation masks is labor-intensive and timeconsuming, we present a semi-automatic pipeline inspired by <ref type="bibr" target="#b48">[49]</ref> to keep the efficiency of the annotating process and high-quality annotations. Specifically, the images and annotations, including category information and visible and amodal masks, are reserved from the original dataset.</p><p>For generating the question-and-answer pairs, each image alongside the annotations is organized by a designed prompt template to be understood by a powerful and versatile large Vision-Language model, which is the ChatGPT-4o in our work that could take both image and text as input and output text response.</p><p>The prompt template is carefully designed to require ChatGPT-4o to generate question-and-answer pairs that satisfy the requirements to ensure the generation of highquality data. The annotation information of objects for this image is collected and fed to ChatGPT-4o. For each image, ten question-and-answer pairs are required to be generated. Different objects are required to be organized and contained in one answer. Besides, the relative occlusion information between different objects is required to be considered when generating the question-and-answer pairs, which makes the text description in the answer helpful for discriminating the occlusion relationship between objects. The existing annotations from the original dataset of all objects in the image are organized and taken as input for the ChatGPT-4o. Finally, three human annotators check the generated questions and verify if they are qualified. During human verification, qualified samples are retained, while flawed ones are revised with appropriate questions and answers instead of being discarded. Common issues include incorrect object references, implausible functions, or inaccurate quantities. For the ones that need to be improved, human annotators will manually design appropriate questions and answers for these images. Cross-check is utilized between different human annotators to ensure the quality of the generated data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">Experimental Settings</head><p>Dataset. All experiments, including our proposed method and compared methods, are trained on the training set of the proposed AmodalReasonSeg dataset, and evaluated on the validation set of this dataset for fairness. No extra dataset besides the AmodalReasonSeg dataset is used. Model Structure. We employ the LLaVA-7B-v1-1 <ref type="bibr" target="#b36">[37]</ref> as the multi-modal LLM, which is equipped with LoRA for efficient fine-tuning. For the Vision Backbone and the Prompt Encoder, the SAM <ref type="bibr" target="#b24">[25]</ref> method with the ViT-H version is utilized. The mask decoder of SAM is employed for the Visible Mask Decoder and Amodal Mask Decoder. Unless specifically specified, all experiments of the proposed AURA method are based on the model structure of using the LLaVA-7B-v1-1 <ref type="bibr" target="#b36">[37]</ref> as the multi-modal LLM and the ViT-H version of SAM <ref type="bibr" target="#b24">[25]</ref>. Implementation Details. We implement our proposed AURA based on Pytorch <ref type="bibr" target="#b44">[45]</ref>. The AdamW <ref type="bibr" target="#b39">[40]</ref> optimizer is used with the learning rate set to 1e-3. The WarmupDe-cayLR learning rate adjustment policy is used with 100 iter- </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">Amodal Reasoning Segmentation</head><p>Compared Methods. To benchmark the performance of amodal reasoning segmentation on the proposed Amodal-ReasonSeg dataset, state-of-the-art amodal segmentation methods <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b58">59,</ref><ref type="bibr" target="#b63">64]</ref> and multimodal large language model (MLLM)-based methods <ref type="bibr" target="#b25">[26,</ref><ref type="bibr" target="#b46">47,</ref><ref type="bibr" target="#b56">57,</ref><ref type="bibr" target="#b57">58,</ref><ref type="bibr" target="#b68">69,</ref><ref type="bibr" target="#b70">71]</ref> for reasoning segmentation of visible region are used for comparison. All methods are trained and evaluated on the train set and the val set of our proposed AmodalReasonSeg dataset, ensuring fairness. LLaVA-7B-v1-1 is employed for all MLLM-based methods.</p><p>The amodal segmentation methods <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b58">59,</ref><ref type="bibr" target="#b63">64]</ref> are designed for taking an image as input and predicting amodal segmentation masks for all objects, but cannot understand the user's question, reasoning, and response with textual answers and segmentations. Besides, MLLM-based meth-ods <ref type="bibr" target="#b25">[26,</ref><ref type="bibr" target="#b46">47,</ref><ref type="bibr" target="#b56">57,</ref><ref type="bibr" target="#b57">58,</ref><ref type="bibr" target="#b68">69,</ref><ref type="bibr" target="#b70">71]</ref> are designed to segment the visible regions of each object by taking the image and the user's question as input.</p><p>However, these aforementioned methods can only predict either visible or amodal masks by training twice with ground-truth visible or amodal masks, while the proposed AURA can reason and predict the visible and amodal masks simultaneously. Moreover, MLLM-based methods like LISA can only reason for one object to each question, while the proposed AURA could reason and respond with various objects with textual answers describing them and corresponding segmentation predictions. The baseline method is the proposed AURA without using the designed two occlusion learning modules, including the Occlusion Condition Encoder E OC and the Spatial Occlusion Encoder E SO . Quantitative Results. Table <ref type="table" target="#tab_0">1</ref> shows the performance of all compared methods on the proposed AmodalReasonSeg dataset. † means this method is trained twice on groundtruth visible and amodal masks, respectively, due to a lack of the ability to predict both masks at the same time. AURA achieves the best performance among all metrics regarding amodal and visible segmentations. To be more specific: (1) Firstly, since amodal segmentation methods <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b58">59,</ref><ref type="bibr" target="#b63">64]</ref> are designed for amodal segmentation and cannot take a textual question as input and understand it, they cannot be certain of which objects to segment, and the predicted masks could not be for the target objects. Therefore, these methods are evaluated by computing metrics between all predicted objects and target objects. In contrast, the proposed AURA can understand the purpose underneath the user's question and predict the amodal and visible masks for the targeted objects mentioned in the generated textual answer. (2) Secondly, since these MLLM-based methods are designed for segmenting visible regions of objects, their performance is not as well as AURA, which is specifically designed for the amodal reasoning segmentation task with task-specific designs for handling occlusions. Moreover, methods like LISA are designed to only segment one object for each question with other objects missed. However, AURA can support multi-object segmentation in a single conversation, responding with textual answers describing various objects with detailed elaborations. Qualitative Results. Figure <ref type="figure">5</ref> presents the visualization results of AURA in three cases, showing that AURA can accurately understand the occlusion relation between objects in the image, reason the purpose underneath the question, and predict segmentation masks for various objects. In the first case, although part of the orange is completely occluded by the ice cream on top, and the plate below has a messy pattern, which may cause confusion, AURA still can correctly understand the question and predict an intact amodal segmentation mask for the occluded orange. In the second case, the black cat and the person's black clothing are easily con- fused, especially in a dark environment. However, AURA can precisely distinguish between the cat and the person's black clothing and accurately predict the complete amodal mask of the person, even though a large region of the person is occluded by the cat. In the third case, the front side of the toilet is occluded by the cat to a large extent, while AURA can reason the purpose of the question and predict a high-quality amodal segmentation mask for the occluded toilet and an accurate segmentation mask for the cat.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.">Ablation Study</head><p>We conduct ablation studies for the proposed AURA from various aspects, including the design of occlusion learning modules, the effectiveness of LoRA, the scale of the Multi-Modal LLM Backbone, and the scale of the Vision Backbone.</p><p>Occlusion Learning. As shown in Table <ref type="table" target="#tab_1">2</ref>, when the two designed Occlusion Condition Encoder E OC and Spatial Occlusion Encoder E SO are not used, the performance of AURA drops in a certain degree. When only using E OC , the occlusion conditions of all objects are learned and can help with our model for comprehensively distinguishing whether objects are occluded and the degree of occlusion for these objects. Besides, when only using E SO , the spatial occlusion distribution can be learned and guide our model to be aware of whether each region is occluded or visible, and constrain the consistency between the predicted visible and amodal masks regarding the spatial occlusion condition. Finally, when both E OC and E SO are utilized, the best performance is achieved with the learning of global and spatial occlusion conditions simultaneously. Effectiveness of LoRA. We conduct experiments to evaluate the effectiveness of LoRA, as shown in Table <ref type="table" target="#tab_2">3</ref>.</p><p>The LoRA <ref type="bibr" target="#b12">[13]</ref> technique is utilized to be equipped with the Multi-Modal LLM for efficiently fine-tuning new data while keeping the pre-trained weight of LLM frozen. As shown in Table <ref type="table" target="#tab_2">3</ref>, when not using the LoRA technique, the performance of AURA drops to a certain extent. This is because the Multi-Modal LLM is not pre-trained on the AmodalReasonSeg dataset and has no specific knowledge learned to understand the purpose underneath the user's question and reason for various occluded objects. Therefore, the Multi-Modal LLM cannot predict textual answers correctly to respond to the user's question, leading to the performance of visible and amodal segmentation not well. Scale of Multi-Modal LLM Backbone. The effect of the scale of the Multi-Modal LLM backbone is evaluated as shown in Table <ref type="table" target="#tab_3">4</ref>. The AURA-7B, AURA-13B, and AURA-Llama2-13B denote the AURA method with different Multi-Modal LLM backbones corresponding to LLaVA-7B, LLaVA-13B, and LLaVA-Llama2-13B models. These models are different variants of the LLaVA model with different scales of parameters (7 billion and 13 billion) and different generations of Llama. All experiments, apart from this ablation study, are based on the AURA-7B model. We can observe from Table <ref type="table" target="#tab_3">4</ref> that the AURA-7B model does not perform as well as the other two models since the smaller number of parameters limits its learning ability for fine-tuning on the proposed AmodalReasonSeg dataset. Moreover, using larger models with 13 billion parameters can bring better performance since the learning capabilities of these models are better. Finally, upgrading the Llama large language model from the first to the second generation further enhances segmentation performance by generating higher-quality answers and refined embeddings used for segmentation. Scale of the Vision Backbone. To evaluate the effect of the scale of the Vision Backbone, which is utilized to ex-Figure <ref type="figure">5</ref>. Visualization results of AURA. Three cases are shown from top to bottom with questions and ground-truth (GT) answers. The first two cases show the images, ground-truth amodal and visible masks, and the predicted masks of AURA. In the last case, the predicted amodal mask by AURA for the occludee, which is the occluded toilet, is shown replacing the ground-truth visible mask.</p><p>tract vision features of the input image and plays an essential role in providing informative features to the segmentation decoders, experiments are conducted, and the results are shown in Table <ref type="table" target="#tab_4">5</ref>. Three scales of the Vision Backbone are compared, including the Base, Large, and Huge versions of SAM, corresponding to 93.7M, 312M, and 641M parameters, respectively. We can observe that the model with a larger number of parameters can achieve better segmentation performance and greater learning ability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>In this work, we propose a new task named Amodal Reasoning Segmentation, aiming to predict textual answers alongside visible and amodal segmentation masks in response to the user's input question that requires understanding and complex reasoning in the image. A generalizable dataset generation pipeline is proposed, which can generate anno-tations with high quality efficiently. A new dataset named AmodalReasonSeg is presented for daily scenarios where occlusions are challenging for amodal segmentation. Extensive textual question-and-answer pairs are generated, and various objects are referred to in the answers. Moreover, we propose AURA to understand the user's implicit purpose and reason for the answer, which organizes various objects coherently with accurately predicted visible and amodal segmentation masks. Extensive experiments demonstrate the effectiveness of our proposed AURA on reasoning and segmenting the amodal masks in diverse complex scenarios. To enhance the applicability in real-world scenarios, we plan to further optimize the efficiency of our LLM-based model and enrich our dataset's diversity and granularity. Moreover, feature compression approaches <ref type="bibr">[15-17, 41, 42]</ref> can be considered to improve the inference speed of the proposed approach.</p><p>Unveiling the Invisible: Reasoning Complex Occlusions Amodally with AURA</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supplementary Material</head><p>In the supplementary material, we introduce the following contents, including: • Generalization ability is demonstrated in Section 7, • Experimental results in Section 8, • Discussions in Section 9, • Additional Information of the Dataset in Section 10.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Generalization on Cloud Occluded Region Segmentation</head><p>We showcase the proposed method's potential of generalizing to the meteorological image, which is included to qualitatively demonstrate the potential of our method to generalize across domains. The example is illustrative with no quantitative results, and is not part of the core evaluation presented in the main paper.</p><p>To be specific, cloud cover is a major challenge in remote sensing and meteorological observations, as it obscures ground-level features that are critical for weather modeling, environmental monitoring, and climate studies. Accurate retrieval of ground information under cloud cover is essential for enhancing the quality of meteorological data and improving predictions.</p><p>Ground-level observations, such as vegetation health, urban heat distribution, and soil moisture, play a vital role in meteorological models. However, cloud coverage often introduces uncertainties in these observations, affecting the accuracy of derived climate indicators. Besides, meteorological models rely on ground information for initial boundary conditions, such as vegetation cover for evapotranspiration modeling or urban features for heat island studies. Addressing cloud-induced occlusions can significantly improve the reliability of such models. Furthermore, during extreme weather events like tropical cyclones or heavy rainfall, cloud cover is prevalent. Recovering occluded groundlevel features aids in post-disaster assessment and supports real-time meteorological decision-making.</p><p>It is worth noticing that the dynamic nature of cloud cover, influenced by meteorological parameters such as wind speed, humidity, and atmospheric pressure, makes it critical to develop robust methods that can adaptively infer ground information under varying cloud conditions.</p><p>We evaluate the proposed AURA method for reconstructing ground-level information obscured by cloud cover using amodal segmentation, enabling meteorologists to retrieve critical land-surface data under cloudy conditions.</p><p>As shown in Figure <ref type="figure" target="#fig_3">6</ref>, the effectiveness of AURA is evaluated using a cloud-occluded image from the RICE dataset <ref type="bibr" target="#b32">[33]</ref>. This dataset is derived from the Landsat 8 OLI/TIRS dataset <ref type="bibr" target="#b49">[50]</ref>, which comprises paired images captured under cloud-occluded and non-occluded conditions. The Landsat 8 OLI/TIRS dataset, developed by NASA and the United States Geological Survey (USGS), offers highresolution multispectral and thermal imagery to support global environmental monitoring, climate change research, and sustainable resource management. For this study, we annotated ten images from the RICE dataset with groundtruth amodal masks and question-answer pairs. AURA was fine-tuned on eight images, reserving the remaining two for validation. The same model structure and parameter settings of AURA are used, as described in Section 5 of the main paper.</p><p>Figure <ref type="figure" target="#fig_3">6</ref> presents a qualitative result on the validation set. The results highlight AURA's capability to segment complete shapes despite cloud occlusions, demonstrating its potential to comprehend ground-level conditions based on meteorological knowledge.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.1.">Experimental Settings</head><p>All of the experiments are conducted on the proposed AmodalReasonSeg dataset. No extra datasets other than the proposed AmodalReasonSeg dataset are used to ensure fairness in comparison. There are no other datasets used in our experiments. The pre-trained weights of LLaVA-7B-v1-1 and SAM-Vit-H are used as the initialized weights of the multi-modal LLM as well as the vision backbone and mask decoders, respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.2.">Training and Inference Efficiency</head><p>Regarding training time, LISA requires 8 hours for either visible or amodal segmentation, whereas AURA takes only 10 hours to handle both.</p><p>Under the same testing environment, LISA achieves 0.33 fps, whereas AURA achieves 0.28 fps.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.3.">Evaluation Details</head><p>Evaluation of amodal segmentation methods. The evaluation of these models is performed by computing metrics between all predicted objects and the target object, as these models are designed to predict all objects in the scene and cannot identify which specific object should be predicted. Explanation of the evaluation of MLLM-based methods. First, MLLM methods like LISA and LLM-Seg predict one object at a time and are evaluated per prediction-target match, ignoring any unmatched targets. Because most images contain multiple objects, these methods tend to per- form suboptimally. Second, for MLLM-based methods that can predict multiple objects simultaneously, such as GVSA, OMG-LLaVA, GLaMM, and PSALM, the evaluation protocol is consistent with that used for AURA.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.">Discussions</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.1.">Difference between Reasoning Segmentation and Referring Segmentation</head><p>The key difference between the reasoning segmentation and the referring segmentation tasks lies in the content of the questions and answers.</p><p>In the reasoning segmentation task, questions are abstract and do not explicitly reference specific objects. The answers include both textual elaborations and segmentation masks for the objects mentioned. For example, the question, "How can I accessorize my kitchen for cooking efficiently?" requires understanding and reasoning without direct object references. The corresponding answer might be, "Utilize the bottles[SEG] on the countertop for easy access to oils or spices, and rely on the sink[SEG] for rinsing utensils and ingredients during food preparation." This answer provides both the segmentation masks (denoted as "[SEG]") and explanatory details to address the question.</p><p>In contrast, the referring segmentation task involves questions that explicitly mention the objects to be segmented. For instance, the question, "Where is the orange? Please segment it.", explicitly identifies the object of interest. The typical answer is concise, such as "It is [SEG]", and lacks additional elaborations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.2.">Difference between Amodal Reasoning Segmentation and other Amodal Segmentation Tasks</head><p>The proposed amodal reasoning segmentation task differs from existing amodal segmentation tasks by enabling interaction with users through textual input questions and providing elaborative textual answers. While traditional amodal segmentation tasks-spanning semantic, instance, and panoptic levels-are limited to processing only image or video inputs, the proposed task introduces the ability to accept textual questions as input, infer the implicit purpose underneath these questions, and produce textual answers alongside segmentation masks. The ability of language interaction significantly broadens the potential for real-world applications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.3.">Applicability of Existing Reasoning Segmentation Method on the Proposed New Task</head><p>There are various existing reasoning segmentation methods proposed, like LISA. These methods were originally designed for segmenting visible masks, and can be applied to the proposed new task -Amodal Reasoning Segmentation by training with ground-truth question-answer pairs and amodal segmentation masks. However, methods like LISA need two major improvements for this task. First, LISA can only predict visible or amodal masks, requiring an additional decoder to handle both simultaneously. Second, LISA predicts only one object, while AURA handles multiple objects in a single inference by modifying [SEG] tokens. With these changes, LISA can only be upgraded to the "Baseline" method in Table 1 of our main paper.</p><p>Then the task-specific designs, including the proposed Occlusion Condition Encoder and the Spatial Occlusion Encoder, are required to handle the occlusion problem, which is the core difference between the traditional visible segmentation task and the focused amodal segmentation task in the paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.">Dataset 10.1. Exhibition of Various Perspectives</head><p>In the created dataset AmodalReasonSeg, there are 11.3 pairs of questions and answers annotated for each image on average. To ensure the diversity of the question-and-answer pairs provided in this dataset, we specifically add a requirement in the prompt template used for guiding ChatGPT-4o to generate question-and-answer pairs from different perspectives to cover various potentials. As shown in Figures 8  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.2.">Prompt Template for GPT</head><p>We present the designed prompt template in Figure <ref type="figure" target="#fig_4">7</ref>. This template specifies detailed requirements and provides comprehensive information about the image and objects, ensuring the generation of high-quality questions and answers by ChatGPT-4o. Additionally, it includes an example to clarify the requirements and assist ChatGPT-4o in understanding them effectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.3.">Average count of question-answer pairs per</head><p>image.</p><p>The dataset contains an average of 11.3 QA pairs per image. Initially, GPT-4o generated 10 QA pairs per image, which human annotators subsequently revised and occasionally supplemented during verification to enhance data quality, resulting in a final average above 10.  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Overall architecture of the proposed AURA. (a) Given an input image and the input question from the user, the Vision Backbone extracts the visual features of the input image, and the Multi-Modal LLM equipped with LoRA is utilized for understanding the input image and textual questions simultaneously and responding with textual answers that include the [SEG] tokens indicating the segmentation masks. (b) For each [SEG], the Prompt Encoder takes its embedding of the Multi-Modal LLM and outputs the refined embeddings corresponding to the [SEG]. (c) Finally, the Visible Mask Decoder predicts the visible mask using each [SEG]'s refined embeddings. The Amodal Decoder predicts the amodal mask using the occlusion-aware embedding predicted by the Occlusion Condition Encoder. A Spatial Occlusion Encoder is designed to constrain the spatial occlusion information of the predicted visible and amodal segmentation masks to be accurate. Best viewed in color.</figDesc><graphic coords="3,58.50,72.00,495.01,155.09" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. The designed occlusion encoders. (a) The Occlusion Condition Encoder learns to embed the occlusion condition of each mask and output the occlusion-aware embedding. (b) The Spatial Occlusion Encoder takes the predicted visible and amodal masks as input and predicts the occlusion-aware spatial map to constrain the spatial relationship between the two predicted masks.</figDesc><graphic coords="4,67.95,72.00,217.35,149.58" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. The designed generalizable pipeline for dataset generation. (a) Each image and the information of objects in it are gathered and fed into the GPT to generate questions and answers. (b) Then human annotators will check the generated data and improve it manually. Cross-check ensures the quality of the generated data.</figDesc><graphic coords="5,70.31,72.00,212.62,147.54" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. The qualitative result for demonstrating the generalization ability of AURA on real-world scenarios such as climate change analysis. Best viewed in color.</figDesc><graphic coords="11,112.95,72.00,386.10,423.37" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 7</head><label>7</label><figDesc>Figure 7. The designed prompt template used for guiding the GPT, including the core task description for the ChatGPT-4o, the guidelines for question and answer creation, and the details about the image and objects in it.</figDesc><graphic coords="12,317.25,72.00,236.25,314.81" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head></head><label></label><figDesc>Figure 7. The designed prompt template used for guiding the GPT, including the core task description for the ChatGPT-4o, the guidelines for question and answer creation, and the details about the image and objects in it.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 8 .</head><label>8</label><figDesc>Figure 8. The first example of the proposed AmodalReasonSeg dataset shows various questions and answers from diverse perspectives for the same image. Best viewed in color.</figDesc><graphic coords="13,60.97,72.00,490.06,585.45" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 9 .</head><label>9</label><figDesc>Figure 9. The second example of the proposed AmodalReasonSeg dataset shows various questions and answers from diverse perspectives for the same image. Best viewed in color.</figDesc><graphic coords="14,60.97,72.00,490.06,583.99" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="1,58.50,228.71,495.01,201.62" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="8,93.15,72.00,425.71,369.72" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>Comparison of the amodal reasoning segmentation performance on the AmodalReasonSeg dataset. † denotes that this method is trained twice with ground-truth visible and amodal masks of the proposed AmodalReasonSeg dataset, respectively. Best in bold, second underlined.</figDesc><table><row><cell>Method</cell><cell>Amodal</cell><cell>Visible</cell></row><row><cell></cell><cell cols="2">gIoU cIoU gIoU cIoU</cell></row><row><cell>Amodal Segmentation Methods</cell><cell></cell><cell></cell></row><row><cell>VRSP  † [59] AAAI'21</cell><cell cols="2">15.18 16.55 17.41 19.75</cell></row><row><cell>C2F-Seg  † [11] ICCV'23</cell><cell cols="2">18.62 18.25 19.12 20.31</cell></row><row><cell>SD-Amodal  † [64] CVPR'24</cell><cell cols="2">20.87 20.09 21.52 23.10</cell></row><row><cell>MLLM-based Methods</cell><cell></cell><cell></cell></row><row><cell>LISA  † [26] CVPR'24</cell><cell cols="2">23.05 22.87 24.39 26.81</cell></row><row><cell>LLM-Seg  † [57] CVPR'24</cell><cell cols="2">24.62 23.06 25.19 27.94</cell></row><row><cell>GSVA  † [58] CVPR'24</cell><cell cols="2">42.30 42.87 47.01 48.22</cell></row><row><cell>OMG-LLaVA  † [69] NeurIPS'24</cell><cell cols="2">43.92 44.21 49.41 49.38</cell></row><row><cell>GLaMM  † [47] CVPR'24</cell><cell cols="2">45.75 46.82 49.93 54.14</cell></row><row><cell>PSALM  † [71] ECCV'24</cell><cell cols="2">46.81 47.03 50.64 55.19</cell></row><row><cell>Baseline</cell><cell cols="2">43.55 43.92 48.96 48.63</cell></row><row><cell>AURA</cell><cell cols="2">47.76 47.32 51.31 55.38</cell></row></table><note>ations for warmup and then linearly decreases the learning rate to 0. Apart from the ablation studies using 13B models as Multi-Modal LLM Backbone that use two NVIDIA A100 GPUs (80GB Memory) for experiments, all of our experiments are conducted on two NVIDIA V100 GPUs (32GB Memory). The batch size for each GPU card is set to 1. The entire training iterations are 5000, and the gradient accumulation technique is used by setting the accumulation step to 4. The entire training time is about 10 hours. Evaluation Metrics. The gIoU and cIoU metrics are used for evaluating the segmentation performance of amodal and visible masks. The gIoU is calculated by averaging the Intersection-over-Unions (IoUs) of all images, while the cIoU is calculated by dividing the cumulative intersection by the cumulative union of all masks.</note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc>Index E OC E SO Ablation study of designs for occlusion learning. Best in bold, second underlined.</figDesc><table><row><cell></cell><cell></cell><cell></cell><cell cols="2">Amodal</cell><cell>Visible</cell></row><row><cell></cell><cell></cell><cell></cell><cell cols="2">gIoU cIoU gIoU cIoU</cell></row><row><cell>1</cell><cell></cell><cell></cell><cell cols="2">43.55 43.92 48.96 48.63</cell></row><row><cell>2</cell><cell>✓</cell><cell></cell><cell cols="2">44.86 44.07 49.57 49.10</cell></row><row><cell>3</cell><cell></cell><cell>✓</cell><cell cols="2">46.95 45.60 50.68 53.72</cell></row><row><cell>4</cell><cell>✓</cell><cell>✓</cell><cell cols="2">47.76 47.32 51.31 55.38</cell></row><row><cell>Method</cell><cell></cell><cell></cell><cell cols="2">Amodal</cell><cell>Visible</cell></row><row><cell></cell><cell></cell><cell></cell><cell>gIoU</cell><cell>cIoU</cell><cell>gIoU</cell><cell>cIoU</cell></row><row><cell cols="5">AURA w/o LoRA 20.84 21.03 25.43 27.95</cell></row><row><cell cols="2">AURA w/ LoRA</cell><cell></cell><cell cols="2">47.76 47.32 51.31 55.38</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 .</head><label>3</label><figDesc>Ablation study of the effectiveness of using LoRA in the Multi-Modal LLM for efficient fine-tuning. w/o and w/ denote without and with the LoRA technique, respectively. Best in bold.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 4 .</head><label>4</label><figDesc>Ablation study of the scale of the backbone for the Multi-Modal LLM. Best in bold, second underlined.</figDesc><table><row><cell>Multi-Modal</cell><cell></cell><cell>Amodal</cell><cell></cell><cell>Visible</cell></row><row><cell>LLM Backbone</cell><cell cols="4">gIoU cIoU gIoU cIoU</cell></row><row><cell>AURA-7B</cell><cell cols="4">47.76 47.32 51.31 55.38</cell></row><row><cell>AURA-13B</cell><cell cols="4">49.41 49.74 54.13 57.97</cell></row><row><cell cols="5">AURA-Llama2-13B 52.34 52.95 58.42 60.21</cell></row><row><cell>Vision</cell><cell cols="2">Amodal</cell><cell cols="2">Visible</cell></row><row><cell>Backbone</cell><cell>gIoU</cell><cell>cIoU</cell><cell>gIoU</cell><cell>cIoU</cell></row><row><cell>SAM-ViT-B</cell><cell>42.85</cell><cell>42.76</cell><cell>46.92</cell><cell>50.12</cell></row><row><cell>SAM-ViT-L</cell><cell>45.23</cell><cell>45.31</cell><cell>49.18</cell><cell>53.71</cell></row><row><cell>SAM-ViT-H</cell><cell>47.76</cell><cell>47.32</cell><cell>51.31</cell><cell>55.38</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 5 .</head><label>5</label><figDesc>Ablation study of the scale of the Vision Backbone. B, L, and H denote Base, Large, and Huge, respectively. Best in bold, second underlined.</figDesc><table /></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>This research was supported by the Ministry of Education of Singapore Tier3 grant MOET32022-0006. This research was also supported by Culture, Sports and Tourism R&amp;D Program through the Korea Creative Content Agency grant funded by the Ministry of Culture, Sports and Tourism in 2024 (Project Name: Global Talent for Generative AI Copyright Infringement and Copyright Theft, Project Number: RS-2024-00398413, Contribution Rate: 10%).</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<author>
+			<persName><forename type="first">Josh</forename><surname>Achiam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Adler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lama</forename><surname>Ahmad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilge</forename><surname>Akkaya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florencia</forename><surname>Leoni Aleman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diogo</forename><surname>Almeida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Janko</forename><surname>Altenschmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Altman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.08774</idno>
+		<title level="m">Shyamal Anadkat, et al. Gpt-4 technical report</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Unseen object amodal instance segmentation via hierarchical occlusion modeling</title>
+		<author>
+			<persName><forename type="first">Seunghyeok</forename><surname>Back</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joosoon</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Taewon</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sangjun</forename><surname>Noh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raeyoung</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Seongho</forename><surname>Bak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyoobin</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Robotics and Automation</title>
+				<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="5085" to="5092" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Joint prediction of amodal and visible semantic segmentation for automated driving</title>
+		<author>
+			<persName><forename type="first">Jasmin</forename><surname>Breitenstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Löhdefink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Fingscheidt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF European Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF European Conference on Computer Vision</meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="633" to="645" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">End-toend object detection with transformers</title>
+		<author>
+			<persName><forename type="first">Nicolas</forename><surname>Carion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francisco</forename><surname>Massa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Synnaeve</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicolas</forename><surname>Usunier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kirillov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sergey</forename><surname>Zagoruyko</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF European Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF European Conference on Computer Vision</meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="213" to="229" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Learning 6-dof object poses to grasp category-level objects by language instructions</title>
+		<author>
+			<persName><forename type="first">Chilam</forename><surname>Cheang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haitao</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanwei</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangyang</forename><surname>Xue</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Robotics and Automation</title>
+				<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="8476" to="8482" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Amodal instance segmentation via priorguided expansion</title>
+		<author>
+			<persName><forename type="first">Junjie</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Niu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianlou</forename><surname>Si</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liqing</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+				<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="313" to="321" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Objectdriven multi-layer scene decomposition from a single image</title>
+		<author>
+			<persName><forename type="first">Helisa</forename><surname>Dhamo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nassir</forename><surname>Navab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Federico</forename><surname>Tombari</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="5369" to="5378" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Segan: Segmenting and generating the invisible</title>
+		<author>
+			<persName><forename type="first">Kiana</forename><surname>Ehsani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roozbeh</forename><surname>Mottaghi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Farhadi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="6144" to="6153" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Taming transformers for high-resolution image synthesis</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bjorn</forename><surname>Ommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="12873" to="12883" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Learning to see the invisible: End-to-end trainable amodal instance segmentation</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Follmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rebecca</forename><surname>König</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Härtinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Klostermann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tobias</forename><surname>Böttger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision</title>
+				<meeting>the IEEE/CVF Winter Conference on Applications of Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Coarse-to-fine amodal segmentation with shape prior</title>
+		<author>
+			<persName><forename type="first">Jianxiong</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuelin</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yikai</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianjun</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tong</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanwei</forename><surname>Fu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Are we ready for autonomous driving? the KITTI vision benchmark suite</title>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Geiger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><surname>Lenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raquel</forename><surname>Urtasun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="3354" to="3361" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">LoRA: Low-rank adaptation of large language models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Edward</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yelong</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Phillip</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyuan</forename><surname>Wallis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuanzhi</forename><surname>Allen-Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shean</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weizhu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ternational Conference on Learning Representations</title>
+				<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">SAIL-VOS: Semantic amodal instance level video object segmentation-a synthetic dataset and baselines</title>
+		<author>
+			<persName><forename type="first">Yuan-Ting</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong-Shuo</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kexin</forename><surname>Hui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia-Bin</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><forename type="middle">G</forename><surname>Schwing</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="3105" to="3115" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Rate-adaptive neural network for image compressive sensing</title>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Hui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shengping</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenxue</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaohui</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Debin</forename><surname>Zhao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Multimedia</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="2515" to="2530" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">S 2 -csnet: Scale-aware scalable sampling network for image compressive sensing</title>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Hui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haiqi</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuya</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaohui</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Debin</forename><surname>Zhao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM Multimedia</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="1" to="10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Image compressive sensing with scale-variable adaptive sampling and hybrid-attention transformer reconstruction</title>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Hui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Debin</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weisi</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaohui</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Jiang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Multimedia</title>
+		<imprint>
+			<biblScope unit="issue">8</biblScope>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Domain generalization via balancing training difficulty and model capability</title>
+		<author>
+			<persName><forename type="first">Xueying</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaxing</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sheng</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijian</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="18993" to="19003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Weakly supervised monocular 3D detection with a single-view image</title>
+		<author>
+			<persName><forename type="first">Xueying</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sheng</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lewei</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoqin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijian</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="10508" to="10518" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Monomae: Enhancing monocular 3D detection through depth-aware masked autoencoders</title>
+		<author>
+			<persName><forename type="first">Xueying</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sheng</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoqin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ling</forename><surname>Shao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijian</forename><surname>Lu</surname></persName>
+		</author>
+		<idno type="arXiv">arXivpreprintarXiv:2405.07696</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Multimodal 3d reasoning segmentation with complex scenes</title>
+		<author>
+			<persName><forename type="first">Xueying</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lewei</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ling</forename><surname>Shao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijian</forename><surname>Lu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2411.13927</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Exploring 3d activity reasoning and planning: From implicit human intentions to route-aware planning</title>
+		<author>
+			<persName><forename type="first">Xueying</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenhao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoqin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ling</forename><surname>Shao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijian</forename><surname>Lu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2503.12974</idno>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Llms meet vlms: Boost open vocabulary object detection with fine-grained descriptors</title>
+		<author>
+			<persName><forename type="first">Sheng</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xueying</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaxing</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lewei</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijian</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Segment anything in high quality</title>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Ke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingqiao</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Danelljan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu-Wing</forename><surname>Tai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chi-Keung</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fisher</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Segment anything</title>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kirillov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Mintun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikhila</forename><surname>Ravi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanzi</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chloe</forename><surname>Rolland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Laura</forename><surname>Gustafson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tete</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Spencer</forename><surname>Whitehead</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><forename type="middle">C</forename><surname>Berg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wan-Yen</forename><surname>Lo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">LISA: Reasoning segmentation via large language model</title>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Lai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhuotao</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yukang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanwei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuhui</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaya</forename><surname>Jia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">BLIP-2: Bootstrapping language-image pre-training with frozen image encoders and large language models</title>
+		<author>
+			<persName><forename type="first">Junnan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongxu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Silvio</forename><surname>Savarese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Hoi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+				<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="19730" to="19742" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Amodal instance segmentation</title>
+		<author>
+			<persName><forename type="first">Ke</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jitendra</forename><surname>Malik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF European Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF European Conference on Computer Vision</meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="677" to="693" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">2D amodal instance segmentation guided by 3D shape prior</title>
+		<author>
+			<persName><forename type="first">Zhixuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weining</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingting</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tiejun</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF European Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF European Conference on Computer Vision</meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="165" to="181" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">OAFormer: Learning occlusion distinguishable feature for amodal instance segmentation</title>
+		<author>
+			<persName><forename type="first">Zhixuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruohua</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tiejun</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingting</forename><surname>Jiang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Acoustics, Speech, and Signal Processing</title>
+				<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">GIN: Generative invariant shape prior for amodal instance segmentation</title>
+		<author>
+			<persName><forename type="first">Zhixuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weining</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingting</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tiejun</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Multimedia</title>
+		<imprint>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">MUVA: A new large-scale benchmark for multi-view amodal instance segmentation in the shopping scenario</title>
+		<author>
+			<persName><forename type="first">Zhixuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weining</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juan</forename><surname>Terven</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zachary</forename><surname>Bennett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingting</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tiejun</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="23504" to="23513" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">A remote sensing image dataset for cloud removal</title>
+		<author>
+			<persName><forename type="first">Daoyu</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangluan</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoke</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xian</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Fu</surname></persName>
+		</author>
+		<idno type="arXiv">arXivpreprintarXiv:1901.00600</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Microsoft coco: Common objects in context</title>
+		<author>
+			<persName><forename type="first">Tsung-Yi</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Maire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Serge</forename><surname>Belongie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Hays</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pietro</forename><surname>Perona</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deva</forename><surname>Ramanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lawrence</forename><surname>Zitnick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF European Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF European Conference on Computer Vision</meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="740" to="755" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Variational amodal object completion</title>
+		<author>
+			<persName><forename type="first">Huan</forename><surname>Ling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Acuna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karsten</forename><surname>Kreis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Seung</forename><forename type="middle">Wook</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanja</forename><surname>Fidler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="16246" to="16257" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Improved baselines with visual instruction tuning</title>
+		<author>
+			<persName><forename type="first">Haotian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunyuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><forename type="middle">Jae</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="26296" to="26306" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Visual instruction tuning</title>
+		<author>
+			<persName><forename type="first">Haotian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunyuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingyang</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><forename type="middle">Jae</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">BLADE: Box-level supervised amodal segmentation through directed expansion</title>
+		<author>
+			<persName><forename type="first">Zhaochen</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhixuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingting</forename><surname>Jiang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+				<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<biblScope unit="volume">2024</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<author>
+			<persName><forename type="first">Zhaochen</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Limeng</forename><surname>Qiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangxiang</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingting</forename><surname>Jiang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2405.16094</idno>
+		<title level="m">Revisiting amodal segmentation with foundation model and hierarchical focus</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<author>
+			<persName><surname>Loshchilov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1711.05101</idno>
+		<title level="m">Decoupled weight decay regularization</title>
+				<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Clif-vqa: Enhancing video quality assessment by incorporating high-level semantic information related to human feelings</title>
+		<author>
+			<persName><forename type="first">Yachun</forename><surname>Mi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Shu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Hui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Puchao</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaohui</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ACM International Conference on Multimedia</title>
+				<meeting>the ACM International Conference on Multimedia</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="9989" to="9998" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Mvqa: Mamba with unified sampling for efficient video quality assessment</title>
+		<author>
+			<persName><forename type="first">Yachun</forename><surname>Mi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weicheng</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chaofeng</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Hui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaohui</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2504.16003</idno>
+		<imprint>
+			<date type="published" when="2025">2025</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Amodal panoptic segmentation</title>
+		<author>
+			<persName><forename type="first">Rohit</forename><surname>Mohan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhinav</forename><surname>Valada</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="21023" to="21032" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">A weakly supervised amodal segmenter with boundary uncertainty estimation</title>
+		<author>
+			<persName><forename type="first">Khoi</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sinisa</forename><surname>Todorovic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="7396" to="7405" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Pytorch: An imperative style, high-performance deep learning library</title>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Paszke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francisco</forename><surname>Massa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Lerer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Bradbury</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gregory</forename><surname>Chanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Trevor</forename><surname>Killeen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeming</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Natalia</forename><surname>Gimelshein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luca</forename><surname>Antiga</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">32</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Amodal instance segmentation with KINS dataset</title>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoyong</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaya</forename><surname>Jia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Glamm: Pixel grounding large multimodal model</title>
+		<author>
+			<persName><forename type="first">Hanoona</forename><surname>Rasheed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhammad</forename><surname>Maaz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sahal</forename><surname>Shaji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abdelrahman</forename><surname>Shaker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Salman</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hisham</forename><surname>Cholakkal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Rao M Anwer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Hsuan</forename><surname>Xing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fahad S</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Khan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="13009" to="13018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Walt: Watch and learn 2d amodal representation from time-lapse imagery</title>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>N Dinesh Reddy</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tamburo</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Srinivasa G Narasimhan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="9356" to="9366" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">PixelLM: Pixel reasoning with large multimodal model</title>
+		<author>
+			<persName><forename type="first">Zhicheng</forename><surname>Zhongwei Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunchao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yao</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongmei</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiashi</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojie</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Landsat-8: Science and product vision for terrestrial global change research. Remote sensing of Environment</title>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">A</forename><surname>David P Roy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">R</forename><surname>Wulder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Curtis</forename><forename type="middle">E</forename><surname>Loveland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><forename type="middle">G</forename><surname>Woodcock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martha</forename><forename type="middle">C</forename><surname>Allen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dennis</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><forename type="middle">R</forename><surname>Helder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">M</forename><surname>Irons</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kennedy</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="volume">145</biblScope>
+			<biblScope unit="page" from="154" to="172" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Amodalsynthdrive: A synthetic amodal perception dataset for autonomous driving</title>
+		<author>
+			<persName><forename type="first">Ahmed</forename><surname>Rida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sekkat</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rohit</forename><surname>Mohan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oliver</forename><surname>Sawade</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elmar</forename><surname>Matthes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhinav</forename><surname>Valada</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Robotics and Automation Letters</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="9597" to="9604" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Deep semantic segmentation for automated driving: Taxonomy, roadmap and challenges</title>
+		<author>
+			<persName><forename type="first">Mennatullah</forename><surname>Siam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sara</forename><surname>Elkerdawy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Jagersand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Senthil</forename><surname>Yogamani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE international conference on intelligent transportation systems</title>
+				<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="1" to="8" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Generalised dice overlap as a deep learning loss function for highly unbalanced segmentations</title>
+		<author>
+			<persName><forename type="first">Wenqi</forename><surname>Carole H Sudre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastien</forename><surname>Vercauteren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jorge</forename><surname>Ourselin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cardoso</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Deep Learning in Medical Image Analysis and Multimodal Learning for Clinical Decision Support: Third International Workshop, DLMIA 2017, and 7th International Workshop, ML-CDS 2017, Held in Conjunction with MIC-CAI 2017</title>
+				<meeting><address><addrLine>Québec City, QC, Canada</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2017">September 14, Proceedings 3. 2017</date>
+			<biblScope unit="page" from="240" to="248" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Amodal segmentation through out-of-task and out-of-distribution generalization with a bayesian model</title>
+		<author>
+			<persName><forename type="first">Yihong</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Kortylewski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><surname>Yuille</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1215" to="1224" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<monogr>
+		<title level="m" type="main">LLaMA: Open and efficient foundation language models</title>
+		<author>
+			<persName><forename type="first">Thibaut</forename><surname>Hugo Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gautier</forename><surname>Lavril</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xavier</forename><surname>Izacard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marie-Anne</forename><surname>Martinet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothée</forename><surname>Lachaux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baptiste</forename><surname>Lacroix</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naman</forename><surname>Rozière</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Faisal</forename><surname>Hambro</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Azhar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.13971</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<monogr>
+		<title level="m" type="main">LLaMA 2: Open foundation and fine-tuned chat models</title>
+		<author>
+			<persName><forename type="first">Hugo</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Louis</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Stone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Albert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amjad</forename><surname>Almahairi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yasmine</forename><surname>Babaei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikolay</forename><surname>Bashlykov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Soumya</forename><surname>Batra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prajjwal</forename><surname>Bhargava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shruti</forename><surname>Bhosale</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.09288</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">LLM-Seg: Bridging image segmentation and large language model reasoning</title>
+		<author>
+			<persName><forename type="first">Junchi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Ke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Gsva: Generalized segmentation via multimodal large language models</title>
+		<author>
+			<persName><forename type="first">Zhuofan</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongchen</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yizeng</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuran</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiji</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gao</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="3858" to="3869" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Amodal segmentation based on visible region segmentation and shape prior</title>
+		<author>
+			<persName><forename type="first">Yuting</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanyu</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziming</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weixin</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiawei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shenghua</forename><surname>Gao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+				<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">EfficientSAM: Leveraged masked image pretraining for efficient segment anything</title>
+		<author>
+			<persName><forename type="first">Yunyang</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bala</forename><surname>Varadarajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lemeng</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoyu</forename><surname>Xiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fanyi</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chenchen</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoliang</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dilin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Forrest</forename><surname>Iandola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="16111" to="16121" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Amodal completion via progressive mixed context diffusion</title>
+		<author>
+			<persName><forename type="first">Katherine</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lingzhi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianbo</forename><surname>Shi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="9099" to="9109" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">VISA: Reasoning video object segmentation via large language models</title>
+		<author>
+			<persName><forename type="first">Cilin</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haochen</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shilin</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaolong</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yao</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guoliang</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weidi</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Efstratios</forename><surname>Gavves</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF European Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF European Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Automated image segmentation using improved pcnn model based on crossentropy</title>
+		<author>
+			<persName><forename type="first">Ma</forename><surname>Yi-De</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liu</forename><surname>Qing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qian</forename><surname>Zhi-Bai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Symposium on Intelligent Multimedia, Video and Speech Processing</title>
+				<meeting>International Symposium on Intelligent Multimedia, Video and Speech Processing</meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2004">2004</date>
+			<biblScope unit="page" from="743" to="746" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Amodal ground truth and completion in the wild</title>
+		<author>
+			<persName><forename type="first">Guanqi</forename><surname>Zhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuanxia</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weidi</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Zisserman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2006">2024. 2, 4, 6</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Self-supervised scene deocclusion</title>
+		<author>
+			<persName><forename type="first">Xiaohang</forename><surname>Zhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingang</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dahua</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><forename type="middle">Change</forename><surname>Loy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="3784" to="3792" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Black-box unsupervised domain adaptation with bidirectional atkinson-shiffrin memory</title>
+		<author>
+			<persName><forename type="first">Jingyi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaxing</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xueying</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shijian</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="11771" to="11782" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">LLaMA-Adapter: Efficient fine-tuning of language models with zero-init attention</title>
+		<author>
+			<persName><forename type="first">Renrui</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaming</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aojun</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangfei</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shilin</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pan</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongsheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Qiao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Opnet: Deep occlusion perception network with boundary awareness for amodal instance segmentation</title>
+		<author>
+			<persName><forename type="first">Shihui</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziteng</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuhong</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Houlin</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Acoustics, Speech, and Signal Processing</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="2595" to="2599" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Omg-llava: Bridging image-level, object-level, pixel-level reasoning and understanding</title>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangtai</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Fei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haobo</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shengqiong</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shunping</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><forename type="middle">Change</forename><surname>Loy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuicheng</forename><surname>Yan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="71737" to="71767" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Learning semantics-aware distance map with semantics layering network for amodal instance segmentation</title>
+		<author>
+			<persName><forename type="first">Ziheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anpei</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ling</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingyi</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shenghua</forename><surname>Gao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM International Conference on Multimedia</title>
+				<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="2124" to="2132" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Psalm: Pixelwise segmentation with large multi-modal model</title>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yeyao</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Enming</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Bai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF European Conference on Computer Vision</title>
+				<meeting>the IEEE/CVF European Conference on Computer Vision</meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="74" to="91" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Visiting the invisible: Layer-bylayer completed scene decomposition</title>
+		<author>
+			<persName><forename type="first">Chuanxia</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Duy-Son</forename><surname>Dao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guoxian</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tat-Jen</forename><surname>Cham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfei</forename><surname>Cai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Vision</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="3195" to="3215" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Semantic amodal segmentation</title>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuandong</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dimitris</forename><surname>Metaxas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Dollár</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
