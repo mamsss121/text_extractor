@@ -1,13 +1,13 @@
 title: text_extractor_OS: GROBID-based analysis of open-access articles
 license: MIT
 authors:
-  - family-names: Tahiri
+  - family-names: Tahri Jautei Hassani
     given-names: Mamoun
 cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the associated Zenodo record."
 preferred-citation:
   authors:
-  - family-names: Tahiri
+  - family-names: Tahri Jautei Hassani
     given-names: Mamoun
   type: software
   title: text_extractor_OS: GROBID-based analysis of open-access articles
