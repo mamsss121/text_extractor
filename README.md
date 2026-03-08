@@ -168,19 +168,11 @@ Basic unit tests are located in the `tests/` directory to check expected behavio
 
 ---
 
-## Citation
-
-## Citation
-
-If you use this repository in your work, please cite it as:
-
-Tahiri, M. (2025). text_extractor_OS: GROBID-based analysis of open-access articles  
-(Version 1.0.0) [Computer software]. Zenodo.  
-https://doi.org/10.5281/zenodo.18911946
-
 ## Where to get help
 
 If you have questions, problems, or suggestions feel free to contact me on: m2016.tahiri@gmail.com
+
+---
 
 # License
 
