@@ -1,5 +1,7 @@
 # Text Extractor
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18911946.svg)](https://doi.org/10.5281/zenodo.18911946)
+
 A Python project for **extracting structured information from GROBID TEI XML files** generated from scientific PDFs.
 
 The pipeline processes TEI files and produces:
@@ -165,6 +167,20 @@ Basic unit tests are located in the `tests/` directory to check expected behavio
 * Keyword extraction does **not perform lemmatization or phrase detection**, so similar terms may appear separately (e.g., *model* vs *models*).
 
 ---
+
+## Citation
+
+## Citation
+
+If you use this repository in your work, please cite it as:
+
+Tahiri, M. (2025). text_extractor_OS: GROBID-based analysis of open-access articles  
+(Version 1.0.0) [Computer software]. Zenodo.  
+https://doi.org/10.5281/zenodo.18911946
+
+## Where to get help
+
+If you have questions, problems, or suggestions feel free to contact me on: m2016.tahiri@gmail.com
 
 # License
 
