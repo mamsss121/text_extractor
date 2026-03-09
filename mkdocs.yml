@@ -1,0 +1,11 @@
+site_name: text_extractor_OS
+site_description: GROBID-based analysis of open-access articles
+repo_url: https://github.com/mamsss121/text_extractor_OS
+theme:
+  name: readthedocs
+
+nav:
+  - Home: index.md
+  - Install: install.md
+  - Usage: usage.md
+  - Validation: validation.md
