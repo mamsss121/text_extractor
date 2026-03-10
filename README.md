@@ -210,6 +210,7 @@ pytest
 ```
 A GitHub Actions workflow (.github/workflows/ci.yml) automatically installs dependencies and runs the test suite (and optionally builds the docs) on every push and pull request.
 
+---
 # Validation
 
 To validate the extraction results:
