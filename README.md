@@ -17,6 +17,24 @@ The pipeline processes TEI files and produces:
 # Repository Structure
 
 ```
+# Text Extractor
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18911946.svg)](https://doi.org/10.5281/zenodo.18911946)
+
+A Python project for **extracting structured information from GROBID TEI XML files** generated from scientific PDFs.
+
+The pipeline processes TEI files and produces:
+
+- Extracted **links/URLs**
+- **Figure counts** per article
+- **Keyword frequencies** and a **word cloud**
+- CSV outputs for further analysis
+
+---
+
+## Repository structure
+
+```text
 text_extractor_os/
 │
 ├── data/
@@ -24,7 +42,7 @@ text_extractor_os/
 │   ├── pdfs/                # Original PDFs
 │   └── papers.csv           # Metadata about the papers
 │
-├── outputs/                 # Generated results
+├── outputs/                 # Generated results (created by the pipeline)
 │   ├── abstracts.csv
 │   ├── figures_per_paper.csv
 │   ├── figures_per_paper.png
@@ -38,12 +56,15 @@ text_extractor_os/
 │   ├── extract_links.py
 │   └── generate_keyword_cloud.py
 │
-├── tests/                   # Unit tests
-├── docs/                    # Optional documentation
+├── tests/                   # Unit tests (pytest)
+├── docs/                    # Documentation (MkDocs + Read the Docs)
 │
+├── run_pipeline.py          # Orchestrates the 3 scripts
+├── Dockerfile               # Containerised environment
+├── .readthedocs.yaml
 ├── requirements.txt
-├── README.md
 └── LICENSE
+
 ```
 
 ---
@@ -99,6 +120,18 @@ data/pdfs/
 
 # Usage
 
+## Run the full pipeline
+
+This command runs figures, links, and keyword extraction in one go:
+
+```bash
+python run_pipeline.py
+```
+
+It expects TEI XML files under data/grobid/ and writes all outputs to outputs/.
+
+# Run individual steps
+
 ## Generate keywords and word cloud
 
 This script processes abstracts and generates keyword statistics and a word cloud.
@@ -144,6 +177,40 @@ Outputs:
 
 ---
 
+## Docker usage (alternative installation method)
+
+If you have Docker installed, you can run the project without setting up Python manually.
+
+Build the image
+From the repository root:
+
+```bash
+docker build -t text_extractor:latest .
+```
+
+# Run the full pipeline with Docker
+
+Mount local data/ and outputs/ so inputs and results stay on your machine:
+
+```bash
+docker run --rm \
+  -v "$PWD/data:/app/data" \
+  -v "$PWD/outputs:/app/outputs" \
+  text_extractor:latest
+```
+
+--- 
+# Test and continuous integration
+
+
+Tests live under tests/ and can be run with:
+
+```bash
+pytest
+```
+
+A GitHub Actions workflow (.github/workflows/ci.yml) automatically installs dependencies and runs the test suite (and optionally builds the docs) on every push and pull request.
+---
 # Validation
 
 To validate the extraction results:
