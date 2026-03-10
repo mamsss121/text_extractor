@@ -12,89 +12,85 @@ OUTPUT_KEYWORDS = "outputs/keywords.txt"
 
 ns = {"tei": "http://www.tei-c.org/ns/1.0"}
 
-# English stopwords
 STOPWORDS = set([
     'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
     'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been',
-    'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
-    'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those', 'it',
-    'its', 'which', 'who', 'when', 'where', 'why', 'how', 'all', 'each',
-    'every', 'both', 'few', 'more', 'most', 'other', 'some', 'such', 'than',
-    'too', 'very', 'we', 'us', 'our', 'their', 'them', 'they', 'his', 'her'
+    'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+    'could', 'should', 'may', 'might', 'can', 'this', 'that', 'these',
+    'those', 'it', 'its', 'which', 'who', 'when', 'where', 'why', 'how',
+    'all', 'each', 'every', 'both', 'few', 'more', 'most', 'other',
+    'some', 'such', 'than', 'too', 'very', 'we', 'us', 'our', 'their',
+    'them', 'they', 'his', 'her'
 ])
 
-rows = []
-all_abstracts_text = []  # Store all abstracts for keyword cloud
 
-for filename in os.listdir(INPUT_DIR):
-    if filename.endswith(".xml"):
-        file_path = os.path.join(INPUT_DIR, filename)
-        try:
-            tree = ET.parse(file_path)
-            root = tree.getroot()
+def main():
+    rows = []
+    all_abstracts_text = []
 
-            abstract_texts = []
-            for abstract in root.findall(".//tei:abstract", ns):
-                for elem in abstract.iter():
-                    if elem.text:
-                        abstract_texts.append(elem.text.strip())
+    for filename in os.listdir(INPUT_DIR):
+        if filename.endswith(".xml"):
+            file_path = os.path.join(INPUT_DIR, filename)
+            try:
+                tree = ET.parse(file_path)
+                root = tree.getroot()
 
-            abstract_text = " ".join(t for t in abstract_texts if t)
+                abstract_texts = []
+                for abstract in root.findall(".//tei:abstract", ns):
+                    for elem in abstract.iter():
+                        if elem.text:
+                            abstract_texts.append(elem.text.strip())
 
-            all_abstracts_text.append(abstract_text) 
+                abstract_text = " ".join(t for t in abstract_texts if t)
+                all_abstracts_text.append(abstract_text)
+                rows.append([filename, abstract_text])
 
-            rows.append([filename, abstract_text])
+            except Exception as e:
+                rows.append([filename, f"ERROR: {e}"])
 
-        except Exception as e:
-            rows.append([filename, f"ERROR: {e}"])
+    combined_text = " ".join(all_abstracts_text).lower()
+    combined_text = re.sub(r'[^a-z\s]', ' ', combined_text)
 
-# Add all the abstracts in one large text
-combined_text = " ".join(all_abstracts_text)
+    words = combined_text.split()
+    filtered_words = [
+        word for word in words
+        if word and len(word) > 2 and word not in STOPWORDS
+    ]
 
-# Preprocessing for keyword cloud:
-# Convert to lowercase
-combined_text = combined_text.lower()
+    word_freq = Counter(filtered_words)
 
-# Remove punctuation (keep only letters and spaces)
-combined_text = re.sub(r'[^a-z\s]', ' ', combined_text)
+    os.makedirs("outputs", exist_ok=True)
 
-# Split into words and remove stopwords
-words = combined_text.split()
-filtered_words = [word for word in words if word and len(word) > 2 and word not in STOPWORDS]
+    with open(OUTPUT_KEYWORDS, "w", encoding="utf-8") as f:
+        f.write(" ".join(filtered_words))
 
-# Count word frequencies
-word_freq = Counter(filtered_words)
+    with open("outputs/top_keywords.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["keyword", "frequency"])
+        writer.writerows(word_freq.most_common(100))
 
-# Save outputs
-os.makedirs("outputs", exist_ok=True)
+    with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["filename", "abstract"])
+        writer.writerows(rows)
 
-# Save processed keywords for word cloud
-with open(OUTPUT_KEYWORDS, "w", encoding="utf-8") as f:
-    f.write(" ".join(filtered_words))
+    wordcloud = WordCloud(width=800, height=400,
+                          background_color='white').generate(
+        " ".join(filtered_words)
+    )
 
-# Save top keywords with frequencies
-with open("outputs/top_keywords.csv", "w", newline="", encoding="utf-8") as f:
-    writer = csv.writer(f)
-    writer.writerow(["keyword", "frequency"])
-    writer.writerows(word_freq.most_common(100))
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.title("Keyword Cloud")
+    plt.tight_layout()
+    plt.savefig("outputs/keyword_cloud.png", dpi=300)
+    plt.close()
 
-# Save abstracts CSV
-with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
-    writer = csv.writer(f)
-    writer.writerow(["filename", "abstract"])
-    writer.writerows(rows)
+    print(f"Saved {len(rows)} abstracts to {OUTPUT_FILE}")
+    print(f"Saved processed keywords to {OUTPUT_KEYWORDS}")
+    print(f"Top 5 keywords: {word_freq.most_common(5)}")
 
-# Generate the keyword cloud
-wordcloud = WordCloud(width=800, height=400, background_color='white').generate(" ".join(filtered_words))
 
-plt.figure(figsize=(10, 5))
-plt.imshow(wordcloud, interpolation='bilinear')
-plt.axis('off')  
-plt.title("Keyword Cloud")
-plt.tight_layout()
-plt.savefig("outputs/keyword_cloud.png", dpi=300)
-plt.show()
-
-print(f"Saved {len(rows)} abstracts to {OUTPUT_FILE}")
-print(f"Saved processed keywords to {OUTPUT_KEYWORDS}")
-print(f"Top 5 keywords: {word_freq.most_common(5)}")
+if __name__ == "__main__":
+    main()
