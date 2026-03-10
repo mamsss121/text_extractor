@@ -1,0 +1,9 @@
+version: 1
+# Build documentation with Mkdocs
+mkdocs:
+   configuration: mkdocs.yml
+
+python:
+  version: 3.11
+  install:
+    - requirements: docs/requirements.txt
